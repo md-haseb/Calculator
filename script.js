@@ -6,7 +6,15 @@ showAndCalculate();
 function showAndCalculate(){
   button.forEach((b, index) => {
     b.addEventListener('click', () => {
-      input.value += b.textContent;
+      if(b.textContent === '=' && input.value !== ''){
+        input.value = eval(input.value);
+      }
+      else if(b.textContent === '=' && input.value == ''){
+        input.value = '';
+      }
+      else{
+        input.value += b.textContent;
+      }
     })
   })
 }
