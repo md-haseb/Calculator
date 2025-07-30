@@ -12,6 +12,12 @@ function showAndCalculate(){
       else if(b.textContent === '=' && input.value == ''){
         input.value = '';
       }
+      else if(b.textContent === 'AC'){
+        input.value = '';
+      }
+      else if(b.textContent === 'Cen'){
+        input.value = input.value.slice(0, input.value.length - 1);
+      }
       else{
         input.value += b.textContent;
       }
