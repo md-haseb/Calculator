@@ -18,6 +18,9 @@ function showAndCalculate(){
       else if(b.textContent === 'Cen'){
         input.value = input.value.slice(0, input.value.length - 1);
       }
+      else if(input.value == '' && (b.textContent === '+' || b.textContent === '-' || b.textContent === '*' || b.textContent === '/' || b.textContent === '.')){
+        input.value = '';
+      }
       else{
         input.value += b.textContent;
       }
