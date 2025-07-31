@@ -34,9 +34,9 @@ function showAndCalculate(){
       else if(operators.includes(input.value[input.value.length - 1]) && b.textContent === '.'){
         input.value += b.textContent;
       }
-      //"Logic: Do not display operators side by side" (Group A: Order 2)
+      //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
       else if(operators.includes(input.value[input.value.length - 1]) && operators.includes(b.textContent)){
-        return;
+        input.value = input.value.slice(0, -1) + b.textContent;
       }
       //"Logic: After an operator display further, if the input is not an operator again"
       else if(operators.includes(input.value[input.value.length - 1]) && !operators.includes(b.textContent)){
