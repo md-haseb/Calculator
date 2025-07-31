@@ -12,7 +12,7 @@ function showAndCalculate(){
         input.value = eval(input.value);
       }
       else if(b.textContent === '=' && input.value == ''){
-        input.value = '';
+        return;
       }
       //AC button logic
       else if(b.textContent === 'AC'){
@@ -24,15 +24,19 @@ function showAndCalculate(){
       }
       //"Logic: Do not display operator first when input is empty"
       else if(input.value == '' && (b.textContent === '+' || b.textContent === '*' || b.textContent === '/')){
-        input.value = '';
+        return;
       }
       //"Logic: Do not display same operator twice"
       else if(b.textContent === input.value[input.value.length - 1] && operators.includes(input.value[input.value.length - 1])){
-        input.value += '';
+        return;
       }
-      //"Logic: Do not display operators side by side"
+      //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
+      else if(operators.includes(input.value[input.value.length - 1]) && b.textContent === '.'){
+        input.value += b.textContent;
+      }
+      //"Logic: Do not display operators side by side" (Group A: Order 2)
       else if(operators.includes(input.value[input.value.length - 1]) && operators.includes(b.textContent)){
-        input.value += '';
+        return;
       }
       //"Logic: After an operator display further, if the input is not an operator again"
       else if(operators.includes(input.value[input.value.length - 1]) && !operators.includes(b.textContent)){
