@@ -23,7 +23,7 @@ function showAndCalculate(){
         input.value = input.value.slice(0, input.value.length - 1);
       }
       //"Logic: Do not display operator first when input is empty"
-      else if(input.value == '' && (b.textContent === '+' || b.textContent === '-' || b.textContent === '*' || b.textContent === '/' || b.textContent === '.')){
+      else if(input.value == '' && (b.textContent === '+' || b.textContent === '*' || b.textContent === '/')){
         input.value = '';
       }
       //"Logic: Do not display same operator twice"
