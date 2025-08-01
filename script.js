@@ -7,6 +7,7 @@ function showAndCalculate(){
   const operators = '+-*/.';
   button.forEach((b, index) => {
     b.addEventListener('click', () => {
+      let lastChar = input.value[input.value.length - 1];
       //calculation logic
       if(b.textContent === '=' && input.value !== ''){
         input.value = eval(input.value);
@@ -27,19 +28,19 @@ function showAndCalculate(){
         return;
       }
       //"Logic: Do not display same operator twice"
-      else if(b.textContent === input.value[input.value.length - 1] && operators.includes(input.value[input.value.length - 1])){
+      else if(b.textContent === lastChar && operators.includes(lastChar)){
         return;
       }
       //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
-      else if(operators.includes(input.value[input.value.length - 1]) && b.textContent === '.'){
+      else if(operators.includes(lastChar) && b.textContent === '.'){
         input.value += b.textContent;
       }
       //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
-      else if(operators.includes(input.value[input.value.length - 1]) && operators.includes(b.textContent)){
+      else if(operators.includes(lastChar) && operators.includes(b.textContent)){
         input.value = input.value.slice(0, -1) + b.textContent;
       }
       //"Logic: After an operator display further, if the input is not an operator again"
-      else if(operators.includes(input.value[input.value.length - 1]) && !operators.includes(b.textContent)){
+      else if(operators.includes(lastChar) && !operators.includes(b.textContent)){
         input.value += b.textContent;
       }
       //Update input value based on user button click
