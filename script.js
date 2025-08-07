@@ -4,8 +4,9 @@ let button = document.querySelectorAll('.btn');
 showAndCalculate();
 
 function showAndCalculate(){
-  const operators = '+-*/';
+  const operators = '+*/-';
   const decimal = '.';
+  const regex = new RegExp(`[${operators}]`);
   button.forEach((b, index) => {
     b.addEventListener('click', () => {
       let lastChar = input.value[input.value.length - 1];
@@ -35,6 +36,17 @@ function showAndCalculate(){
       //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
       else if(operators.includes(lastChar) && b.textContent === decimal){
         input.value += b.textContent;
+      }
+      //Logic: Don not permit . twice for a number
+      else if(b.textContent === decimal && input.value !== ''){
+        let splittedArr = input.value.split(regex);
+        let lastElementArr = splittedArr[splittedArr.length - 1];
+        if(!lastElementArr.includes(decimal)){
+          input.value += b.textContent;
+        }
+        else{
+          return;
+        }
       }
       //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
       else if(operators.includes(lastChar) && operators.includes(b.textContent)){
