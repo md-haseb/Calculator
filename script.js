@@ -14,7 +14,7 @@ function showAndCalculate(){
       if(b.textContent === '=' && input.value !== ''){
         let typedValues = input.value.match(/\d+(\.\d+)?|[+\-*/]/g);
         let result = '';
-        for(let i = 0; i < typedValues.length - 1; i++){
+        for(let i = 0; i < typedValues.length; i++){
           if(typedValues[i] === '*'){
             result = Number(typedValues[i - 1]) * Number(typedValues[i + 1]);
             typedValues.splice(i - 1, 3, result);
@@ -26,7 +26,7 @@ function showAndCalculate(){
             i--;
           }
         }
-        for(let i = 0; i < typedValues.length - 1; i++){
+        for(let i = 0; i < typedValues.length; i++){
           if(typedValues[i] === '+'){
             result = Number(typedValues[i - 1]) + Number(typedValues[i + 1]);
             typedValues.splice(i - 1, 3, result);
@@ -38,7 +38,7 @@ function showAndCalculate(){
             i--;
           }
         }
-        input.value = typedValues.join('');
+        input.value = typedValues[0];
       }
       else if(b.textContent === '=' && input.value == ''){
         return;
