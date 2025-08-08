@@ -12,7 +12,33 @@ function showAndCalculate(){
       let lastChar = input.value[input.value.length - 1];
       //calculation logic
       if(b.textContent === '=' && input.value !== ''){
-        input.value = eval(input.value);
+        let typedValues = input.value.match(/\d+(\.\d+)?|[+\-*/]/g);
+        let result = '';
+        for(let i = 0; i < typedValues.length - 1; i++){
+          if(typedValues[i] === '*'){
+            result = Number(typedValues[i - 1]) * Number(typedValues[i + 1]);
+            typedValues.splice(i - 1, 3, result);
+            i--;
+          }
+          if(typedValues[i] === '/'){
+            result = Number(typedValues[i - 1]) / Number(typedValues[i + 1]);
+            typedValues.splice(i - 1, 3, result);
+            i--;
+          }
+        }
+        for(let i = 0; i < typedValues.length - 1; i++){
+          if(typedValues[i] === '+'){
+            result = Number(typedValues[i - 1]) + Number(typedValues[i + 1]);
+            typedValues.splice(i - 1, 3, result);
+            i--;
+          }
+          if(typedValues[i] === '-'){
+            result = Number(typedValues[i - 1]) - Number(typedValues[i + 1]);
+            typedValues.splice(i - 1, 3, result);
+            i--;
+          }
+        }
+        input.value = typedValues.join('');
       }
       else if(b.textContent === '=' && input.value == ''){
         return;
@@ -37,7 +63,7 @@ function showAndCalculate(){
       else if(operators.includes(lastChar) && b.textContent === decimal){
         input.value += b.textContent;
       }
-      //Logic: Don not permit . twice for a number
+      //Logic: Do not permit . twice for a number
       else if(b.textContent === decimal && input.value !== ''){
         let splittedArr = input.value.split(regex);
         let lastElementArr = splittedArr[splittedArr.length - 1];
