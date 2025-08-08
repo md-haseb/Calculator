@@ -11,7 +11,7 @@ function showAndCalculate(){
     b.addEventListener('click', () => {
       let lastChar = input.value[input.value.length - 1];
       //calculation logic
-      if(b.textContent === '=' && input.value !== ''){
+      if(b.textContent === '=' && input.value !== '' && !(operators.includes(lastChar) || decimal.includes(lastChar))){
         let typedValues = input.value.match(/\d+(\.\d+)?|[+\-*/]/g);
         let result = '';
         for(let i = 0; i < typedValues.length; i++){
@@ -39,6 +39,9 @@ function showAndCalculate(){
           }
         }
         input.value = typedValues[0];
+      }
+      else if(b.textContent === '=' && input.value !== '' && (operators.includes(lastChar) || decimal.includes(lastChar))){
+        return;
       }
       else if(b.textContent === '=' && input.value == ''){
         return;
