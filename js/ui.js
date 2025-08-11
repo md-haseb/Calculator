@@ -18,9 +18,17 @@ export function init(){
       if(value === '='){
 
       }
-      if(validateForDisplay(input.value, value)){
-        input.value += value;
+      // if(validateForDisplay(input.value, value)){
+      //   input.value += value;
+      // }
+      const validatedValue = validateForDisplay(input.value, value);
+      if(validatedValue){
+        input.value = validatedValue;
       }
+      // const updatedValue = updateForDisplay(input.value, value);
+      // if(updatedValue) { 
+      //   input.value = updatedValue; 
+      // }
     })
   })
 }
