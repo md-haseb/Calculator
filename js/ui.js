@@ -1,34 +1,42 @@
-import {validateForDisplay} from './validation.js';
+import {validateForDisplay, validateForEvaluation} from './validation.js';
+import {calculate} from './calculation.js';
 
 const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
 
+//this function is for DOM manipulation/change or not on the UI, based on user response
 export function init(){
   button.forEach(btn => {
     btn.addEventListener('click', () => {
       const value = btn.textContent;
+
+      //AC button logic
       if(value === 'AC'){
         input.value = '';
         return;
       }
+
+      //Cen button logic
       if(value === 'Cen'){
         input.value = input.value.slice(0, -1);
         return;
       }
-      if(value === '='){
 
+      //equal button logic, first validate then calculate
+      if(value === '='){
+        const validatedForEval = validateForEvaluation(input.value, value);
+        if(validatedForEval !== null){
+          input.value = calculate(input.value);
+          return;
+        }
+        return;
       }
-      // if(validateForDisplay(input.value, value)){
-      //   input.value += value;
-      // }
+
+      //for validation, validate first before change anything on the input section
       const validatedValue = validateForDisplay(input.value, value);
-      if(validatedValue){
+      if(validatedValue !== null){
         input.value = validatedValue;
       }
-      // const updatedValue = updateForDisplay(input.value, value);
-      // if(updatedValue) { 
-      //   input.value = updatedValue; 
-      // }
     })
   })
 }

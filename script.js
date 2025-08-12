@@ -40,9 +40,11 @@ function showAndCalculate(){
         }
         input.value = typedValues[0];
       }
+      //Logic: When last character is an operator/decimal then do nothing
       else if(b.textContent === '=' && input.value !== '' && (operators.includes(lastChar) || decimal.includes(lastChar))){
         return;
       }
+      //Logic: when input value is empty, then do nothing
       else if(b.textContent === '=' && input.value == ''){
         return;
       }
