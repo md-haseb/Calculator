@@ -48,7 +48,7 @@ html, body{
   grid-column: span 2;
 }
 .button_equal{
-  grid-column: span 4;
+  /* grid-column: span 4; */
   background-color: darkgreen;
   color: white;
   font-size: 30px;

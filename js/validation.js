@@ -4,7 +4,7 @@ const operators = '+*/-';
 const decimal = '.';
 
 //for checking, is character is an operator
-function isOperator(char){
+export function isOperator(char){
   return operators.includes(char);
 }
 
