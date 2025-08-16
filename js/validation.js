@@ -30,7 +30,7 @@ export function validateForDisplay(currentInput, newValue){
   }
 
   //Logic: Do not permit . twice for a number
-  if(newValue === decimal && currentInput !== '' && currentInput === 'Invalid Input'){
+  if(newValue === decimal && currentInput !== '' && !(currentInput === 'Invalid Input')){
     let filteredNumberArray = currentInput.split(regex);
     let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
     if(!lastElementOfArray.includes(decimal)){
@@ -47,7 +47,7 @@ export function validateForDisplay(currentInput, newValue){
   }
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
-    return 'invalid Input';
+    return 'Invalid Input';
   }
 
   //"Logic: After an operator display further, if the input is a number"
@@ -56,7 +56,7 @@ export function validateForDisplay(currentInput, newValue){
   }
 
   //when input value is 'Invalid Input', do nothing instead of AC button
-  if(currentInput === 'invalid Input'){
+  if(currentInput === 'Invalid Input'){
     return null;
   }
 
