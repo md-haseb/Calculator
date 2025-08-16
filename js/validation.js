@@ -1,6 +1,7 @@
 
 
 const operators = '+*/-';
+const root = '√';
 const decimal = '.';
 
 //for checking, is character is an operator
@@ -11,7 +12,7 @@ export function isOperator(char){
 //this function is about validate and allow for display or not
 export function validateForDisplay(currentInput, newValue){
   //Do not display operator first when input is empty except - and .
-  if(currentInput == '' && isOperator(newValue) && !['-', decimal].includes(newValue)){
+  if(currentInput == '' && isOperator(newValue) && !['-', root, decimal].includes(newValue)){
     return null;
   }
 
@@ -19,7 +20,7 @@ export function validateForDisplay(currentInput, newValue){
   const regex = new RegExp(`[${operators}]`);
 
   //"Logic: Do not display same operator twice"
-  if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar)))){
+  if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar) || root === lastChar))){
     return null;
   }
 
@@ -29,7 +30,7 @@ export function validateForDisplay(currentInput, newValue){
   }
 
   //Logic: Do not permit . twice for a number
-  if(newValue === decimal && currentInput !== ''){
+  if(newValue === decimal && currentInput !== '' && currentInput === 'Invalid Input'){
     let filteredNumberArray = currentInput.split(regex);
     let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
     if(!lastElementOfArray.includes(decimal)){
@@ -44,10 +45,19 @@ export function validateForDisplay(currentInput, newValue){
   if(isOperator(lastChar) && isOperator(newValue)){
     return currentInput.slice(0, -1) + newValue;
   }
+  //after a root, operators are not allowed
+  if(lastChar === root && isOperator(newValue)){
+    return 'invalid Input';
+  }
 
   //"Logic: After an operator display further, if the input is a number"
   if(isOperator(lastChar) && !isOperator(newValue)){
     return currentInput + newValue;
+  }
+
+  //when input value is 'Invalid Input', do nothing instead of AC button
+  if(currentInput === 'invalid Input'){
+    return null;
   }
 
   //Update input value based on user button click
@@ -67,7 +77,6 @@ export function validateForEvaluation(currentInput, newValue){
   if(newValue === '=' && currentInput == ''){
     return null;
   }
-
   //proceed for calculation
   return true;
 }

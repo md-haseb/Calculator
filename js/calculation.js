@@ -10,27 +10,39 @@ export function tokenize(expr){
 //this function is for calculation
 export function calculate(expression){
   const tokens = tokenize(expression);
-  let result = '';
+  // let result = '';
 
   //this loop evaluates square root in the expression
   for(let i = 0; i < tokens.length; i++){
     if(tokens[i] === '√'){
       const rootNumber = Number(tokens[i + 1]);
+      let result = '';
+
+      if(rootNumber === 0 || rootNumber === 1){
+        result = rootNumber;
+        tokens.splice(i, 2, result);
+        continue;
+      }
+
       let bigHalf = Math.max(1, rootNumber);
       let smallHalf = 0;
+      let iterations = 0;
 
-      for(let j = i;; j++){
+      while(true){
+        if(++iterations > 1000) break;
+
         const average = (bigHalf + smallHalf) / 2;
+        const square = average * average;
         const epsilon = 1e-10;
-        if(Math.abs(average * average - rootNumber) < epsilon){
+        if(Math.abs(square - rootNumber) < epsilon){
           result = average;
           tokens.splice(i, 2, result);
           break;
         }
-        if(average * average > rootNumber){
+        if(square > rootNumber){
           bigHalf = average;
         }
-        if(average * average < rootNumber){
+        if(square < rootNumber){
           smallHalf = average;
         }
       }
@@ -39,6 +51,7 @@ export function calculate(expression){
 
   //this loop evaluates 'multiplication and division' first in the expression
   for(let i = 0; i < tokens.length; i++){
+    let result = '';
     if(tokens[i] === '*'){
       result = Number(tokens[i - 1]) * Number(tokens[i + 1]);
       tokens.splice(i - 1, 3, result);
@@ -53,6 +66,7 @@ export function calculate(expression){
 
   //this loop evaluates 'addition and substraction' in the expression
   for(let i = 0; i < tokens.length; i++){
+    let result = '';
     if(tokens[i] === '+'){
       result = Number(tokens[i - 1]) + Number(tokens[i + 1]);
       tokens.splice(i - 1, 3, result);

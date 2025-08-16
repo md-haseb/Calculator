@@ -17,7 +17,7 @@ export function init(){
       }
 
       //Cen button logic
-      if(value === 'Cen'){
+      if(value === 'Cen' && (input.value === 'Invalid Input')){
         input.value = input.value.slice(0, -1);
         return;
       }
