@@ -12,7 +12,7 @@ export function isOperator(char){
 //this function is about validate and allow for display or not
 export function validateForDisplay(currentInput, newValue){
   //Do not display operator first when input is empty except - and .
-  if(currentInput == '' && isOperator(newValue) && !['-', root, decimal].includes(newValue)){
+  if(currentInput == '' && isOperator(newValue) && !['+','-', root, decimal].includes(newValue)){
     return null;
   }
 
@@ -42,12 +42,22 @@ export function validateForDisplay(currentInput, newValue){
   }
 
   //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
+  // but, if the operators are *, /, root then don't replace
   if(isOperator(lastChar) && isOperator(newValue)){
+    if(['*','/', root].includes(newValue)){
+      return null;
+    }
     return currentInput.slice(0, -1) + newValue;
   }
+
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
     return 'Invalid Input';
+  }
+
+  //when input value is only +/-/. then don't allow root to display
+  if(currentInput.length == 1 && ['+','-', decimal].includes(lastChar) && newValue === root){
+    return null;
   }
 
   //"Logic: After an operator display further, if the input is a number"
