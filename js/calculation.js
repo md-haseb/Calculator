@@ -10,7 +10,6 @@ export function tokenize(expr){
 //this function is for calculation
 export function calculate(expression){
   const tokens = tokenize(expression);
-  // let result = '';
 
   //this loop evaluates square root in the expression
   for(let i = 0; i < tokens.length; i++){
@@ -18,32 +17,32 @@ export function calculate(expression){
       const rootNumber = Number(tokens[i + 1]);
       let result = '';
 
-      if(rootNumber === 0 || rootNumber === 1){
+      if(rootNumber === 0 || rootNumber === 1){   //if user type 0 and 1 after root
         result = rootNumber;
         tokens.splice(i, 2, result);
         continue;
       }
 
-      let bigHalf = Math.max(1, rootNumber);
-      let smallHalf = 0;
+      let high = Math.max(1, rootNumber);   //finding the square root using binary search algorithm
+      let low = 0;
       let iterations = 0;
 
       while(true){
         if(++iterations > 1000) break;
 
-        const average = (bigHalf + smallHalf) / 2;
+        const average = (high + low) / 2;
         const square = average * average;
         const epsilon = 1e-10;
-        if(Math.abs(square - rootNumber) < epsilon){
-          result = average;
+        if(Math.abs(square - rootNumber) < epsilon || (high - low) < epsilon){
+          result = Math.round(average * 1e11) / 1e11;
           tokens.splice(i, 2, result);
           break;
         }
         if(square > rootNumber){
-          bigHalf = average;
+          high = average;
         }
         if(square < rootNumber){
-          smallHalf = average;
+          low = average;
         }
       }
     }
