@@ -11,19 +11,37 @@ export function tokenize(expr){
 export function calculate(expression){
   const tokens = tokenize(expression);
 
+  //this loop evaluates brackets in the expression
+  const stack = [];
+  for(let i = 0; i < tokens.length; i++){
+    let start = 0;
+    let end = 0;
+    if(tokens[i] === '('){
+      stack.push(i);
+    }
+    if(tokens[i] === ')'){
+      start = stack.pop();
+      end = i;
+      let insideElement = tokens.slice(start + 1, end);
+      let result = calculate(insideElement);
+      tokens.splice(start, insideElement.length + 2, result);
+      i = start;
+    }
+  }
+
   //this loop evaluates square root in the expression
   for(let i = 0; i < tokens.length; i++){
     if(tokens[i] === '√'){
       const rootNumber = Number(tokens[i + 1]);
       let result = '';
 
-      if(rootNumber === 0 || rootNumber === 1){   //if user type 0 and 1 after root
+      if(rootNumber === 0 || rootNumber === 1){  //if user type 0 and 1 after root
         result = rootNumber;
         tokens.splice(i, 2, result);
         continue;
       }
 
-      let high = Math.max(1, rootNumber);   //finding the square root using binary search algorithm
+      let high = Math.max(1, rootNumber);  //finding the square root using binary search algorithm
       let low = 0;
       let iterations = 0;
 
