@@ -70,6 +70,11 @@ export function validateForDisplay(currentInput, newValue){
     return null;
   }
 
+  if(lastChar === ')'){
+    currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
+    return currentInput;
+  }
+
   //Update input value based on user button click
   return currentInput + newValue;
 }

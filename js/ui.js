@@ -18,12 +18,21 @@ export function init(){
 
       //Cen button logic
       if (value === 'Cen') {
-      if (input.value !== 'Invalid Input') {
-        input.value = input.value.slice(0, -1);
-        return
-      }
+          if (input.value !== 'Invalid Input') {
+          input.value = input.value.slice(0, -1);
+          return;
+        }
         return;
       }
+
+      if (value === '()') {
+        // input.value = input.value + '(' + ')';
+        input.value = input.value + '()';
+        input.setSelectionRange(input.value.length - 1, input.value.length - 1);
+        input.focus();
+        return;
+      }
+
 
       //equal button logic, first validate then calculate
       if(value === '='){
