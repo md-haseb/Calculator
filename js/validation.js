@@ -70,8 +70,24 @@ export function validateForDisplay(currentInput, newValue){
     return null;
   }
 
+  // if(lastChar === ')' && newValue === '()'){
+  //   currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
+  //   return currentInput;
+  // }
+
+  // if(lastChar === ')' && currentInput[currentInput.length - 2] === ')'){
+  //   currentInput = currentInput.slice(0, currentInput.length - 2) + newValue + ')'+ ')';
+  //   return currentInput;
+  // }
+
+  // if(lastChar === ')'){
+  //   currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
+  //   return currentInput;
+  // }
+
   if(lastChar === ')'){
-    currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
+    let endBracketIndex = currentInput.indexOf(')');
+    currentInput = currentInput.slice(0, endBracketIndex) + newValue + currentInput.slice(endBracketIndex);
     return currentInput;
   }
 

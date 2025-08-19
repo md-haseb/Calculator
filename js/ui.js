@@ -25,13 +25,13 @@ export function init(){
         return;
       }
 
-      if (value === '()') {
-        // input.value = input.value + '(' + ')';
-        input.value = input.value + '()';
-        input.setSelectionRange(input.value.length - 1, input.value.length - 1);
-        input.focus();
-        return;
-      }
+      // if (value === '()') {
+      //   // input.value = input.value + '(' + ')';
+      //   input.value = input.value + '()';
+      //   input.setSelectionRange(input.value.length - 1, input.value.length - 1);
+      //   input.focus();
+      //   return;
+      // }
 
 
       //equal button logic, first validate then calculate
