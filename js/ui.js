@@ -1,5 +1,6 @@
 import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
+import {insertValueInsideBracket} from './insertion.js';
 
 const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
@@ -9,6 +10,7 @@ export function init(){
   button.forEach(btn => {
     btn.addEventListener('click', () => {
       const value = btn.textContent;
+      const lastChar = input.value[input.value.length - 1];
 
       //AC button logic
       if(value === 'AC'){
@@ -25,13 +27,10 @@ export function init(){
         return;
       }
 
-      // if (value === '()') {
-      //   // input.value = input.value + '(' + ')';
-      //   input.value = input.value + '()';
-      //   input.setSelectionRange(input.value.length - 1, input.value.length - 1);
-      //   input.focus();
-      //   return;
-      // }
+      if(lastChar === ')' && value !== '=') {
+        input.value = insertValueInsideBracket(input.value, value);
+        return;
+      }
 
 
       //equal button logic, first validate then calculate

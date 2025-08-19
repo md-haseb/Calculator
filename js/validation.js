@@ -30,7 +30,7 @@ export function validateForDisplay(currentInput, newValue){
   }
 
   //Logic: Do not permit . twice for a number
-  if(newValue === decimal && currentInput !== '' && !(currentInput === 'Invalid Input')){
+  if(newValue === decimal && currentInput !== '' && !(currentInput === 'Invalid Input') && lastChar !== ')'){
     let filteredNumberArray = currentInput.split(regex);
     let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
     if(!lastElementOfArray.includes(decimal)){
@@ -68,27 +68,6 @@ export function validateForDisplay(currentInput, newValue){
   //when input value is 'Invalid Input', do nothing instead of AC button
   if(currentInput === 'Invalid Input'){
     return null;
-  }
-
-  // if(lastChar === ')' && newValue === '()'){
-  //   currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
-  //   return currentInput;
-  // }
-
-  // if(lastChar === ')' && currentInput[currentInput.length - 2] === ')'){
-  //   currentInput = currentInput.slice(0, currentInput.length - 2) + newValue + ')'+ ')';
-  //   return currentInput;
-  // }
-
-  // if(lastChar === ')'){
-  //   currentInput = currentInput.slice(0, currentInput.length - 1) + newValue + ')';
-  //   return currentInput;
-  // }
-
-  if(lastChar === ')'){
-    let endBracketIndex = currentInput.indexOf(')');
-    currentInput = currentInput.slice(0, endBracketIndex) + newValue + currentInput.slice(endBracketIndex);
-    return currentInput;
   }
 
   //Update input value based on user button click
