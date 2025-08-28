@@ -33,16 +33,15 @@ export function calculate(expression){
   for(let i = 0; i < tokens.length; i++){
     if(tokens[i] === '√'){
       const rootNumber = Number(tokens[i + 1]);
-      let result = '';
 
       if(rootNumber === 0 || rootNumber === 1){  //if user type 0 and 1 after root
-        result = rootNumber;
-        tokens.splice(i, 2, result);
+        tokens.splice(i, 2, rootNumber);
         continue;
       }
 
       let high = Math.max(1, rootNumber);  //finding the square root using binary search algorithm
       let low = 0;
+      let result = 0;
       let iterations = 0;
 
       while(true){
@@ -51,15 +50,18 @@ export function calculate(expression){
         const average = (high + low) / 2;
         const square = average * average;
         const epsilon = 1e-10;
+
         if(Math.abs(square - rootNumber) < epsilon || (high - low) < epsilon){
-          result = Math.round(average * 1e11) / 1e11;
+          result = Math.round(average * 1e11) / 1e11; 
+          if(Math.abs(result - Math.round(result)) < epsilon){  // for integer result (Line 56 - 58)
+            result = Math.round(result);
+          }
           tokens.splice(i, 2, result);
           break;
         }
         if(square > rootNumber){
           high = average;
-        }
-        if(square < rootNumber){
+        }else{
           low = average;
         }
       }
