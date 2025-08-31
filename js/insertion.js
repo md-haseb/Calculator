@@ -1,5 +1,5 @@
 
-
+//to insert input inside bracket
 export function insertValueInsideBracket(currentInput, newValue){
   const lastChar = currentInput[currentInput.length - 1];
   if(lastChar === ')'){

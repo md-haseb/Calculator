@@ -27,9 +27,15 @@ export function init(){
         return;
       }
 
+      //to insert input inside bracket
       if(lastChar === ')' && value !== '=') {
         input.value = insertValueInsideBracket(input.value, value);
         return;
+      }
+
+      if(value.includes("□")){ 
+        // btn.innerHTML = `X<sup>\u25A1</sup>`;
+        input.value = "X&#x25A1";
       }
 
 
