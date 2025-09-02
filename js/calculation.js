@@ -68,16 +68,16 @@ export function calculate(expression){
       }
     }
     //to calculate exponent
-    if(tokens[i].match(/\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]+/)){ 
-      const match = tokens[i].match(/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/);
-      const base = match[1];
-      const exponent = match[2];
-      let result = base;
-      for(let i = 0; i < exponent - 1; i++){
-        result *= base;
-      }
-      tokens.splice(i, 1, result);
-    }
+    // if(tokens[i].match(/\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]+/)){ 
+    //   const match = tokens[i].match(/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/);
+    //   const base = match[1];
+    //   const exponent = match[2];
+    //   let result = base;
+    //   for(let i = 0; i < exponent - 1; i++){
+    //     result *= base;
+    //   }
+    //   tokens.splice(i, 1, result);
+    // }
   }
 
   //this loop evaluates 'multiplication and division' first in the expression

@@ -10,18 +10,18 @@ export function init(){
   button.forEach(btn => {
     btn.addEventListener('click', () => {
       const value = btn.textContent;
-      const lastChar = input.value[input.value.length - 1];
+      const lastChar = input.textContent[input.textContent.length - 1];
 
       //AC button logic
       if(value === 'AC'){
-        input.value = '';
+        input.textContent = '';
         return;
       }
 
       //Cen button logic
       if (value === 'Cen') {
-          if (input.value !== 'Invalid Input') {
-          input.value = input.value.slice(0, -1);
+          if (input.textContent !== 'Invalid Input') {
+          input.textContent = input.textContent.slice(0, -1);
           return;
         }
         return;
@@ -29,30 +29,30 @@ export function init(){
 
       //to insert input inside bracket
       if(lastChar === ')' && value !== '=') {
-        input.value = insertValueInsideBracket(input.value, value);
+        input.textContent = insertValueInsideBracket(input.textContent, value);
         return;
       }
 
-      if(value.includes("□")){ 
-        // btn.innerHTML = `X<sup>\u25A1</sup>`;
-        input.value = "X&#x25A1";
-      }
+      // if(value.includes("□")){ 
+      //   // btn.innerHTML = `X<sup>\u25A1</sup>`;
+      //   input.textContent = "X&#x25A1";
+      // }
 
 
       //equal button logic, first validate then calculate
       if(value === '='){
-        const validatedForEval = validateForEvaluation(input.value, value);
+        const validatedForEval = validateForEvaluation(input.textContent, value);
         if(validatedForEval !== null){
-          input.value = calculate(input.value);
+          input.textContent = calculate(input.textContent);
           return;
         }
         return;
       }
 
       //for validation, validate first before change anything on the input section
-      const validatedValue = validateForDisplay(input.value, value);
+      const validatedValue = validateForDisplay(input.textContent, value);
       if(validatedValue !== null){
-        input.value = validatedValue;
+        input.textContent = validatedValue;
       }
     })
   })
