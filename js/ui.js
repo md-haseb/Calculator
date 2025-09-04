@@ -1,6 +1,6 @@
 import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
-import {insertValueInsideBracket} from './insertion.js';
+import {insertValueInsideBracket, showExponentBox, showExponent} from './insertion.js';
 
 const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
@@ -33,11 +33,15 @@ export function init(){
         return;
       }
 
-      // if(value.includes("□")){ 
-      //   // btn.innerHTML = `X<sup>\u25A1</sup>`;
-      //   input.textContent = "X&#x25A1";
-      // }
+      if(value.includes("□")){ 
+        showExponentBox(input, input.textContent, value);
+        return;
+      }
 
+      if(["□"].includes(lastChar)){
+        showExponent(input, input.textContent, value);
+        return;
+      }
 
       //equal button logic, first validate then calculate
       if(value === '='){

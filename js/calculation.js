@@ -68,16 +68,21 @@ export function calculate(expression){
       }
     }
     //to calculate exponent
-    // if(tokens[i].match(/\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]+/)){ 
-    //   const match = tokens[i].match(/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/);
-    //   const base = match[1];
-    //   const exponent = match[2];
-    //   let result = base;
-    //   for(let i = 0; i < exponent - 1; i++){
-    //     result *= base;
-    //   }
-    //   tokens.splice(i, 1, result);
-    // }
+    if(tokens[i].match(/\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]+/)){ 
+      const superscriptToNormal = {
+        "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4",
+        "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9",
+      };
+      const match = tokens[i].match(/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/);
+      const base = Number(match[1]);
+      const exponentStr = match[2].split('').map(ch => superscriptToNormal[ch]).join('');
+      const exponent = Number(exponentStr);
+      let result = base ** exponent;
+      // for(let i = 0; i < exponent; i++){
+      //   result *= base;
+      // }
+      tokens.splice(i, 1, result);
+    }
   }
 
   //this loop evaluates 'multiplication and division' first in the expression
