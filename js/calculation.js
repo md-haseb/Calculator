@@ -4,7 +4,7 @@ const operators = '+*/-';
 
 //for tokenize/making array of numbers and operators
 export function tokenize(expr){
-  return expr.match(/\d+(\.\d+)?|[+\-*/√]/g);
+  return expr.match(/\d+(?:\.\d+)?[⁰¹²³⁴⁵⁶⁷⁸⁹]*|[+\-*/√]/g);
 }
 
 //this function is for calculation
@@ -70,17 +70,23 @@ export function calculate(expression){
     //to calculate exponent
     if(tokens[i].match(/\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]+/)){ 
       const superscriptToNormal = {
-        "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4",
-        "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9",
+        "\u2070": "0",
+        "\u00B9": "1",
+        "\u00B2": "2",
+        "\u00B3": "3",
+        "\u2074": "4",
+        "\u2075": "5",
+        "\u2076": "6",
+        "\u2077": "7",
+        "\u2078": "8",
+        "\u2079": "9"
       };
+      
       const match = tokens[i].match(/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/);
       const base = Number(match[1]);
       const exponentStr = match[2].split('').map(ch => superscriptToNormal[ch]).join('');
       const exponent = Number(exponentStr);
       let result = base ** exponent;
-      // for(let i = 0; i < exponent; i++){
-      //   result *= base;
-      // }
       tokens.splice(i, 1, result);
     }
   }

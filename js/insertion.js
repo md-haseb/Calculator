@@ -1,4 +1,4 @@
-
+import {validateForDisplay} from './validation.js';
 
 const operators = '+*/-';
 const root = '√';
@@ -14,8 +14,8 @@ export function insertValueInsideBracket(currentInput, newValue){
 }
 
 export function showExponentBox(input, currentInput, newValue){
-  const lastChar = currentInput[currentInput.length - 1];
-  if(![operators, root, decimal].includes(lastChar)){
+  // const lastChar = currentInput[currentInput.length - 1];
+  if(validateForDisplay(currentInput, newValue)){
     input.innerHTML = `${currentInput}<sup>□</sup>`;
     return input.textContent;
   }
@@ -23,10 +23,23 @@ export function showExponentBox(input, currentInput, newValue){
 }
 
 export function showExponent(input, currentInput, newValue){
+  const normalToSuperscript = {
+    "0":"\u2070",
+    "1":"\u00B9",
+    "2":"\u00B2",
+    "3":"\u00B3",
+    "4":"\u2074",
+    "5":"\u2075",
+    "6":"\u2076",
+    "7":"\u2077",
+    "8":"\u2078",
+    "9":"\u2079"
+  };
+
   const lastChar = currentInput[currentInput.length - 1];
+
   if(["□"].includes(lastChar)){
-    input.innerHTML = input.innerHTML.replace(/<sup>.*?<\/sup>/, "");
-    input.innerHTML = `${input.textContent}<sup>${newValue}</sup>`;
+    input.textContent = currentInput.slice(0, -1) + newValue.split('').map(d => normalToSuperscript[d]).join('');
     return input.textContent;
   }
 }

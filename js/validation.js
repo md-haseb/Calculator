@@ -70,6 +70,10 @@ export function validateForDisplay(currentInput, newValue){
     return null;
   }
 
+  if(!(operators.includes(lastChar) || root === lastChar || decimal === lastChar) && newValue.includes("□")){
+    return true;
+  }
+
   //Update input value based on user button click
   return currentInput + newValue;
 }
@@ -87,6 +91,7 @@ export function validateForEvaluation(currentInput, newValue){
   if(newValue === '=' && currentInput == ''){
     return null;
   }
+
   //proceed for calculation
   return true;
 }
