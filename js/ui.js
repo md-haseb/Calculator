@@ -11,6 +11,7 @@ export function init(){
     btn.addEventListener('click', () => {
       const value = btn.textContent;
       const lastChar = input.textContent[input.textContent.length - 1];
+      console.log(value);
 
       //AC button logic
       if(value === 'AC'){
@@ -43,8 +44,20 @@ export function init(){
         return;
       }
 
+      const superscripts = new Set([
+        "\u2070", "\u00B9", "\u00B2", "\u00B3",
+        "\u2074", "\u2075", "\u2076", "\u2077",
+        "\u2078", "\u2079"
+      ]);
+
+      if(superscripts.has(lastChar) && value !== '=' && !['+', '-', '*', '/'].includes(value)){
+        showExponent(input, input.textContent, value);
+        return;
+      }
+
       //equal button logic, first validate then calculate
       if(value === '='){
+        console.log(input.textContent);
         const validatedForEval = validateForEvaluation(input.textContent, value);
         if(validatedForEval !== null){
           input.textContent = calculate(input.textContent);

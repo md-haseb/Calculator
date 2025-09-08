@@ -40,6 +40,10 @@ export function showExponent(input, currentInput, newValue){
 
   if(["□"].includes(lastChar)){
     input.textContent = currentInput.slice(0, -1) + newValue.split('').map(d => normalToSuperscript[d]).join('');
-    return input.textContent;
+  }else if(Object.values(normalToSuperscript).includes(lastChar)){
+    input.textContent = input.textContent + newValue.split('').map(d => normalToSuperscript[d]).join('');
+  }else{
+    input.textContent += newValue;
   }
+  return input.textContent;
 }
