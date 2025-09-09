@@ -30,11 +30,18 @@ export function init(){
 
       //to insert input inside bracket
       if(lastChar === ')' && value !== '=') {
-        input.textContent = insertValueInsideBracket(input.textContent, value);
+        input.textContent = insertValueInsideBracket(input, input.textContent, value);
         return;
       }
 
-      if(value.includes("□")){ 
+      // to show exponents
+      const superscripts = new Set([
+        "\u2070", "\u00B9", "\u00B2", "\u00B3",
+        "\u2074", "\u2075", "\u2076", "\u2077",
+        "\u2078", "\u2079"
+      ]);
+
+      if(value.includes("□") && !superscripts.has(lastChar)){ 
         showExponentBox(input, input.textContent, value);
         return;
       }
@@ -43,12 +50,6 @@ export function init(){
         showExponent(input, input.textContent, value);
         return;
       }
-
-      const superscripts = new Set([
-        "\u2070", "\u00B9", "\u00B2", "\u00B3",
-        "\u2074", "\u2075", "\u2076", "\u2077",
-        "\u2078", "\u2079"
-      ]);
 
       if(superscripts.has(lastChar) && value !== '=' && !['+', '-', '*', '/'].includes(value)){
         showExponent(input, input.textContent, value);

@@ -5,10 +5,16 @@ const root = '√';
 const decimal = '.';
 
 //to insert input inside bracket
-export function insertValueInsideBracket(currentInput, newValue){
+export function insertValueInsideBracket(input, currentInput, newValue){
   const lastChar = currentInput[currentInput.length - 1];
   if(lastChar === ')'){
     let firstClosingBracket = currentInput.indexOf(')');
+    // if(newValue.includes("□")){
+    //   currentInput = currentInput.slice(0, firstClosingBracket);
+    //   input.innerHTML = showExponentBox(input, currentInput, newValue);
+    //   currentInput = currentInput + ')';
+    //   return input.textContent;
+    // }
     return currentInput.slice(0, firstClosingBracket) + newValue + currentInput.slice(firstClosingBracket);
   }
 }
@@ -17,7 +23,7 @@ export function showExponentBox(input, currentInput, newValue){
   // const lastChar = currentInput[currentInput.length - 1];
   if(validateForDisplay(currentInput, newValue)){
     input.innerHTML = `${currentInput}<sup>□</sup>`;
-    return input.textContent;
+    return input.innerHTML;
   }
   return null;
 }
