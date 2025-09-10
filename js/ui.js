@@ -30,7 +30,8 @@ export function init(){
 
       //to insert input inside bracket
       if(lastChar === ')' && value !== '=') {
-        input.textContent = insertValueInsideBracket(input, input.textContent, value);
+        // input.textContent = insertValueInsideBracket(input, input.textContent, value);
+        insertValueInsideBracket(input, input.textContent, value);
         return;
       }
 
