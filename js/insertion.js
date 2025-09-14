@@ -34,8 +34,8 @@ export function insertValueInsideBracket(input, currentInput, newValue){
       return;
     }
     if(Object.values(normalToSuperscript).includes(exponentCh)){
-      // input.innerHTML = `${showExponent(input, beforeText, newValue)}${afterText}`;
-      showExponent(input, beforeText, newValue);
+      input.textContent = input.textContent.slice(0, firstClosingBracket);
+      input.innerHTML = `${showExponent(input, beforeText, newValue)}${afterText}`;
       return;
     }
     input.innerHTML = `${beforeText}${newValue}${afterText}`;
