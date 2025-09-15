@@ -31,29 +31,35 @@ export function init(){
       //to insert input inside bracket
       if(lastChar === ')' && value !== '=') {
         // input.textContent = insertValueInsideBracket(input, input.textContent, value);
-        insertValueInsideBracket(input, input.textContent, value);
+        input.innerHTML = insertValueInsideBracket(input.textContent, value);
         return;
       }
 
       // to show exponents
+      const operators = new Set(['+', '-', '*', '/']);
       const superscripts = new Set([
         "\u2070", "\u00B9", "\u00B2", "\u00B3",
         "\u2074", "\u2075", "\u2076", "\u2077",
         "\u2078", "\u2079"
       ]);
 
-      if(value.includes("□") && !superscripts.has(lastChar)){ 
-        showExponentBox(input, input.textContent, value);
+      if(value.includes("□")) {
+        if(operators.has(lastChar)) {
+          return; // invalid case
+        }
+        if(!superscripts.has(lastChar)) {
+          input.innerHTML = showExponentBox(input.textContent, value);
+          return;
+        }
+      }
+
+      if(["□"].includes(lastChar)){ 
+        input.innerHTML = showExponent(input.textContent, value);
         return;
       }
 
-      if(["□"].includes(lastChar)){
-        showExponent(input, input.textContent, value);
-        return;
-      }
-
-      if(superscripts.has(lastChar) && value !== '=' && !['+', '-', '*', '/'].includes(value)){
-        showExponent(input, input.textContent, value);
+      if(superscripts.has(lastChar) && value !== '=' && !operators.has(value)){
+        input.innerHTML = showExponent(input.textContent, value);
         return;
       }
 

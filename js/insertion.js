@@ -18,50 +18,43 @@ const normalToSuperscript = {
 };
 
 //to insert input inside bracket
-export function insertValueInsideBracket(input, currentInput, newValue){
+export function insertValueInsideBracket(currentInput, newValue){
   const lastChar = currentInput[currentInput.length - 1];
   if(lastChar === ')'){
-    let firstClosingBracket = currentInput.indexOf(')');
-    const exponentCh = currentInput[firstClosingBracket - 1];
-    let beforeText = currentInput.slice(0, firstClosingBracket);
-    let afterText = currentInput.slice(firstClosingBracket);
+    const firstClosingBracketIndex = currentInput.indexOf(')');
+    const lastExponentChar = currentInput[firstClosingBracketIndex - 1];
+    const beforeClosingBracket = currentInput.slice(0, firstClosingBracketIndex);
+    const afterClosingBracket = currentInput.slice(firstClosingBracketIndex); 
     if(newValue.includes("□")){
-      input.innerHTML = `${showExponentBox(input, beforeText, newValue)}${afterText}`;
-      return;
+      return `${showExponentBox(beforeClosingBracket, newValue)}${afterClosingBracket}`;
     }
     if(currentInput.includes("□")){
-      input.innerHTML = `${showExponent(input, beforeText, newValue)}${afterText}`;
-      return;
+      return `${showExponent(beforeClosingBracket, newValue)}${afterClosingBracket}`;
     }
-    if(Object.values(normalToSuperscript).includes(exponentCh)){
-      input.textContent = input.textContent.slice(0, firstClosingBracket);
-      input.innerHTML = `${showExponent(input, beforeText, newValue)}${afterText}`;
-      return;
+    if(Object.values(normalToSuperscript).includes(lastExponentChar)){
+      return `${showExponent(beforeClosingBracket, newValue)}${afterClosingBracket}`;
     }
-    input.innerHTML = `${beforeText}${newValue}${afterText}`;
-    return;
+    return `${beforeClosingBracket}${newValue}${afterClosingBracket}`;
   }
+  return currentInput + newValue;
 }
 
-export function showExponentBox(input, currentInput, newValue){
-  // const lastChar = currentInput[currentInput.length - 1];
+export function showExponentBox(currentInput, newValue){
   if(validateForDisplay(currentInput, newValue)){
-    input.innerHTML = `${currentInput}<sup>□</sup>`;
-    return input.innerHTML;
+    return `${currentInput}<sup>□</sup>`;
   }
-  return null;
+  return currentInput;
 }
 
-export function showExponent(input, currentInput, newValue){
+export function showExponent(currentInput, newValue){
   
   const lastChar = currentInput[currentInput.length - 1];
 
   if(["□"].includes(lastChar)){
-    input.textContent = currentInput.slice(0, -1) + newValue.split('').map(d => normalToSuperscript[d]).join('');
+    return currentInput.slice(0, -1) + newValue.split('').map(d => normalToSuperscript[d]).join('');
   }else if(Object.values(normalToSuperscript).includes(lastChar)){
-    input.textContent = input.textContent + newValue.split('').map(d => normalToSuperscript[d]).join('');
+    return currentInput + newValue.split('').map(d => normalToSuperscript[d]).join('');
   }else{
-    input.textContent += newValue;
+    return currentInput + newValue;
   }
-  return input.textContent;
 }
