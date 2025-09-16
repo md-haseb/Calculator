@@ -65,9 +65,8 @@ export function init(){
 
       //equal button logic, first validate then calculate
       if(value === '='){
-        console.log(input.textContent);
         const validatedForEval = validateForEvaluation(input.textContent, value);
-        if(validatedForEval !== null){
+        if(validatedForEval.allowed){
           input.textContent = calculate(input.textContent);
           return;
         }
@@ -76,8 +75,11 @@ export function init(){
 
       //for validation, validate first before change anything on the input section
       const validatedValue = validateForDisplay(input.textContent, value);
-      if(validatedValue !== null){
-        input.textContent = validatedValue;
+      // if(validatedValue !== null){
+      //   input.textContent = validatedValue;
+      // }
+      if(validatedValue.allowed){
+        input.textContent += value;
       }
     })
   })
