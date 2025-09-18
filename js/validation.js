@@ -1,8 +1,8 @@
+import {operators, root, decimal} from './constants.js';
 
-
-const operators = '+*/-';
-const root = '√';
-const decimal = '.';
+// const operators = '+*/-';
+// const root = '√';
+// const decimal = '.';
 
 //for checking, is character is an operator
 export function isOperator(char){
@@ -52,7 +52,7 @@ export function validateForDisplay(currentInput, newValue){
   //     return null;
   //   }
   // }
-  if(newValue === decimal && currentInput !== '' && !(currentInput === 'Invalid Input') && lastChar !== ')'){
+  if(newValue === decimal && currentInput !== '' && lastChar !== ')'){
     let filteredNumberArray = currentInput.split(regex);
     let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
     if(lastElementOfArray.includes(decimal)){

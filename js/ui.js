@@ -1,6 +1,7 @@
 import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
 import {insertValueInsideBracket, showExponentBox, showExponent, replaceOperator} from './insertion.js';
+import {operatorsSet, superscripts} from './constants.js';
 
 const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
@@ -45,12 +46,12 @@ export function init(){
       }
 
       // to show exponents
-      const operators = new Set(['+', '-', '*', '/']);
-      const superscripts = new Set([
-        "\u2070", "\u00B9", "\u00B2", "\u00B3",
-        "\u2074", "\u2075", "\u2076", "\u2077",
-        "\u2078", "\u2079"
-      ]);
+      // const operators = new Set(['+', '-', '*', '/']);
+      // const superscripts = new Set([
+      //   "\u2070", "\u00B9", "\u00B2", "\u00B3",
+      //   "\u2074", "\u2075", "\u2076", "\u2077",
+      //   "\u2078", "\u2079"
+      // ]);
 
       if(value.includes("□")) {
         // if(operators.has(lastChar)) {
@@ -71,7 +72,7 @@ export function init(){
         return;
       }
 
-      if(superscripts.has(lastChar) && value !== '=' && !operators.has(value)){
+      if(superscripts.has(lastChar) && value !== '=' && !operatorsSet.has(value)){
         input.innerHTML = showExponent(input.textContent, value);
         return;
       }

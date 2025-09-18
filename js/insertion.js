@@ -1,21 +1,22 @@
 import {validateForDisplay, isOperator} from './validation.js';
+import {normalToSuperscript} from './constants.js';
 
-const operators = '+*/-';
-const root = '√';
-const decimal = '.';
+// const operators = '+*/-';
+// const root = '√';
+// const decimal = '.';
 
-const normalToSuperscript = {
-  "0":"\u2070",
-  "1":"\u00B9",
-  "2":"\u00B2",
-  "3":"\u00B3",
-  "4":"\u2074",
-  "5":"\u2075",
-  "6":"\u2076",
-  "7":"\u2077",
-  "8":"\u2078",
-  "9":"\u2079"
-};
+// const normalToSuperscript = {
+//   "0":"\u2070",
+//   "1":"\u00B9",
+//   "2":"\u00B2",
+//   "3":"\u00B3",
+//   "4":"\u2074",
+//   "5":"\u2075",
+//   "6":"\u2076",
+//   "7":"\u2077",
+//   "8":"\u2078",
+//   "9":"\u2079"
+// };
 
 //to insert input inside bracket
 export function insertValueInsideBracket(currentInput, newValue){
