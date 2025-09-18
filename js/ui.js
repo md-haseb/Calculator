@@ -1,9 +1,14 @@
 import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
-import {insertValueInsideBracket, showExponentBox, showExponent} from './insertion.js';
+import {insertValueInsideBracket, showExponentBox, showExponent, replaceOperator} from './insertion.js';
 
 const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
+const messageDiv = document.querySelector('.messageDiv');
+
+function defaultMessage(){
+  messageDiv.textContent = 'Message: All is well';
+}
 
 //this function is for DOM manipulation/change or not on the UI, based on user response
 export function init(){
@@ -15,16 +20,20 @@ export function init(){
 
       //AC button logic
       if(value === 'AC'){
+        defaultMessage();
         input.textContent = '';
         return;
       }
 
       //Cen button logic
       if (value === 'Cen') {
-          if (input.textContent !== 'Invalid Input') {
-          input.textContent = input.textContent.slice(0, -1);
-          return;
-        }
+        //   if (input.textContent !== 'Invalid Input') {
+        //   input.textContent = input.textContent.slice(0, -1);
+        //   return;
+        // }
+        // return;
+        defaultMessage();
+        input.textContent = input.textContent.slice(0, -1);
         return;
       }
 
@@ -44,10 +53,14 @@ export function init(){
       ]);
 
       if(value.includes("□")) {
-        if(operators.has(lastChar)) {
-          return; // invalid case
-        }
-        if(!superscripts.has(lastChar)) {
+        // if(operators.has(lastChar)) {
+        //   return; // invalid case
+        // }
+        // if(!superscripts.has(lastChar)) {
+        //   input.innerHTML = showExponentBox(input.textContent, value);
+        //   return;
+        // }
+        if(validateForDisplay(input.textContent, value).allowed && !superscripts.has(lastChar)){
           input.innerHTML = showExponentBox(input.textContent, value);
           return;
         }
@@ -79,7 +92,23 @@ export function init(){
       //   input.textContent = validatedValue;
       // }
       if(validatedValue.allowed){
+        defaultMessage();
         input.textContent += value;
+        return;
+      }
+      if(validatedValue === 'replace'){
+        defaultMessage();
+        input.textContent = replaceOperator(input.textContent, value);
+        return;
+      }
+      else{
+        messageDiv.textContent = validatedValue.message;
+        return;
+        // if(messageDiv.textContent !== validatedValue.message){
+        //   messageDiv.textContent = validatedValue.message;
+        // }else{
+        //   messageDiv.textContent = validatedValue.message;
+        // }
       }
     })
   })

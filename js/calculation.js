@@ -68,7 +68,7 @@ export function calculate(expression){
       }
     }
     //to calculate exponent
-    if(tokens[i].match(/\d+[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]+/)){ 
+    if(String(tokens[i]).match(/\d+[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]+/)){ 
       const superscriptToNormal = {
         "\u2070": "0",
         "\u00B9": "1",

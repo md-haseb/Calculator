@@ -16,12 +16,24 @@ export function validateForDisplay(currentInput, newValue){
 
   //Do not display operator first when input is empty (except - and .)
   if(currentInput == '' && isOperator(newValue) && !['+','-', root, decimal].includes(newValue)){
-    return {allowed: 'false', message: 'Operators like (*, /,) are not allowed when input is empty'};
+    return {allowed: false, message: 'Message: Operators like (*, /,) are not allowed when input is empty'};
   }
 
   //"Logic: Do not display same operator twice in a row"
-  if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar) || root === lastChar))){
-    return {allowed: 'false', message: 'Same operator twice in a row is not allowed'};
+  // if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar) || root === lastChar))){
+  //   return {allowed: false, message: 'Message: Same operator twice in a row is not allowed'};
+  // }
+
+  if(newValue === lastChar){
+    if(isOperator(lastChar)){
+      return {allowed: false, message: 'Message: Same operator twice in a row is not allowed'};
+    }
+    if(decimal.includes(lastChar)){
+      return {allowed: false, message: 'Message: Two decimal in a row is not allowed'};
+    }
+    if(root === lastChar){
+      return {allowed: false, message: 'Message: Two root symbol in a row is not allowed'};
+    }
   }
 
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
@@ -44,7 +56,7 @@ export function validateForDisplay(currentInput, newValue){
     let filteredNumberArray = currentInput.split(regex);
     let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
     if(lastElementOfArray.includes(decimal)){
-      return {allowed: 'false', message: 'Multiple decimal in the same number is not allowed'};
+      return {allowed: false, message: 'Message: Multiple decimal in the same number is not allowed'};
     }
   }
 
@@ -60,12 +72,12 @@ export function validateForDisplay(currentInput, newValue){
 
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
-    return {allowed: 'false', message: 'Operators are not allowed after root'};
+    return {allowed: false, message: 'Message: Operators are not allowed after root'};
   }
 
   //when input value is only +/-/. then don't allow root to display
   if(currentInput.length == 1 && ['+','-', decimal].includes(lastChar) && newValue === root){
-    return {allowed: 'false', message: 'root is not allowed after single (+, -, decimal)'};
+    return {allowed: false, message: 'Message: root is not allowed after single (+, -, decimal)'};
   }
 
   //"Logic: After an operator display further, if the input is a number"
@@ -83,11 +95,11 @@ export function validateForDisplay(currentInput, newValue){
   // }
 
   if((operators.includes(lastChar) || root === lastChar || decimal === lastChar) && newValue.includes("□")){
-    return {allowed: 'false', message: 'taking exponent is not allowed if last character is not number'};
+    return {allowed: false, message: 'Message: taking exponent is not allowed if last character is not number'};
   }
 
   //Update input value based on user button click
-  return {allowed: 'true'};
+  return {allowed: true};
 }
 
 //this function is about validate and allow for calculation
@@ -105,9 +117,9 @@ export function validateForEvaluation(currentInput, newValue){
   // }
 
   if(newValue === '=' && (currentInput === '' || isOperator(lastChar) || lastChar === decimal)){
-    return {allowed: 'false', message: 'Calculation is not allowed if input is empty or last character is operator or decimal'};
+    return {allowed: false, message: 'Message: Calculation is not allowed if input is empty or last character is operator or decimal'};
   }
 
   //proceed for calculation
-  return {allowed: 'true'};
+  return {allowed: true};
 }

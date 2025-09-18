@@ -1,4 +1,4 @@
-import {validateForDisplay} from './validation.js';
+import {validateForDisplay, isOperator} from './validation.js';
 
 const operators = '+*/-';
 const root = '√';
@@ -57,4 +57,14 @@ export function showExponent(currentInput, newValue){
   }else{
     return currentInput + newValue;
   }
+}
+
+export function replaceOperator(currentInput, newValue){
+  // const lastChar = currentInput[currentInput.length - 1];
+  // if(validateForDisplay(currentInput, newValue) === 'replace'){
+  //   if((isOperator(lastChar)) && isOperator(newValue)){
+  //     return currentInput.slice(0, -1) + newValue;
+  //   }
+  // }
+  return currentInput.slice(0, -1) + newValue;
 }
