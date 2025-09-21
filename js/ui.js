@@ -2,7 +2,7 @@ import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
 import {insertValueInsideBracket, showExponentBox, showExponent, replaceOperator} from './insertion.js';
 import {operatorsSet, superscripts} from './constants.js';
-import {caretShow} from './caretAndArrow.js';
+import {caretShow, caretIndex} from './caretAndArrow.js';
 
 export const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
@@ -100,7 +100,8 @@ export function init(){
       if(validatedValue.allowed){
         defaultMessage();
         input.textContent += value;
-        caretShow(input);
+        caretShow(input, input.textContent.length);
+        // console.log(caretIndex(input));
         return;
       }
       if(validatedValue.action === 'replace'){
