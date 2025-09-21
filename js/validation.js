@@ -67,7 +67,7 @@ export function validateForDisplay(currentInput, newValue){
     //   return false;
     // }
     // return currentInput.slice(0, -1) + newValue;
-    return 'replace';
+    return {allowed: false, action: 'replace'};
   }
 
   //after a root, operators are not allowed

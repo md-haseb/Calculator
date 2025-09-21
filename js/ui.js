@@ -2,8 +2,9 @@ import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
 import {insertValueInsideBracket, showExponentBox, showExponent, replaceOperator} from './insertion.js';
 import {operatorsSet, superscripts} from './constants.js';
+import {caretShow} from './caretAndArrow.js';
 
-const input = document.querySelector('.input_field');
+export const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
 const messageDiv = document.querySelector('.messageDiv');
 
@@ -13,6 +14,8 @@ function defaultMessage(){
 
 //this function is for DOM manipulation/change or not on the UI, based on user response
 export function init(){
+  // input.focus();
+  caretShow(input);
   button.forEach(btn => {
     btn.addEventListener('click', () => {
       const value = btn.textContent;
@@ -23,6 +26,7 @@ export function init(){
       if(value === 'AC'){
         defaultMessage();
         input.textContent = '';
+        caretShow(input);
         return;
       }
 
@@ -35,6 +39,7 @@ export function init(){
         // return;
         defaultMessage();
         input.textContent = input.textContent.slice(0, -1);
+        caretShow(input);
         return;
       }
 
@@ -95,11 +100,13 @@ export function init(){
       if(validatedValue.allowed){
         defaultMessage();
         input.textContent += value;
+        caretShow(input);
         return;
       }
-      if(validatedValue === 'replace'){
+      if(validatedValue.action === 'replace'){
         defaultMessage();
         input.textContent = replaceOperator(input.textContent, value);
+        caretShow(input);
         return;
       }
       else{
