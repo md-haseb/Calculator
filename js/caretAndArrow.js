@@ -15,6 +15,9 @@ export function caretIndex(inputElm){
 }
 
 export function caretShow(inputElm, caretPos){
+  const text = inputElm.textContent;
+  caretPos = Math.max(0, Math.min(caretPos, text.length));
+
   if(inputElm.textContent.length == 0){
     inputElm.focus();
   }else{
@@ -22,13 +25,12 @@ export function caretShow(inputElm, caretPos){
     // range.selectNodeContents(inputElm);
     const textNode = inputElm.firstChild;
     range.setStart(textNode, caretPos);
-    range.setEnd(textNode, caretPos);
-    range.collapse(false);
+    range.collapse(true);
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
     inputElm.focus();
-    console.log(caretIndex(input));
+    console.log(caretIndex(inputElm));
   }
 }
 

@@ -82,6 +82,18 @@ export function init(){
         return;
       }
 
+      if(value === '<' && input.textContent.length > 0){
+        const caretPos = caretIndex(input);
+        caretShow(input, caretPos - 1);
+        return;
+      }
+
+      if(value === '>' && caretIndex(input) > 0){
+        const caretPos = caretIndex(input);
+        caretShow(input, caretPos + 1);
+        return;
+      }
+
       //equal button logic, first validate then calculate
       if(value === '='){
         const validatedForEval = validateForEvaluation(input.textContent, value);
@@ -98,11 +110,19 @@ export function init(){
       //   input.textContent = validatedValue;
       // }
       if(validatedValue.allowed){
-        defaultMessage();
-        input.textContent += value;
-        caretShow(input, input.textContent.length);
-        // console.log(caretIndex(input));
-        return;
+        if(caretIndex(input) === input.textContent.length){
+          defaultMessage();
+          input.textContent += value;
+          caretShow(input, input.textContent.length);
+          // console.log(caretIndex(input));
+          return;
+        }else{
+          defaultMessage();
+          const caretPos = caretIndex(input);
+          input.textContent = input.textContent.slice(0, caretPos) + value + input.textContent.slice(caretPos);
+          caretShow(input, caretPos + 1);
+          return;
+        }
       }
       if(validatedValue.action === 'replace'){
         defaultMessage();
