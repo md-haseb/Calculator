@@ -98,6 +98,10 @@ export function validateForDisplay(currentInput, newValue){
     return {allowed: false, message: 'Message: taking exponent is not allowed if last character is not number'};
   }
 
+  if((newValue === '<' || newValue === '>') && currentInput == ''){
+    return {allowed: false, message: 'Message: arrow keys are disable when input field is empty'};
+  }
+
   //Update input value based on user button click
   return {allowed: true};
 }

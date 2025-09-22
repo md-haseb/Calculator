@@ -2,7 +2,7 @@ import {validateForDisplay, validateForEvaluation} from './validation.js';
 import {calculate} from './calculation.js';
 import {insertValueInsideBracket, showExponentBox, showExponent, replaceOperator} from './insertion.js';
 import {operatorsSet, superscripts} from './constants.js';
-import {caretShow, caretIndex} from './caretAndArrow.js';
+import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
 
 export const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
@@ -15,7 +15,7 @@ function defaultMessage(){
 //this function is for DOM manipulation/change or not on the UI, based on user response
 export function init(){
   // input.focus();
-  caretShow(input);
+  caretShowWithFocus(input);
   button.forEach(btn => {
     btn.addEventListener('click', () => {
       const value = btn.textContent;
@@ -26,7 +26,7 @@ export function init(){
       if(value === 'AC'){
         defaultMessage();
         input.textContent = '';
-        caretShow(input);
+        caretShowWithFocus(input);
         return;
       }
 
@@ -39,7 +39,7 @@ export function init(){
         // return;
         defaultMessage();
         input.textContent = input.textContent.slice(0, -1);
-        caretShow(input);
+        caretShowWithFocus(input);
         return;
       }
 
@@ -82,16 +82,16 @@ export function init(){
         return;
       }
 
-      if(value === '<' && input.textContent.length > 0){
-        const caretPos = caretIndex(input);
-        caretShow(input, caretPos - 1);
-        return;
-      }
-
-      if(value === '>' && caretIndex(input) > 0){
-        const caretPos = caretIndex(input);
-        caretShow(input, caretPos + 1);
-        return;
+      const caretPosition = caretIndex(input);
+      if(input.textContent !== ''){
+        if(value === '<'){
+          moveCaretLeft(input);
+          return;
+        }
+        if(value === '>'){
+          moveCaretRight(input);
+          return;
+        }
       }
 
       //equal button logic, first validate then calculate
@@ -99,6 +99,7 @@ export function init(){
         const validatedForEval = validateForEvaluation(input.textContent, value);
         if(validatedForEval.allowed){
           input.textContent = calculate(input.textContent);
+          caretShowWithFocus(input, caretPosition);
           return;
         }
         return;
@@ -110,28 +111,28 @@ export function init(){
       //   input.textContent = validatedValue;
       // }
       if(validatedValue.allowed){
-        if(caretIndex(input) === input.textContent.length){
+        if(caretPosition === input.textContent.length){
           defaultMessage();
           input.textContent += value;
-          caretShow(input, input.textContent.length);
+          caretShowWithFocus(input, input.textContent.length);
           // console.log(caretIndex(input));
           return;
         }else{
           defaultMessage();
-          const caretPos = caretIndex(input);
-          input.textContent = input.textContent.slice(0, caretPos) + value + input.textContent.slice(caretPos);
-          caretShow(input, caretPos + 1);
+          input.textContent = input.textContent.slice(0, caretPosition) + value + input.textContent.slice(caretPosition);
+          caretShowWithFocus(input, caretPosition + 1);
           return;
         }
       }
       if(validatedValue.action === 'replace'){
         defaultMessage();
         input.textContent = replaceOperator(input.textContent, value);
-        caretShow(input);
+        caretShowWithFocus(input);
         return;
       }
       else{
         messageDiv.textContent = validatedValue.message;
+        caretShowWithFocus(input, caretPosition);
         return;
         // if(messageDiv.textContent !== validatedValue.message){
         //   messageDiv.textContent = validatedValue.message;
@@ -141,4 +142,14 @@ export function init(){
       }
     })
   })
+}
+
+function moveCaretLeft(inputElm) {
+  const caretPosition = caretIndex(input);
+  caretShowWithFocus(inputElm, caretPosition - 1);
+}
+
+function moveCaretRight(inputElm) {
+  const caretPosition = caretIndex(input);
+  caretShowWithFocus(inputElm, caretPosition + 1);
 }
