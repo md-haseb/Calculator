@@ -8,8 +8,8 @@ export const input = document.querySelector('.input_field');
 const button = document.querySelectorAll('.btn');
 const messageDiv = document.querySelector('.messageDiv');
 
-function defaultMessage(){
-  messageDiv.textContent = 'Message: All is well';
+function showMessage(msg = 'Message: All is well'){
+  messageDiv.textContent = msg;
 }
 
 //this function is for DOM manipulation/change or not on the UI, based on user response
@@ -20,11 +20,12 @@ export function init(){
     btn.addEventListener('click', () => {
       const value = btn.textContent;
       const lastChar = input.textContent[input.textContent.length - 1];
+      const caretPosition = caretIndex(input);
       console.log(value);
 
       //AC button logic
       if(value === 'AC'){
-        defaultMessage();
+        showMessage();
         input.textContent = '';
         caretShowWithFocus(input);
         return;
@@ -37,16 +38,17 @@ export function init(){
         //   return;
         // }
         // return;
-        defaultMessage();
+        showMessage();
         input.textContent = input.textContent.slice(0, -1);
         caretShowWithFocus(input);
         return;
       }
 
       //to insert input inside bracket
-      if(lastChar === ')' && value !== '=') {
+      if(lastChar === ')' && !['=', '<', '>'].includes(value) && caretPosition < input.textContent.length){
         // input.textContent = insertValueInsideBracket(input, input.textContent, value);
         input.innerHTML = insertValueInsideBracket(input.textContent, value);
+        caretShowWithFocus(input, caretPosition + 1);
         return;
       }
 
@@ -82,17 +84,15 @@ export function init(){
         return;
       }
 
-      const caretPosition = caretIndex(input);
-      if(input.textContent !== ''){
-        if(value === '<'){
-          moveCaretLeft(input);
-          return;
-        }
-        if(value === '>'){
-          moveCaretRight(input);
-          return;
-        }
-      }
+      // const caretPosition = caretIndex(input);
+        // if(value === '<'){
+        //   moveCaretLeft(input);
+        //   return;
+        // }
+        // if(value === '>'){
+        //   moveCaretRight(input);
+        //   return;
+        // }
 
       //equal button logic, first validate then calculate
       if(value === '='){
@@ -107,38 +107,47 @@ export function init(){
 
       //for validation, validate first before change anything on the input section
       const validatedValue = validateForDisplay(input.textContent, value);
+      // const caretPosition = caretIndex(input);
       // if(validatedValue !== null){
       //   input.textContent = validatedValue;
       // }
       if(validatedValue.allowed){
+        if(value === '<'){
+          moveCaretLeft(input);
+          return;
+        }
+        if(value === '>'){
+          moveCaretRight(input);
+          return;
+        }
+        if(value === '()'){
+          input.textContent += value;
+          caretShowWithFocus(input, caretPosition + 1);
+          return;
+        }
         if(caretPosition === input.textContent.length){
-          defaultMessage();
+          showMessage();
           input.textContent += value;
           caretShowWithFocus(input, input.textContent.length);
           // console.log(caretIndex(input));
           return;
         }else{
-          defaultMessage();
+          showMessage();
           input.textContent = input.textContent.slice(0, caretPosition) + value + input.textContent.slice(caretPosition);
           caretShowWithFocus(input, caretPosition + 1);
           return;
         }
       }
       if(validatedValue.action === 'replace'){
-        defaultMessage();
+        showMessage();
         input.textContent = replaceOperator(input.textContent, value);
         caretShowWithFocus(input);
         return;
       }
       else{
-        messageDiv.textContent = validatedValue.message;
+        showMessage(validatedValue.message);
         caretShowWithFocus(input, caretPosition);
         return;
-        // if(messageDiv.textContent !== validatedValue.message){
-        //   messageDiv.textContent = validatedValue.message;
-        // }else{
-        //   messageDiv.textContent = validatedValue.message;
-        // }
       }
     })
   })
