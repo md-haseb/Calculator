@@ -45,12 +45,12 @@ export function init(){
       }
 
       //to insert input inside bracket
-      if(lastChar === ')' && !['=', '<', '>'].includes(value) && caretPosition < input.textContent.length){
-        // input.textContent = insertValueInsideBracket(input, input.textContent, value);
-        input.innerHTML = insertValueInsideBracket(input.textContent, value);
-        caretShowWithFocus(input, caretPosition + 1);
-        return;
-      }
+      // if(lastChar === ')' && !['=', '<', '>'].includes(value) && caretPosition < input.textContent.length){
+      //   // input.textContent = insertValueInsideBracket(input, input.textContent, value);
+      //   input.innerHTML = insertValueInsideBracket(input.textContent, value);
+      //   caretShowWithFocus(input, caretPosition + 1);
+      //   return;
+      // }
 
       // to show exponents
       // const operators = new Set(['+', '-', '*', '/']);
@@ -70,17 +70,20 @@ export function init(){
         // }
         if(validateForDisplay(input.textContent, value).allowed && !superscripts.has(lastChar)){
           input.innerHTML = showExponentBox(input.textContent, value);
+          caretShowWithFocus(input, caretPosition);
           return;
         }
       }
 
       if(["□"].includes(lastChar)){ 
         input.innerHTML = showExponent(input.textContent, value);
+        caretShowWithFocus(input, caretPosition + 1);
         return;
       }
 
       if(superscripts.has(lastChar) && value !== '=' && !operatorsSet.has(value)){
         input.innerHTML = showExponent(input.textContent, value);
+        caretShowWithFocus(input, caretPosition + 1);
         return;
       }
 
@@ -121,7 +124,7 @@ export function init(){
           return;
         }
         if(value === '()'){
-          input.textContent += value;
+          input.innerHTML = insertValueInsideBracket(input.textContent, value);
           caretShowWithFocus(input, caretPosition + 1);
           return;
         }

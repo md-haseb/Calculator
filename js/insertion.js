@@ -1,5 +1,6 @@
 import {validateForDisplay, isOperator} from './validation.js';
 import {normalToSuperscript} from './constants.js';
+import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
 
 // const operators = '+*/-';
 // const root = '√';
@@ -22,10 +23,10 @@ import {normalToSuperscript} from './constants.js';
 export function insertValueInsideBracket(currentInput, newValue){
   const lastChar = currentInput[currentInput.length - 1];
   if(lastChar === ')'){
-    const firstClosingBracketIndex = currentInput.indexOf(')');
-    const lastExponentChar = currentInput[firstClosingBracketIndex - 1];
-    const beforeClosingBracket = currentInput.slice(0, firstClosingBracketIndex);
-    const afterClosingBracket = currentInput.slice(firstClosingBracketIndex); 
+    const lastClosingBracketIndex = currentInput.lastIndexOf(')');
+    const lastExponentChar = currentInput[lastClosingBracketIndex - 1];
+    const beforeClosingBracket = currentInput.slice(0, lastClosingBracketIndex);
+    const afterClosingBracket = currentInput.slice(lastClosingBracketIndex);
     if(newValue.includes("□")){
       return `${showExponentBox(beforeClosingBracket, newValue)}${afterClosingBracket}`;
     }
