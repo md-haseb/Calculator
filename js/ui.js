@@ -69,20 +69,22 @@ export function init(){
         //   return;
         // }
         if(validateForDisplay(input.textContent, value).allowed && !superscripts.has(lastChar)){
-          input.innerHTML = showExponentBox(input.textContent, value);
+          // input.innerHTML = showExponentBox(input.textContent, value);
+          input.innerHTML = insertValueInsideBracket(input, input.textContent, value);
           caretShowWithFocus(input, caretPosition);
           return;
         }
       }
 
-      if(["□"].includes(lastChar)){ 
-        input.innerHTML = showExponent(input.textContent, value);
+      if(input.textContent.includes("□")){ 
+        input.innerHTML = insertValueInsideBracket(input, input.textContent, value);
         caretShowWithFocus(input, caretPosition + 1);
         return;
       }
 
-      if(superscripts.has(lastChar) && value !== '=' && !operatorsSet.has(value)){
-        input.innerHTML = showExponent(input.textContent, value);
+      const hasSuperscript = [...input.textContent].some(ch => superscripts.has(ch));
+      if(hasSuperscript && !['=', '<', '>'].includes(value) && !operatorsSet.has(value)){
+        input.innerHTML = insertValueInsideBracket(input, input.textContent, value);
         caretShowWithFocus(input, caretPosition + 1);
         return;
       }
@@ -124,7 +126,7 @@ export function init(){
           return;
         }
         if(value === '()'){
-          input.innerHTML = insertValueInsideBracket(input.textContent, value);
+          input.innerHTML = insertValueInsideBracket(input, input.textContent, value);
           caretShowWithFocus(input, caretPosition + 1);
           return;
         }
