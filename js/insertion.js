@@ -1,89 +1,83 @@
-import {validateForDisplay, isOperator} from './validation.js';
-import {normalToSuperscript} from './constants.js';
-import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
+import { validateForDisplay, isOperator } from "./validation.js";
+import { normalToSuperscript } from "./constants.js";
 
-// const operators = '+*/-';
-// const root = '√';
-// const decimal = '.';
+// Main insertion function
+export function insertValue(currentInput, caretPosition, newValue) {
+  const lastChar = currentInput[caretPosition - 1];
 
-// const normalToSuperscript = {
-//   "0":"\u2070",
-//   "1":"\u00B9",
-//   "2":"\u00B2",
-//   "3":"\u00B3",
-//   "4":"\u2074",
-//   "5":"\u2075",
-//   "6":"\u2076",
-//   "7":"\u2077",
-//   "8":"\u2078",
-//   "9":"\u2079"
-// };
-
-//to insert input inside bracket
-export function insertValueInsideBracket(element, currentInput, newValue){
-  const lastChar = currentInput[currentInput.length - 1];
-  const caretPosition = caretIndex(element); 
-  // if(lastChar === ')'){
-    // const lastClosingBracketIndex = currentInput.lastIndexOf(')');
-    const lastExponentChar = currentInput[caretPosition - 1];
-    const exponentBox = currentInput[caretPosition];
-    const withExponentBox = currentInput.slice(0, caretPosition + 1);
-    const afterExponentBox = currentInput.slice(caretPosition + 1);
-    const beforeCaret = currentInput.slice(0, caretPosition);
-    const afterCaret = currentInput.slice(caretPosition);
-    if(newValue.includes("□")){
-      return `${showExponentBox(beforeCaret, newValue)}${afterCaret}`;
+  // Case 1: inserting exponent box
+  if (newValue.includes("□")) {
+    if (validateForDisplay(currentInput, newValue).allowed) {
+      return {
+        newInput: showExponentBox(currentInput, caretPosition),
+        // newCaret: caretPosition + 1, // caret lands inside □
+        newCaret: caretPosition,
+      };
     }
-    if(currentInput.includes("□")){
-      return `${showExponent(element, withExponentBox, newValue)}${afterExponentBox}`;
-    }
-    if(Object.values(normalToSuperscript).includes(lastExponentChar)){
-      return `${showExponent(element, beforeCaret, newValue)}${afterCaret}`;
-    }
-    return `${beforeCaret}${newValue}${afterCaret}`;
-  // }
-  // return currentInput + newValue;
-}
-
-export function showExponentBox(currentInput, newValue){
-  if(validateForDisplay(currentInput, newValue)){
-    return `${currentInput}<sup>□</sup>`;
   }
-  return currentInput;
-}
 
-export function showExponent(element, currentInput, newValue){
-  
-  const lastChar = currentInput[currentInput.length - 1];
-
-  if(["□"].includes(lastChar)){
-    return currentInput.slice(0, -1) + newValue.split('').map(d => normalToSuperscript[d]).join('');
-  }else if(Object.values(normalToSuperscript).includes(lastChar)){
-    return currentInput + newValue.split('').map(d => normalToSuperscript[d]).join('');
-  }else{
-    return currentInput + newValue;
+  // Case 2: filling exponent
+  if (currentInput.includes("□")) {
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
   }
+
+  // Case 3: appending to superscript
+  if (Object.values(normalToSuperscript).includes(lastChar)) {
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  // Case 4: bracket handling → place caret inside
+  if (newValue === "()") {
+    return {
+      newInput:
+        currentInput.slice(0, caretPosition) +
+        "()" +
+        currentInput.slice(caretPosition),
+      newCaret: caretPosition + 1, // caret is inside the brackets
+    };
+  }
+
+  // Default case: normal insertion
+  return {
+    newInput:
+      currentInput.slice(0, caretPosition) +
+      newValue +
+      currentInput.slice(caretPosition),
+    newCaret: caretPosition + newValue.length,
+  };
 }
 
-export function replaceOperator(currentInput, newValue){
-  // const lastChar = currentInput[currentInput.length - 1];
-  // if(validateForDisplay(currentInput, newValue) === 'replace'){
-  //   if((isOperator(lastChar)) && isOperator(newValue)){
-  //     return currentInput.slice(0, -1) + newValue;
-  //   }
-  // }
+function showExponentBox(currentInput, caretPos) {
+  return (
+    currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
+  );
+}
+
+function showExponent(currentInput, caretPos, newValue) {
+  const lastChar = currentInput[caretPos];
+  const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
+
+  if (lastChar === "□") {
+    return (
+      currentInput.slice(0, caretPos) +
+      supers +
+      currentInput.slice(caretPos + 1)
+    );
+  }
+  if (Object.values(normalToSuperscript).includes(lastChar)) {
+    return (
+      currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos)
+    );
+  }
+  return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
+}
+
+export function replaceOperator(currentInput, newValue) {
   return currentInput.slice(0, -1) + newValue;
 }
-
-// const caretPosition = caretIndex(element); 
-//   const exponentBox = currentInput[caretPosition + 1];
-//   const exponent = currentInput[caretPosition - 1];
-//   console.log(currentInput.split(''));
-
-//   if(["□"].includes(exponentBox)){
-//     return currentInput.slice(0, exponentBox) + newValue.split('').map(d => normalToSuperscript[d]).join('');
-//   }else if(Object.values(normalToSuperscript).includes(exponent)){
-//     return currentInput + newValue.split('').map(d => normalToSuperscript[d]).join('');
-//   }else{
-//     return currentInput + newValue;
-//   }
