@@ -1,9 +1,28 @@
 // Operators
-export const operators = ['+', '-', '*', '/'];
+export const operators = ['+', '-', '*', '/', '^'];
 export const operatorsSet = new Set(operators);
 
 export const root = '√';
 export const decimal = '.';
+
+// Precedence and associativity
+export const precedence = {
+  '+': 1,
+  '-': 1,
+  '*': 2,
+  '/': 2,
+  '^': 3,
+  '√': 4, // highest, unary
+};
+
+export const associativity = {
+  '+': 'L',
+  '-': 'L',
+  '*': 'L',
+  '/': 'L',
+  '^': 'R',
+  '√': 'R', // unary, right-associative
+};
 
 // Superscript mapping
 export const normalToSuperscript = {

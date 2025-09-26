@@ -32,7 +32,11 @@ export function init() {
       // Cen button
       if (value === "Cen") {
         showMessage();
-        input.textContent = input.textContent.slice(0, -1);
+        if(caretPosition == 0){
+          caretShowWithFocus(input, caretPosition);
+          return;
+        }
+        input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
         caretShowWithFocus(input, caretPosition - 1);
         return;
       }
