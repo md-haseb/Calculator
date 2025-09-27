@@ -13,6 +13,7 @@ export const precedence = {
   '/': 2,
   '^': 3,
   '√': 4, // highest, unary
+  '%': 4,
 };
 
 export const associativity = {

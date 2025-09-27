@@ -7,48 +7,81 @@ const superscriptChars = Array.from(superscripts).join('');
 
 // for tokenize/making array of numbers and operators
 export function tokenize(expr){
-  const tokenRegEx = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}]*|[+\\-*/√]`, 'g');
+  const tokenRegEx = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}]*|[+\\-*/√%]`, 'g');
   return expr.match(tokenRegEx);
 }
 
-// Convert to Postfix (Shunting Yard)
+// Convert to Postfix (Shunting Yard) with %
 export function toPostfix(tokens) {
   const output = [];
-  const stack = [];
+  const operatorStack = [];
+  let lastOperatorIndex = -1; // index of last operator in output
 
-  for (let token of tokens) {
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+
     if (!isNaN(token) || isSuperscriptedNumber(token)) {
       output.push(token);
-    } else if (token === root) {
-      stack.push(token);
-    } else if (operatorsSet.has(token)) {
+    } 
+    else if (token === "%") {
+      console.log(output);
+      console.log(operatorStack);
+      const value = parseFloat(output.pop());
+
+      let base = value;
+      let lastOp = null;
+
+      if (lastOperatorIndex !== -1) {
+        lastOp = output[lastOperatorIndex];
+        base = parseFloat(output[lastOperatorIndex - 1]);
+      }
+
+      if (lastOp === "+" || lastOp === "-") {
+        // percentage relative to number before last +/-
+        output.push((base * value) / 100);
+      } else {
+        // normal percentage
+        output.push(value / 100);
+      }
+      console.log(output);
+    } 
+    else if (token === root) {
+      operatorStack.push(token);
+    } 
+    else if (operatorsSet.has(token)) {
       while (
-        stack.length &&
-        operatorsSet.has(stack[stack.length - 1]) &&
+        operatorStack.length &&
+        operatorsSet.has(operatorStack[operatorStack.length - 1]) &&
         (
           (associativity[token] === 'L' &&
-           precedence[token] <= precedence[stack[stack.length - 1]]) ||
+           precedence[token] <= precedence[operatorStack[operatorStack.length - 1]]) ||
           (associativity[token] === 'R' &&
-           precedence[token] < precedence[stack[stack.length - 1]])
+           precedence[token] < precedence[operatorStack[operatorStack.length - 1]])
         )
       ) {
-        output.push(stack.pop());
+        output.push(operatorStack.pop());
       }
-      stack.push(token);
-    } else if (token === '(') {
-      stack.push(token);
-    } else if (token === ')') {
-      while (stack.length && stack[stack.length - 1] !== '(') {
-        output.push(stack.pop());
+      operatorStack.push(token);
+
+      // store the index of this operator in output
+      // lastOperatorIndex = output.length - 1;
+      lastOperatorIndex = [...output].findIndex(t => ["+", "-", "*", "/"].includes(t));
+    } 
+    else if (token === '(') {
+      operatorStack.push(token);
+    } 
+    else if (token === ')') {
+      while (operatorStack.length && operatorStack[operatorStack.length - 1] !== '(') {
+        output.push(operatorStack.pop());
       }
-      stack.pop(); // remove '('
+      operatorStack.pop(); // remove '('
     }
   }
 
-  while (stack.length) {
-    output.push(stack.pop());
+  while (operatorStack.length) {
+    output.push(operatorStack.pop());
   }
-
+  console.log(output);
   return output;
 }
 
