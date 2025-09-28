@@ -86,22 +86,57 @@ export function toPostfix(tokens) {
 }
 
 // Evaluate Postfix
+// export function evaluatePostfix(postfix) {
+//   const stack = [];
+
+//   for (let token of postfix) {
+//     if (!isNaN(token)) {
+//       stack.push(Number(token));
+//     } else if (isSuperscriptedNumber(token)) {
+//       const {base, exponent} = parseSuperscripted(token);
+//       stack.push(base ** exponent);
+//     } else if (token === root) {
+//       const val = stack.pop();
+//       stack.push(customSquareRootLogic(val) || Math.sqrt(val));
+//     } else {
+//       const b = stack.pop();
+//       const a = stack.pop();
+//       switch (token) {
+//         case '+': stack.push(a + b); break;
+//         case '-': stack.push(a - b); break;
+//         case '*': stack.push(a * b); break;
+//         case '/': stack.push(a / b); break;
+//       }
+//     }
+//   }
+//   return stack[0];
+// }
+
 export function evaluatePostfix(postfix) {
   const stack = [];
 
-  for (let token of postfix) {
-    if (!isNaN(token)) {
-      stack.push(Number(token));
-    } else if (isSuperscriptedNumber(token)) {
-      const {base, exponent} = parseSuperscripted(token);
+  for (let i = 0; i < postfix.length; i++) {
+    if (!isNaN(postfix[i])) {
+      stack.push(Number(postfix[i]));
+    } else if (isSuperscriptedNumber(postfix[i])) {
+      const {base, exponent} = parseSuperscripted(postfix[i]);
       stack.push(base ** exponent);
-    } else if (token === root) {
+    } else if (postfix[i] === root) {
       const val = stack.pop();
       stack.push(customSquareRootLogic(val) || Math.sqrt(val));
-    } else {
+    }else if (postfix[i] === '%') {
+      const percent = stack.pop();  // e.g. 5
+      const base = stack[stack.length - 1]; // peek, don’t pop
+      const lastOperator = postfix[i + 1];
+      if(lastOperator == '+' || lastOperator == '-'){
+        stack.push((base * percent) / 100);
+      }else{
+        stack.push(percent / 100);
+      }
+    }else {
       const b = stack.pop();
       const a = stack.pop();
-      switch (token) {
+      switch (postfix[i]) {
         case '+': stack.push(a + b); break;
         case '-': stack.push(a - b); break;
         case '*': stack.push(a * b); break;
