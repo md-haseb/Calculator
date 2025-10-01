@@ -4,6 +4,8 @@ export const operatorsSet = new Set(operators);
 
 export const root = '√';
 export const decimal = '.';
+export const percent = '%';
+export const factorial = '!';
 
 // Precedence and associativity
 export const precedence = {
@@ -13,7 +15,6 @@ export const precedence = {
   '/': 2,
   '^': 3,
   '√': 4, // highest, unary
-  '%': 4,
 };
 
 export const associativity = {
