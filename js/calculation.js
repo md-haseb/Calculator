@@ -7,7 +7,7 @@ const superscriptChars = Array.from(superscripts).join('');
 
 // for tokenize/making array of numbers and operators
 export function tokenize(expr){
-  const tokenRegEx = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}]*|[+\\-*/√%!()]`, 'g');
+  const tokenRegEx = new RegExp(`(?:sin|cos|tan)|\\d+(?:\\.\\d+)?[${superscriptChars}]*|[+\\-*/√%!()]`, 'g');
   return expr.match(tokenRegEx);
 }
 
@@ -20,12 +20,12 @@ export function toPostfix(tokens) {
   for (let token of tokens) {
     if (!isNaN(token) || isSuperscriptedNumber(token) || [percent, factorial].includes(token)) {
       output.push(token);
-    } else if (token === root) {
+    } else if (token === root || ['sin', 'cos', 'tan'].includes(token)) {
       stack.push(token);
     } else if (operatorsSet.has(token)) {
       while (
         stack.length &&
-        operatorsSet.has(stack[stack.length - 1]) &&
+        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan'].includes(stack[stack.length - 1])) &&
         (
           (associativity[token] === 'L' &&
            precedence[token] <= precedence[stack[stack.length - 1]]) ||
@@ -62,7 +62,8 @@ export function evaluatePostfix(postfix) {
       stack.push(Number(postfix[i]));
     } else if (isSuperscriptedNumber(postfix[i])) {
       const {base, exponent} = parseSuperscripted(postfix[i]);
-      stack.push(base ** exponent);
+      const expResult = calculateExponent(base, exponent);
+      stack.push(expResult);
     } else if (postfix[i] === root) {
       const val = stack.pop();
       stack.push(customSquareRootLogic(val) || Math.sqrt(val));
@@ -77,19 +78,39 @@ export function evaluatePostfix(postfix) {
       }
     } else if(postfix[i] === factorial){
       let factorialNum = stack.pop();
-      let factorialResult = 1;
-      for(let i = 2; i <= factorialNum; i++){
-        factorialResult *= i;
-      }
+      const factorialResult = calculateFactorial(factorialNum);
       stack.push(factorialResult);
-    } else {
+    } else if(['sin', 'cos', 'tan'].includes(postfix[i])){
+      console.log(stack);
+      console.log(postfix[i]);
+      const degree = stack.pop();
+      const degreeToRadian = (degree * Math.PI) / 180;
+      if(postfix[i] === 'sin'){
+        const result = calculateSin(degreeToRadian);
+        stack.push(result);
+      }
+      if(postfix[i] === 'cos'){
+        const result = calculateCos(degreeToRadian);
+        stack.push(result);
+      }
+      if(postfix[i] === 'tan'){
+        const result = calculateTan(degreeToRadian);
+        stack.push(result);
+      }
+    }
+    else {
       const b = stack.pop();
       const a = stack.pop();
       switch (postfix[i]) {
         case '+': stack.push(a + b); break;
         case '-': stack.push(a - b); break;
         case '*': stack.push(a * b); break;
-        case '/': stack.push(a / b); break;
+        // case '/': stack.push(a / b); break;
+        case '/': {
+          const result = divide(a, b);
+          stack.push(result); 
+          break;
+        }
       }
     }
   }
@@ -105,8 +126,56 @@ export function calculate(expr) {
 }
 
 // Helpers
+function divide(a, b){
+  const result = a / b;
+  const tenDigitResult = Number(result.toFixed(10));
+  return tenDigitResult;
+}
+
 function isSuperscriptedNumber(token) {
   return new RegExp(`\\d+[${superscriptChars}]+`).test(token);
+}
+
+function calculateExponent(base, exp){
+  return base ** exp;
+}
+
+function calculateFactorial(num){
+  let result = 1;
+  for(let i = 2; i <= num; i++){
+    result *= i;
+  }
+  return result;
+}
+
+function calculateSin(degreeToRadian){
+    const sinResult = degreeToRadian 
+                      - (calculateExponent(degreeToRadian, 3)/calculateFactorial(3)) 
+                      + (calculateExponent(degreeToRadian, 5)/calculateFactorial(5)) 
+                      - (calculateExponent(degreeToRadian, 7)/calculateFactorial(7)) 
+                      + (calculateExponent(degreeToRadian, 9)/calculateFactorial(9)) 
+                      - (calculateExponent(degreeToRadian, 11)/calculateFactorial(11)) 
+                      + (calculateExponent(degreeToRadian, 13)/calculateFactorial(13));
+    const tenDigitResult = Number(sinResult.toFixed(10));
+    return tenDigitResult;
+}
+
+function calculateCos(degreeToRadian){
+    const cosResult = 1 
+                      - (calculateExponent(degreeToRadian, 2)/calculateFactorial(2)) 
+                      + (calculateExponent(degreeToRadian, 4)/calculateFactorial(4)) 
+                      - (calculateExponent(degreeToRadian, 6)/calculateFactorial(6)) 
+                      + (calculateExponent(degreeToRadian, 8)/calculateFactorial(8)) 
+                      - (calculateExponent(degreeToRadian, 10)/calculateFactorial(10)) 
+                      + (calculateExponent(degreeToRadian, 12)/calculateFactorial(12));
+    const tenDigitResult = Number(cosResult.toFixed(10));
+    return tenDigitResult;
+}
+
+function calculateTan(degreeToRadian){
+  const tanResult = calculateSin(degreeToRadian)/calculateCos(degreeToRadian);
+  const tenDigitResult = Number(tanResult.toFixed(10));
+  return tenDigitResult;
 }
 
 function parseSuperscripted(token) {

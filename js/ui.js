@@ -41,6 +41,27 @@ export function init() {
         return;
       }
 
+      if(value === 'sin'){
+        showMessage();
+        input.textContent = input.textContent.slice(0, caretPosition)+ 'sin()' + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition + 4);
+        return;
+      }
+
+      if(value === 'cos'){
+        showMessage();
+        input.textContent = input.textContent.slice(0, caretPosition)+ 'cos()' + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition + 4);
+        return;
+      }
+
+      if(value === 'tan'){
+        showMessage();
+        input.textContent = input.textContent.slice(0, caretPosition)+ 'tan()' + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition + 4);
+        return;
+      }
+
       // Equal button
       if (value === "=") {
         const validated = validateForEvaluation(input.textContent, value);

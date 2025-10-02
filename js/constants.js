@@ -15,6 +15,7 @@ export const precedence = {
   '/': 2,
   '^': 3,
   '√': 4, // highest, unary
+  'sin': 4,
 };
 
 export const associativity = {
@@ -24,6 +25,7 @@ export const associativity = {
   '/': 'L',
   '^': 'R',
   '√': 'R', // unary, right-associative
+  'sin': 'R',
 };
 
 // Superscript mapping
