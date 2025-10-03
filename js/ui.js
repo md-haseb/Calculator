@@ -66,7 +66,8 @@ export function init() {
       if (value === "=") {
         const validated = validateForEvaluation(input.textContent, value);
         if (validated.allowed) {
-          input.textContent = calculate(input.textContent);
+          const ModifiedInputText = changeMultiplySign();
+          input.textContent = calculate(ModifiedInputText);
           caretShowWithFocus(input, input.textContent.length);
         }
         return;
@@ -109,4 +110,15 @@ export function init() {
       caretShowWithFocus(input, caretPosition);
     });
   });
+}
+
+//helpers
+function changeMultiplySign(){
+  let inpText = input.textContent;
+  for(let i = 0; i < inpText.length; i++){
+    if(inpText[i] === '×'){
+      inpText = inpText.slice(0, i) + '*' + inpText.slice(i + 1);
+    }
+  }
+  return inpText;
 }
