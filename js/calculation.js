@@ -1,6 +1,8 @@
 // import {isOperator} from './validation.js';
 import {operatorsSet, precedence, associativity, superscripts, superscriptToNormal, root, percent, factorial} from './constants.js';
 
+import {getMode} from './ui.js';
+
 // const operators = '+*/-';
 
 const superscriptChars = Array.from(superscripts).join('');
@@ -77,26 +79,35 @@ export function evaluatePostfix(postfix) {
         stack.push(percent / 100);
       }
     } else if(postfix[i] === factorial){
-      let factorialNum = stack.pop();
-      const factorialResult = calculateFactorial(factorialNum);
-      stack.push(factorialResult);
+        let factorialNum = stack.pop();
+        const factorialResult = calculateFactorial(factorialNum);
+        stack.push(factorialResult);
     } else if(['sin', 'cos', 'tan'].includes(postfix[i])){
-      console.log(stack);
-      console.log(postfix[i]);
-      const degree = stack.pop();
-      const degreeToRadian = (degree * Math.PI) / 180;
-      if(postfix[i] === 'sin'){
-        const result = calculateSin(degreeToRadian);
+        console.log(stack);
+        console.log(postfix[i]);
+        const result = calculateTrig(postfix[i], stack.pop(), getMode());
         stack.push(result);
-      }
-      if(postfix[i] === 'cos'){
-        const result = calculateCos(degreeToRadian);
-        stack.push(result);
-      }
-      if(postfix[i] === 'tan'){
-        const result = calculateTan(degreeToRadian);
-        stack.push(result);
-      }
+
+        // const degree = stack.pop();
+        // let degreeToRadian = null;
+        // let mode = getMode();
+        // if(mode === 'deg'){
+        //   degreeToRadian = (degree * Math.PI) / 180;
+        // }else{
+        //   degreeToRadian = reduceRadian(degree);
+        // }
+        // if(postfix[i] === 'sin'){
+        //   const result = calculateSin(degreeToRadian);
+        //   stack.push(result);
+        // }
+        // if(postfix[i] === 'cos'){
+        //   const result = calculateCos(degreeToRadian);
+        //   stack.push(result);
+        // }
+        // if(postfix[i] === 'tan'){
+        //   const result = calculateTan(degreeToRadian);
+        //   stack.push(result);
+        // }
     }
     else {
       const b = stack.pop();
@@ -148,6 +159,10 @@ function calculateFactorial(num){
   return result;
 }
 
+function reduceRadian(angle){
+  return angle - Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
+}
+
 function calculateSin(degreeToRadian){
     const sinResult = degreeToRadian 
                       - (calculateExponent(degreeToRadian, 3)/calculateFactorial(3)) 
@@ -176,6 +191,13 @@ function calculateTan(degreeToRadian){
   const tanResult = calculateSin(degreeToRadian)/calculateCos(degreeToRadian);
   const tenDigitResult = Number(tanResult.toFixed(10));
   return tenDigitResult;
+}
+
+function calculateTrig(func, angle, mode){
+  let rad = mode === 'deg' ? (angle * Math.PI)/180 : reduceRadian(angle);
+  if(func === 'sin') return calculateSin(rad);
+  if(func === 'cos') return calculateCos(rad);
+  if(func === 'tan') return calculateTan(rad);
 }
 
 function parseSuperscripted(token) {

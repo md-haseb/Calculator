@@ -8,6 +8,8 @@ export const input = document.querySelector(".input_field");
 const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".messageDiv");
 
+let DegRadMode = 'deg';
+
 function showMessage(msg = "Message: All is well") {
   messageDiv.textContent = msg;
 }
@@ -38,6 +40,11 @@ export function init() {
         }
         input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
         caretShowWithFocus(input, caretPosition - 1);
+        return;
+      }
+
+      if(value === 'rad' || value === 'deg'){
+        setMode(value);
         return;
       }
 
@@ -121,4 +128,14 @@ function changeMultiplySign(){
     }
   }
   return inpText;
+}
+
+function setMode(value){
+  if (value === 'deg' || value === 'rad') {
+    DegRadMode = value;
+  } 
+}
+
+export function getMode(){
+  return DegRadMode;
 }
