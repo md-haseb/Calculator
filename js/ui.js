@@ -4,9 +4,9 @@ import {insertValue, replaceOperator} from './insertion.js';
 import {operatorsSet, superscripts} from './constants.js';
 import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
 
-export const input = document.querySelector(".input_field");
+export const input = document.querySelector(".input_display");
 const buttons = document.querySelectorAll(".btn");
-const messageDiv = document.querySelector(".messageDiv");
+const messageDiv = document.querySelector(".message_display");
 
 let DegRadMode = 'deg';
 
@@ -32,16 +32,16 @@ export function init() {
       }
 
       // Cen button
-      if (value === "Cen") {
-        showMessage();
-        if(caretPosition == 0){
-          caretShowWithFocus(input, caretPosition);
-          return;
-        }
-        input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition - 1);
-        return;
-      }
+      // if (value === "Cen") {
+      //   showMessage();
+      //   if(caretPosition == 0){
+      //     caretShowWithFocus(input, caretPosition);
+      //     return;
+      //   }
+      //   input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
+      //   caretShowWithFocus(input, caretPosition - 1);
+      //   return;
+      // }
 
       if(value === 'rad' || value === 'deg'){
         setMode(value);
