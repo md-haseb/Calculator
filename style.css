@@ -152,10 +152,11 @@ html, body{
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 .input_display{
-  width: 97%;
+  width: 96%;
   padding-top: 35px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.30);
   font-size: 23px;
+  outline: none;
 }
 .button_container{
   width: 97%;

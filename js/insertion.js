@@ -1,5 +1,5 @@
 import { validateForDisplay, isOperator } from "./validation.js";
-import { normalToSuperscript } from "./constants.js";
+import { normalToSuperscript, superscripts, superscriptToNormal } from "./constants.js";
 
 // Main insertion function
 export function insertValue(currentInput, caretPosition, newValue) {
@@ -19,6 +19,13 @@ export function insertValue(currentInput, caretPosition, newValue) {
   // Case 2: filling exponent
   if (currentInput.includes("□")) {
     return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(newValue.includes('x2')){
+    return{
       newInput: showExponent(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
     };
@@ -61,7 +68,9 @@ function showExponentBox(currentInput, caretPos) {
 
 function showExponent(currentInput, caretPos, newValue) {
   const lastChar = currentInput[caretPos];
+  // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
   const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
+  console.log(supers);
 
   if (lastChar === "□") {
     return (
@@ -74,6 +83,9 @@ function showExponent(currentInput, caretPos, newValue) {
     return (
       currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos)
     );
+  }
+  if (newValue.includes('x2')){
+    return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
   }
   return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
 }
