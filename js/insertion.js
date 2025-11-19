@@ -24,7 +24,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     };
   }
 
-  if(newValue.includes('x2')){
+  if(newValue.includes('x2') || newValue.includes('x3')){
     return{
       newInput: showExponent(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
@@ -70,7 +70,9 @@ function showExponent(currentInput, caretPos, newValue) {
   const lastChar = currentInput[caretPos];
   // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
   const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
+  const filterOut_baseX = supers.split("").filter(v => v !== 'x');
   console.log(supers);
+  console.log(filterOut_baseX);
 
   if (lastChar === "□") {
     return (
@@ -84,8 +86,8 @@ function showExponent(currentInput, caretPos, newValue) {
       currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos)
     );
   }
-  if (newValue.includes('x2')){
-    return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
+  if (newValue.includes('x2') || newValue.includes('x3')){
+    return currentInput.slice(0, caretPos) + filterOut_baseX + currentInput.slice(caretPos);
   }
   return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
 }
