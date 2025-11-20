@@ -1,25 +1,42 @@
 import { validateForDisplay, isOperator } from "./validation.js";
-import { normalToSuperscript, superscripts, superscriptToNormal } from "./constants.js";
+import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "./constants.js";
 
 // Main insertion function
 export function insertValue(currentInput, caretPosition, newValue) {
   const lastChar = currentInput[caretPosition - 1];
 
   // Case 1: inserting exponent box
-  if (newValue.includes("□")) {
+  if (newValue.includes("□") && newValue.includes('x')) {
     if (validateForDisplay(currentInput, newValue).allowed) {
       return {
-        newInput: showExponentBox(currentInput, caretPosition),
+        newInput: showExponentBox(currentInput, caretPosition, newValue),
         // newCaret: caretPosition + 1, // caret lands inside □
         newCaret: caretPosition,
       };
     }
   }
 
-  // Case 2: filling exponent
-  if (currentInput.includes("□")) {
+  if (newValue.includes("□") && newValue.includes('log')){
+    if (validateForDisplay(currentInput, newValue).allowed) {
+      return {
+        newInput: showExponentBox(currentInput, caretPosition, newValue),
+        // newCaret: caretPosition + 1, // caret lands inside □
+        newCaret: caretPosition + 3,
+      };
+    }
+  }
+
+  // Case 2: filling exponent and indices (subscript)
+  if (currentInput.includes("□") && !isNaN(currentInput[caretPosition - 1])) {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(currentInput.includes("□") && isNaN(currentInput[caretPosition - 1])){
+    return {
+      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
     };
   }
@@ -31,10 +48,17 @@ export function insertValue(currentInput, caretPosition, newValue) {
     };
   }
 
-  // Case 3: appending to superscript
+  // Case 3: appending to superscript and subscript
   if (Object.values(normalToSuperscript).includes(lastChar)) {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(Object.values(normalToSubscript).includes(currentInput[caretPosition - 1])){
+    return {
+      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
     };
   }
@@ -60,7 +84,10 @@ export function insertValue(currentInput, caretPosition, newValue) {
   };
 }
 
-function showExponentBox(currentInput, caretPos) {
+function showExponentBox(currentInput, caretPos, newValue) {
+  if(newValue.includes('log')){
+    return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos)
+  }
   return (
     currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
   );
@@ -90,6 +117,35 @@ function showExponent(currentInput, caretPos, newValue) {
     return currentInput.slice(0, caretPos) + filterOut_baseX + currentInput.slice(caretPos);
   }
   return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
+}
+
+function showIndicesForLog(currentInput, caretPos, newValue) {
+  // const lastChar = currentInput[caretPos];
+  const boxForIndices = currentInput[caretPos];
+  console.log(boxForIndices);
+  // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
+  const subs = newValue.split("").map((d) => normalToSubscript[d] || d).join("");
+  // const filterOut_baseX = supers.split("").filter(v => v !== 'x');
+  // console.log(supers);
+  // console.log(filterOut_baseX);
+
+  if (boxForIndices === "□") {
+    console.log(currentInput[caretPos + 1]);
+    return (
+      currentInput.slice(0, caretPos) +
+      subs +
+      currentInput.slice(caretPos + 1)
+    );
+  }
+  if (Object.values(normalToSubscript).includes(currentInput[caretPos - 1])) {
+    return (
+      currentInput.slice(0, caretPos) + subs + currentInput.slice(caretPos)
+    );
+  }
+  // if (newValue.includes('x2') || newValue.includes('x3')){
+  //   return currentInput.slice(0, caretPos) + filterOut_baseX + currentInput.slice(caretPos);
+  // }
+  return currentInput.slice(0, caretPos) + subs + currentInput.slice(caretPos);
 }
 
 export function replaceOperator(currentInput, newValue) {

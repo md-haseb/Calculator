@@ -69,6 +69,20 @@ export function init() {
         return;
       }
 
+      if(value === 'log'){
+        showMessage();
+        input.textContent = input.textContent.slice(0, caretPosition)+ 'log()' + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition + 4);
+        return;
+      }
+
+      if(value === 'ln'){
+        showMessage();
+        input.textContent = input.textContent.slice(0, caretPosition)+ 'ln()' + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition + 3);
+        return;
+      }
+
       // Equal button
       if (value === "=") {
         const validated = validateForEvaluation(input.textContent, value);
