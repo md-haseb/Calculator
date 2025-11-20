@@ -31,17 +31,17 @@ export function init() {
         return;
       }
 
-      // Cen button
-      // if (value === "Cen") {
-      //   showMessage();
-      //   if(caretPosition == 0){
-      //     caretShowWithFocus(input, caretPosition);
-      //     return;
-      //   }
-      //   input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
-      //   caretShowWithFocus(input, caretPosition - 1);
-      //   return;
-      // }
+      //delete button
+      if (btn.classList.contains('delete_btn')) {
+        showMessage();
+        if(caretPosition == 0){
+          caretShowWithFocus(input, caretPosition);
+          return;
+        }
+        input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
+        caretShowWithFocus(input, caretPosition - 1);
+        return;
+      }
 
       if(value === 'rad' || value === 'deg'){
         setMode(value);
@@ -100,11 +100,11 @@ export function init() {
 
       if (validated.allowed){
         // caret movement
-        if (value === "<") {
+        if (btn.classList.contains('left_arrow')) {
           caretShowWithFocus(input, caretPosition - 1);
           return;
         }
-        if (value === ">") {
+        if (btn.classList.contains('right_arrow')) {
           caretShowWithFocus(input, caretPosition + 1);
           return;
         }
