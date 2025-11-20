@@ -1,15 +1,22 @@
 // import {isOperator} from './validation.js';
-import {operatorsSet, precedence, associativity, superscripts, superscriptToNormal, root, percent, factorial} from './constants.js';
+import {operatorsSet, precedence, associativity, superscripts, subscripts, superscriptToNormal, root, percent, factorial} from './constants.js';
 
 import {getMode} from './ui.js';
 
 // const operators = '+*/-';
 
 const superscriptChars = Array.from(superscripts).join('');
+const subscriptChars = Array.from(subscripts).join('');
 
 // for tokenize/making array of numbers and operators
 export function tokenize(expr){
-  const tokenRegEx = new RegExp(`(?:sin|cos|tan)|\\d+(?:\\.\\d+)?[${superscriptChars}]*|[+\\-*/√%!()]`, 'g');
+  console.log(expr);
+  const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln)` +                  // functions
+  `|\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
+  `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
+  `|[+\\-*/√%!()]`,                           // operators
+  'g');
+  console.log(expr.match(tokenRegEx));
   return expr.match(tokenRegEx);
 }
 

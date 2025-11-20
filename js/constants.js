@@ -15,6 +15,8 @@ export const precedence = {
   '/': 2,
   '^': 3,
   '√': 4, // highest, unary
+  'log': 4,
+  'ln': 4,
   'sin': 4,
 };
 
@@ -69,4 +71,5 @@ export const normalToSubscript = {
 };
 
 export const superscripts = new Set(Object.values(normalToSuperscript));
+export const subscripts = new Set(Object.values(normalToSubscript));
 
