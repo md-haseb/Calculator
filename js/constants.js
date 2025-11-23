@@ -70,6 +70,19 @@ export const normalToSubscript = {
   "9": "\u2089"
 };
 
+export const subscriptToNormal = {
+  "\u2080": "0",
+  "\u2081": "1",
+  "\u2082": "2",
+  "\u2083": "3",
+  "\u2084": "4",
+  "\u2085": "5",
+  "\u2086": "6",
+  "\u2087": "7",
+  "\u2088": "8",
+  "\u2089": "9"
+};
+
 export const superscripts = new Set(Object.values(normalToSuperscript));
 export const subscripts = new Set(Object.values(normalToSubscript));
 

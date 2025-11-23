@@ -1,5 +1,5 @@
 // import {isOperator} from './validation.js';
-import {operatorsSet, precedence, associativity, superscripts, subscripts, superscriptToNormal, root, percent, factorial} from './constants.js';
+import {operatorsSet, precedence, associativity, superscripts, subscripts, superscriptToNormal, subscriptToNormal, root, percent, factorial} from './constants.js';
 
 import {getMode} from './ui.js';
 
@@ -8,7 +8,7 @@ import {getMode} from './ui.js';
 const superscriptChars = Array.from(superscripts).join('');
 const subscriptChars = Array.from(subscripts).join('');
 
-// for tokenize/making array of numbers and operators
+// for tokens[i]ize/making array of numbers and operators
 export function tokenize(expr){
   console.log(expr);
   const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln)` +                  // functions
@@ -26,28 +26,38 @@ export function toPostfix(tokens) {
   const output = [];
   const stack = [];
 
-  for (let token of tokens) {
-    if (!isNaN(token) || isSuperscriptedNumber(token) || [percent, factorial].includes(token)) {
-      output.push(token);
-    } else if (token === root || ['sin', 'cos', 'tan'].includes(token)) {
-      stack.push(token);
-    } else if (operatorsSet.has(token)) {
+  for (let i = 0; i < tokens.length; i++) {
+    if (!isNaN(tokens[i]) || isSuperscriptedNumber(tokens[i]) || [percent, factorial].includes(tokens[i])) {
+      output.push(tokens[i]);
+    } else if (isSubscriptedNumber(tokens[i])) {
+      output.push(parseSubscripted(tokens[i]));
+    } else if (tokens[i] === root || ['sin', 'cos', 'tan'].includes(tokens[i])) {
+      stack.push(tokens[i]);
+    } else if(tokens[i] === 'log' && tokens[i+1] !== '(') {
+      stack.push(tokens[i]);
+    } else if(tokens[i] === 'log' && tokens[i+1] === '(') {
+      stack.push(tokens[i]);
+      output.push('10');
+    } else if(tokens[i] === 'ln') {
+      stack.push(tokens[i]);
+      output.push(Math.E);
+    } else if (operatorsSet.has(tokens[i])) {
       while (
         stack.length &&
-        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan'].includes(stack[stack.length - 1])) &&
+        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan', 'log', 'ln'].includes(stack[stack.length - 1])) &&
         (
-          (associativity[token] === 'L' &&
-           precedence[token] <= precedence[stack[stack.length - 1]]) ||
-          (associativity[token] === 'R' &&
-           precedence[token] < precedence[stack[stack.length - 1]])
+          (associativity[tokens[i]] === 'L' &&
+           precedence[tokens[i]] <= precedence[stack[stack.length - 1]]) ||
+          (associativity[tokens[i]] === 'R' &&
+           precedence[tokens[i]] < precedence[stack[stack.length - 1]])
         )
       ) {
         output.push(stack.pop());
       }
-      stack.push(token);
-    } else if (token === '(') {
-      stack.push(token);
-    } else if (token === ')') {
+      stack.push(tokens[i]);
+    } else if (tokens[i] === '(') {
+      stack.push(tokens[i]);
+    } else if (tokens[i] === ')') {
       while (stack.length && stack[stack.length - 1] !== '(') {
         output.push(stack.pop());
       }
@@ -59,6 +69,7 @@ export function toPostfix(tokens) {
     output.push(stack.pop());
   }
   console.log(stack);
+  console.log(output);
   return output;
 }
 
@@ -154,6 +165,10 @@ function isSuperscriptedNumber(token) {
   return new RegExp(`\\d+[${superscriptChars}]+`).test(token);
 }
 
+function isSubscriptedNumber(token){
+  return new RegExp(`^[₀-₉]+$`).test(token);
+}
+
 function calculateExponent(base, exp){
   return base ** exp;
 }
@@ -217,6 +232,10 @@ function parseSuperscripted(token) {
   return { base, exponent: Number(exponentStr) };
 }
 
+function parseSubscripted(token){
+  return token.split("").map(ch => subscriptToNormal[ch] || ch).join("");
+}
+
 //custom square root logic
 function customSquareRootLogic(num) {
   if (num === 0 || num === 1) return num;
@@ -250,34 +269,34 @@ function customSquareRootLogic(num) {
 
 //this function is for calculation
 // export function calculate(expression){
-//   const tokens = tokenize(expression);
+//   const tokens[i]s = tokens[i]ize(expression);
 
 //   //this loop evaluates brackets in the expression
 //   const stack = [];
-//   for(let i = 0; i < tokens.length; i++){
+//   for(let i = 0; i < tokens[i]s.length; i++){
 //     let start = 0;
 //     let end = 0;
-//     if(tokens[i] === '('){
+//     if(tokens[i]s[i] === '('){
 //       stack.push(i);
 //     }
-//     if(tokens[i] === ')'){
+//     if(tokens[i]s[i] === ')'){
 //       start = stack.pop();
 //       end = i;
-//       let insideElement = tokens.slice(start + 1, end);
+//       let insideElement = tokens[i]s.slice(start + 1, end);
 //       let result = calculate(insideElement);
-//       tokens.splice(start, insideElement.length + 2, result);
+//       tokens[i]s.splice(start, insideElement.length + 2, result);
 //       i = start;
 //     }
 //   }
 
 //   //this loop evaluates square root and exponent in the expression
-//   for(let i = 0; i < tokens.length; i++){
+//   for(let i = 0; i < tokens[i]s.length; i++){
 //     //to calculate square root
-//     if(tokens[i] === '√'){
-//       const rootNumber = Number(tokens[i + 1]);
+//     if(tokens[i]s[i] === '√'){
+//       const rootNumber = Number(tokens[i]s[i + 1]);
 
 //       if(rootNumber === 0 || rootNumber === 1){  //if user type 0 and 1 after root
-//         tokens.splice(i, 2, rootNumber);
+//         tokens[i]s.splice(i, 2, rootNumber);
 //         continue;
 //       }
 
@@ -298,7 +317,7 @@ function customSquareRootLogic(num) {
 //           if(Math.abs(result - Math.round(result)) < epsilon){  // for integer result (Line 56 - 58)
 //             result = Math.round(result);
 //           }
-//           tokens.splice(i, 2, result);
+//           tokens[i]s.splice(i, 2, result);
 //           break;
 //         }
 //         if(square > rootNumber){
@@ -309,7 +328,7 @@ function customSquareRootLogic(num) {
 //       }
 //     }
   //   //to calculate exponent
-  //   if(String(tokens[i]).match(new RegExp(`\\d+[${superscriptChars}]+`))){ 
+  //   if(String(tokens[i]s[i]).match(new RegExp(`\\d+[${superscriptChars}]+`))){ 
   //     // const superscriptToNormal = {
   //     //   "\u2070": "0",
   //     //   "\u00B9": "1",
@@ -323,45 +342,45 @@ function customSquareRootLogic(num) {
   //     //   "\u2079": "9"
   //     // };
       
-  //     const match = tokens[i].match(new RegExp(`(\\d+)([${superscriptChars}]+)`));
+  //     const match = tokens[i]s[i].match(new RegExp(`(\\d+)([${superscriptChars}]+)`));
   //     console.log(match);
   //     const base = Number(match[1]);
   //     const exponentStr = match[2].split('').map(ch => superscriptToNormal[ch]).join('');
   //     const exponent = Number(exponentStr);
   //     let result = base ** exponent;
-  //     tokens.splice(i, 1, result);
+  //     tokens[i]s.splice(i, 1, result);
   //   }
   // }
 
 //   //this loop evaluates 'multiplication and division' first in the expression
-//   for(let i = 0; i < tokens.length; i++){
+//   for(let i = 0; i < tokens[i]s.length; i++){
 //     let result = '';
-//     if(tokens[i] === '*'){
-//       result = Number(tokens[i - 1]) * Number(tokens[i + 1]);
-//       tokens.splice(i - 1, 3, result);
+//     if(tokens[i]s[i] === '*'){
+//       result = Number(tokens[i]s[i - 1]) * Number(tokens[i]s[i + 1]);
+//       tokens[i]s.splice(i - 1, 3, result);
 //       i--;
 //     }
-//     if(tokens[i] === '/'){
-//       result = Number(tokens[i - 1]) / Number(tokens[i + 1]);
-//       tokens.splice(i - 1, 3, result);
+//     if(tokens[i]s[i] === '/'){
+//       result = Number(tokens[i]s[i - 1]) / Number(tokens[i]s[i + 1]);
+//       tokens[i]s.splice(i - 1, 3, result);
 //       i--;
 //     }
 //   }
 
 //   //this loop evaluates 'addition and substraction' in the expression
-//   for(let i = 0; i < tokens.length; i++){
+//   for(let i = 0; i < tokens[i]s.length; i++){
 //     let result = '';
-//     if(tokens[i] === '+'){
-//       result = Number(tokens[i - 1]) + Number(tokens[i + 1]);
-//       tokens.splice(i - 1, 3, result);
+//     if(tokens[i]s[i] === '+'){
+//       result = Number(tokens[i]s[i - 1]) + Number(tokens[i]s[i + 1]);
+//       tokens[i]s.splice(i - 1, 3, result);
 //       i--;
 //     }
-//     if(tokens[i] === '-'){
-//       result = Number(tokens[i - 1]) - Number(tokens[i + 1]);
-//       tokens.splice(i - 1, 3, result);
+//     if(tokens[i]s[i] === '-'){
+//       result = Number(tokens[i]s[i - 1]) - Number(tokens[i]s[i + 1]);
+//       tokens[i]s.splice(i - 1, 3, result);
 //       i--;
 //     }
 //   }   
 //   //this will return the final result of the expression
-//   return tokens[0].toString();
+//   return tokens[i]s[0].toString();
 // }
