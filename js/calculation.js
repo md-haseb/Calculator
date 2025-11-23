@@ -12,6 +12,7 @@ const subscriptChars = Array.from(subscripts).join('');
 export function tokenize(expr){
   console.log(expr);
   const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln)` +                  // functions
+  `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
   `|\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
   `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
   `|[+\\-*/√%!()]`,                           // operators
@@ -31,7 +32,7 @@ export function toPostfix(tokens) {
       output.push(tokens[i]);
     } else if (isSubscriptedNumber(tokens[i])) {
       output.push(parseSubscripted(tokens[i]));
-    } else if (tokens[i] === root || ['sin', 'cos', 'tan'].includes(tokens[i])) {
+    } else if (tokens[i] === root || ['sin', 'cos', 'tan'].includes(tokens[i])) { //tokens[i].endsWith(root)
       stack.push(tokens[i]);
     } else if(tokens[i] === 'log' && tokens[i+1] !== '(') {
       stack.push(tokens[i]);
@@ -44,7 +45,7 @@ export function toPostfix(tokens) {
     } else if (operatorsSet.has(tokens[i])) {
       while (
         stack.length &&
-        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan', 'log', 'ln'].includes(stack[stack.length - 1])) &&
+        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan', 'log', 'ln'].includes(stack[stack.length - 1])) && //stack[stack.length - 1].endsWith(root)
         (
           (associativity[tokens[i]] === 'L' &&
            precedence[tokens[i]] <= precedence[stack[stack.length - 1]]) ||

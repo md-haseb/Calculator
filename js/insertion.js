@@ -26,7 +26,24 @@ export function insertValue(currentInput, caretPosition, newValue) {
     }
   }
 
+  if(newValue.includes("□") && newValue.includes('√')) {
+    if (validateForDisplay(currentInput, newValue).allowed) {
+      return {
+        newInput: showExponentBox(currentInput, caretPosition, newValue),
+        // newCaret: caretPosition + 1, // caret lands inside □
+        newCaret: caretPosition - 1,
+      };
+    }
+  }
+
   // Case 2: filling exponent and indices (subscript)
+  if(currentInput.includes("□") && currentInput[caretPosition + 1] === '√'){ //first priority check
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
   if (currentInput.includes("□") && !isNaN(currentInput[caretPosition - 1])) {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue),
@@ -86,7 +103,10 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
 function showExponentBox(currentInput, caretPos, newValue) {
   if(newValue.includes('log')){
-    return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos)
+    return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos);
+  }
+  if(newValue.includes('√')){
+    return currentInput.slice(0, caretPos) + `<sup>□</sup>√` + currentInput.slice(caretPos);
   }
   return (
     currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
@@ -94,21 +114,21 @@ function showExponentBox(currentInput, caretPos, newValue) {
 }
 
 function showExponent(currentInput, caretPos, newValue) {
-  const lastChar = currentInput[caretPos];
+  const boxForExponent = currentInput[caretPos];
   // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
   const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
   const filterOut_baseX = supers.split("").filter(v => v !== 'x');
   console.log(supers);
   console.log(filterOut_baseX);
 
-  if (lastChar === "□") {
+  if (boxForExponent === "□") {
     return (
       currentInput.slice(0, caretPos) +
       supers +
       currentInput.slice(caretPos + 1)
     );
   }
-  if (Object.values(normalToSuperscript).includes(lastChar)) {
+  if (Object.values(normalToSuperscript).includes(currentInput[caretPos - 1])) {
     return (
       currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos)
     );
