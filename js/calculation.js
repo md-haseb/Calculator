@@ -73,6 +73,7 @@ export function toPostfix(tokens) {
   return output;
 }
 
+//evaluate postfix
 export function evaluatePostfix(postfix) {
   const stack = [];
   console.log(postfix);
@@ -87,7 +88,11 @@ export function evaluatePostfix(postfix) {
     } else if (postfix[i] === root) {
       const val = stack.pop();
       stack.push(customSquareRootLogic(val) || Math.sqrt(val));
-    }else if (postfix[i] === '%') {
+    } else if (postfix[i] === 'log' || postfix[i] === 'ln') {
+      const logarithmNum = stack.pop();
+      const logarithmBase = stack.pop();
+      stack.push(calculateLogarithm(logarithmBase, logarithmNum));
+    } else if (postfix[i] === '%') {
       const percent = stack.pop();  // e.g. 5
       const base = stack[stack.length - 1]; // peek, don’t pop
       const lastOperator = postfix[i + 1];
@@ -220,6 +225,32 @@ function calculateTrig(func, angle, mode){
   if(func === 'sin') return calculateSin(rad);
   if(func === 'cos') return calculateCos(rad);
   if(func === 'tan') return calculateTan(rad);
+}
+
+function calculateLogarithm(base, num) {
+  if (base <= 0 || base === 1 || num <= 0) {
+    throw new Error("Invalid input: base must nume > 0 basend != 1, num must nume > 0");
+  }
+
+  // Step 1: find the rbasenge dynbasemicbaselly
+  let low = 0;
+  let high = 1;
+  while (Math.pow(base, high) < num) {
+    high *= 2;
+  }
+
+  // Step 2: perform numinbasery sebaserch in thbaset rbasenge
+  const eps = 1e-9;
+  while (high - low > eps) {
+    const mid = (low + high) / 2;
+    const val = Math.pow(base, mid);
+
+    if (Math.abs(val - num) < eps) return mid;
+    if (val < num) low = mid;
+    else high = mid;
+  }
+
+  return (low + high) / 2;
 }
 
 function parseSuperscripted(token) {
