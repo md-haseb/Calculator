@@ -32,7 +32,7 @@ export function toPostfix(tokens) {
       output.push(tokens[i]);
     } else if (isSubscriptedNumber(tokens[i])) {
       output.push(parseSubscripted(tokens[i]));
-    } else if (tokens[i] === root || ['sin', 'cos', 'tan'].includes(tokens[i])) { //tokens[i].endsWith(root)
+    } else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan'].includes(tokens[i])) { 
       stack.push(tokens[i]);
     } else if(tokens[i] === 'log' && tokens[i+1] !== '(') {
       stack.push(tokens[i]);
@@ -43,18 +43,29 @@ export function toPostfix(tokens) {
       stack.push(tokens[i]);
       output.push(Math.E);
     } else if (operatorsSet.has(tokens[i])) {
-      while (
-        stack.length &&
-        (operatorsSet.has(stack[stack.length - 1]) || ['sin', 'cos', 'tan', 'log', 'ln'].includes(stack[stack.length - 1])) && //stack[stack.length - 1].endsWith(root)
-        (
-          (associativity[tokens[i]] === 'L' &&
-           precedence[tokens[i]] <= precedence[stack[stack.length - 1]]) ||
-          (associativity[tokens[i]] === 'R' &&
-           precedence[tokens[i]] < precedence[stack[stack.length - 1]])
-        )
-      ) {
-        output.push(stack.pop());
-      }
+        while (stack.length) {
+          const top = stack[stack.length - 1];
+
+          // 1. ROOT OPERATORS POP IMMEDIATELY
+          if (top.endsWith(root)) {
+            output.push(stack.pop());
+            continue;
+          }
+
+          // 2. REGULAR OPERATORS / FUNCTIONS
+          const isTopOperator =
+            operatorsSet.has(top) || functionsSet.has(top);
+
+          if (!isTopOperator) break;
+
+          const precedenceCheck =
+            (associativity[tokens[i]] === 'L' && precedence[tokens[i]] <= precedence[top]) ||
+            (associativity[tokens[i]] === 'R' && precedence[tokens[i]] < precedence[top]);
+
+          if (!precedenceCheck) break;
+
+          output.push(stack.pop());
+        }
       stack.push(tokens[i]);
     } else if (tokens[i] === '(') {
       stack.push(tokens[i]);
@@ -88,7 +99,10 @@ export function evaluatePostfix(postfix) {
       stack.push(expResult);
     } else if (postfix[i] === root) {
       const val = stack.pop();
-      stack.push(customSquareRootLogic(val) || Math.sqrt(val));
+      stack.push(customRootLogic(val, '2') || Math.sqrt(val));
+    } else if (postfix[i].endsWith('√')) {
+      const val = stack.pop();
+      stack.push(customRootLogic(val, rootOfValue(postfix[i])));
     } else if (postfix[i] === 'log' || postfix[i] === 'ln') {
       const logarithmNum = stack.pop();
       const logarithmBase = stack.pop();
@@ -268,8 +282,16 @@ function parseSubscripted(token){
   return token.split("").map(ch => subscriptToNormal[ch] || ch).join("");
 }
 
+function rootOfValue(val){
+  return val
+  .split('')
+  .map(ch => superscriptToNormal[ch])  // convert superscripts
+  .filter(ch => ch !== undefined)       // remove root or unknown chars
+  .join('');         
+}
+
 //custom square root logic
-function customSquareRootLogic(num) {
+function customRootLogic(num, rootOf) {
   if (num === 0 || num === 1) return num;
 
   let low = 0, high = Math.max(1, num), result = 0;
@@ -280,9 +302,9 @@ function customSquareRootLogic(num) {
     if (++iterations > 1000) break;
 
     const mid = (low + high) / 2;
-    const square = mid * mid;
+    const exponentedMid = mid ** rootOf;
 
-    if (Math.abs(square - num) < epsilon || (high - low) < epsilon) {
+    if (Math.abs(exponentedMid - num) < epsilon || (high - low) < epsilon) {
       result = Math.round(mid * 1e11) / 1e11;
       if (Math.abs(result - Math.round(result)) < epsilon) {
         result = Math.round(result); // snap to integer
@@ -290,7 +312,7 @@ function customSquareRootLogic(num) {
       return result;
     }
 
-    if (square > num) {
+    if (exponentedMid > num) {
       high = mid;
     } else {
       low = mid;
