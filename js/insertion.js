@@ -36,7 +36,24 @@ export function insertValue(currentInput, caretPosition, newValue) {
     }
   }
 
+  if(newValue.includes('C')){
+    if (validateForDisplay(currentInput, newValue).allowed) {
+      return {
+        newInput: showExponentBox(currentInput, caretPosition, newValue),
+        // newCaret: caretPosition + 1, // caret lands inside □
+        newCaret: caretPosition,
+      };
+    }
+  }
+
   // Case 2: filling exponent and indices (subscript)
+  if(currentInput.includes("□") && currentInput[caretPosition + 1] === 'C'){
+    return{
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
   if(currentInput.includes("□") && currentInput[caretPosition + 1] === '√'){ //first priority check
     return {
       newInput: showExponent(currentInput, caretPosition, newValue),
@@ -51,7 +68,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     };
   }
 
-  if(currentInput.includes("□") && isNaN(currentInput[caretPosition - 1])){
+  if(currentInput.includes("□") && currentInput[caretPosition - 1] === 'g'){
     return {
       newInput: showIndicesForLog(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
@@ -107,6 +124,9 @@ function showExponentBox(currentInput, caretPos, newValue) {
   }
   if(newValue.includes('√')){
     return currentInput.slice(0, caretPos) + `<sup>□</sup>√` + currentInput.slice(caretPos);
+  }
+  if(newValue.includes('C')){
+    return currentInput.slice(0, caretPos) + `<sup>□</sup>C<sub>□</sub>` + currentInput.slice(caretPos);
   }
   return (
     currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
