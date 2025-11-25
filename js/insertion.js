@@ -1,9 +1,12 @@
 import { validateForDisplay, isOperator } from "./validation.js";
 import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "./constants.js";
+import { tokenize } from "./calculation.js";
 
 // Main insertion function
 export function insertValue(currentInput, caretPosition, newValue) {
   const lastChar = currentInput[caretPosition - 1];
+  const tokens = tokenize(currentInput);
+  console.log(tokens);
 
   // Case 1: inserting exponent box
   if (newValue.includes("□") && newValue.includes('x')) {
@@ -68,7 +71,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     };
   }
 
-  if(currentInput.includes("□") && currentInput[caretPosition - 1] === 'g'){
+  if(currentInput.includes("□") && currentInput.slice(caretPosition - 3, caretPosition) === "log"){
     return {
       newInput: showIndicesForLog(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
@@ -140,7 +143,13 @@ function showExponent(currentInput, caretPos, newValue) {
   const filterOut_baseX = supers.split("").filter(v => v !== 'x');
   console.log(supers);
   console.log(filterOut_baseX);
-
+  if (boxForExponent === "□" && currentInput[caretPos + 1] === 'C') {
+    return (
+      currentInput.slice(0, caretPos) +
+      supers + `C<sub>□</sub>` + 
+      currentInput.slice(caretPos + 3)
+    );
+  }
   if (boxForExponent === "□") {
     return (
       currentInput.slice(0, caretPos) +
