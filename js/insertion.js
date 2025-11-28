@@ -5,77 +5,74 @@ import { tokenize } from "./calculation.js";
 // Main insertion function
 export function insertValue(currentInput, caretPosition, newValue) {
   const lastChar = currentInput[caretPosition - 1];
-  const tokens = tokenize(currentInput);
-  console.log(tokens);
+  // if(currentInput){
+  //   const token = getTokenAtCaret(tokens, caretPosition);
+  //   const prevToken = getPrevToken(tokens, token);
+  //   const nextToken = getNextToken(tokens, token);
+  //   console.log(tokens);
+  //   console.log(token);
+  //   console.log(prevToken);
+  //   console.log(nextToken);
+  // }
 
   // Case 1: inserting exponent box
-  if (newValue.includes("□") && newValue.includes('x')) {
-    if (validateForDisplay(currentInput, newValue).allowed) {
+  // if (newValue.includes("□") && newValue.includes('x')) {
+  //   if (validateForDisplay(currentInput, newValue).allowed) {
+  //     return {
+  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
+  //       // newCaret: caretPosition + 1, // caret lands inside □
+  //       newCaret: caretPosition,
+  //     };
+  //   }
+  // }
+
+  // if (newValue.includes("□") && newValue.includes('log')){
+  //   if (validateForDisplay(currentInput, newValue).allowed) {
+  //     return {
+  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
+  //       // newCaret: caretPosition + 1, // caret lands inside □
+  //       newCaret: caretPosition + 3,
+  //     };
+  //   }
+  // }
+
+  // if(newValue.includes("□") && newValue.includes('√')) {
+  //   if (validateForDisplay(currentInput, newValue).allowed) {
+  //     return {
+  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
+  //       // newCaret: caretPosition + 1, // caret lands inside □
+  //       newCaret: caretPosition - 1,
+  //     };
+  //   }
+  // }
+
+  // if(newValue.includes('C')){
+  //   if (validateForDisplay(currentInput, newValue).allowed) {
+  //     return {
+  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
+  //       // newCaret: caretPosition + 1, // caret lands inside □
+  //       newCaret: caretPosition,
+  //     };
+  //   }
+  // }
+
+
+
+
+  if (newValue.includes("□")) {
       return {
         newInput: showExponentBox(currentInput, caretPosition, newValue),
         // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: caretPosition,
+        newCaret: getCaretAfterInsertion(newValue, caretPosition),
       };
-    }
   }
 
-  if (newValue.includes("□") && newValue.includes('log')){
-    if (validateForDisplay(currentInput, newValue).allowed) {
+  if(newValue.includes("n") && newValue.includes("r")){
       return {
         newInput: showExponentBox(currentInput, caretPosition, newValue),
         // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: caretPosition + 3,
+        newCaret: getCaretAfterInsertion(newValue, caretPosition),
       };
-    }
-  }
-
-  if(newValue.includes("□") && newValue.includes('√')) {
-    if (validateForDisplay(currentInput, newValue).allowed) {
-      return {
-        newInput: showExponentBox(currentInput, caretPosition, newValue),
-        // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: caretPosition - 1,
-      };
-    }
-  }
-
-  if(newValue.includes('C')){
-    if (validateForDisplay(currentInput, newValue).allowed) {
-      return {
-        newInput: showExponentBox(currentInput, caretPosition, newValue),
-        // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: caretPosition,
-      };
-    }
-  }
-
-  // Case 2: filling exponent and indices (subscript)
-  if(currentInput.includes("□") && currentInput[caretPosition + 1] === 'C'){
-    return{
-      newInput: showExponent(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
-    };
-  }
-
-  if(currentInput.includes("□") && currentInput[caretPosition + 1] === '√'){ //first priority check
-    return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
-    };
-  }
-
-  if (currentInput.includes("□") && !isNaN(currentInput[caretPosition - 1])) {
-    return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
-    };
-  }
-
-  if(currentInput.includes("□") && currentInput.slice(caretPosition - 3, caretPosition) === "log"){
-    return {
-      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
-    };
   }
 
   if(newValue.includes('x2') || newValue.includes('x3')){
@@ -84,21 +81,80 @@ export function insertValue(currentInput, caretPosition, newValue) {
       newCaret: caretPosition + 1,
     };
   }
+  const tokens = getTokens(currentInput);
+  const currentToken = getTokenAtCaret(tokens, caretPosition);
+  const prevToken = getPrevToken(tokens, currentToken);
+  const nextToken = getNextToken(tokens, currentToken);
+  console.log(tokens);
+  console.log(currentToken);
+  console.log(prevToken);
+  console.log(nextToken);
+  // Case 2: filling exponent and indices (subscript)
+  if(currentToken?.type === 'function' && nextToken?.type === 'box'){
+    return {
+      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
 
-  // Case 3: appending to superscript and subscript
-  if (Object.values(normalToSuperscript).includes(lastChar)) {
+  if ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && nextToken?.type === 'box') {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
     };
   }
 
-  if(Object.values(normalToSubscript).includes(currentInput[caretPosition - 1])){
+  if(currentToken?.type === 'combAndPerm' && nextToken?.type === 'box'){
     return {
       newInput: showIndicesForLog(currentInput, caretPosition, newValue),
       newCaret: caretPosition + 1,
     };
   }
+
+  if(currentToken?.type === 'box' && nextToken?.type === 'singleRoot'){ 
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(currentToken?.type === 'box' && nextToken?.type === 'combAndPerm'){ 
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  // Case 3: appending to superscript and subscript
+  if (currentToken?.type === 'nthRoot' && caretPosition < currentToken?.end) {
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if (currentToken?.type === 'supAndSub') {
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(currentToken?.type === 'superscriptValue'){
+    return {
+      newInput: showExponent(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+  if(currentToken?.type === 'subscriptValue'){
+    return {
+      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
+      newCaret: caretPosition + 1,
+    };
+  }
+
+
 
   // Case 4: bracket handling → place caret inside
   if (newValue === "()") {
@@ -121,6 +177,28 @@ export function insertValue(currentInput, caretPosition, newValue) {
   };
 }
 
+function getTokens(currentInput){
+  return tokenize(currentInput);
+}
+
+function getTokenAtCaret(tokens, caretPos) {
+  return tokens.find(t => caretPos >= t.start && caretPos <= t.end);
+}
+
+function getPrevToken(tokens, token) {
+  // Find all tokens that end before the current token starts
+  const previousTokens = tokens.filter(t => t.end <= token.start);
+  // Return the one with the **largest end position**
+  return previousTokens.sort((a, b) => b.end - a.end)[0];
+}
+
+function getNextToken(tokens, token) {
+  // Find all tokens that end before the current token starts
+  const nextTokens = tokens.filter(t => t.start >= token.end);
+  // Return the one with the **largest end position**
+  return nextTokens.sort((a, b) => a.start - b.start)[0];
+}
+
 function showExponentBox(currentInput, caretPos, newValue) {
   if(newValue.includes('log')){
     return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos);
@@ -131,9 +209,18 @@ function showExponentBox(currentInput, caretPos, newValue) {
   if(newValue.includes('C')){
     return currentInput.slice(0, caretPos) + `<sup>□</sup>C<sub>□</sub>` + currentInput.slice(caretPos);
   }
+  if(newValue.includes('P')){
+    return currentInput.slice(0, caretPos) + `<sup>□</sup>P<sub>□</sub>` + currentInput.slice(caretPos);
+  }
   return (
     currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
   );
+}
+
+function getCaretAfterInsertion(newValue, caretPos) {
+  if (newValue.includes('log')) return caretPos + 3;
+  if (newValue.includes('√'))   return caretPos - 1;
+  return caretPos; // default for x, C, P, etc.
 }
 
 function showExponent(currentInput, caretPos, newValue) {

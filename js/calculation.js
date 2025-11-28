@@ -9,62 +9,175 @@ const superscriptChars = Array.from(superscripts).join('');
 const subscriptChars = Array.from(subscripts).join('');
 
 // for tokens[i]ize/making array of numbers and operators
+// export function tokenize(expr){
+//   console.log(expr);
+//   const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln|C|P|□|π|e)` +                  // functions
+//   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
+//   `|(?:\\d+\\.\\d+|\\d+|\\.\\d+)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
+//   `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
+//   `|[+\\-*/√%!()]`,                           // operators
+//   'g');
+//   console.log(expr.match(tokenRegEx));
+//   // return expr.match(tokenRegEx);
+//   const rawTokens = expr.match(tokenRegEx) || [];
+//   const tokens = [];
+  
+//   for (const t of rawTokens) {
+//     if (["sin", "cos", "tan", "log", "ln"].includes(t)) {
+//       tokens.push({ type: "function", value: t });
+//     }
+//     else if (t === "C" || t === "P") {
+//       tokens.push({ type: "combAndPerm", value: t });
+//     }
+//     else if (t === 'π' || t === 'e'){
+//       tokens.push({ type: "constant", value: t });
+//     }
+//     else if (new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]+`).test(t)){
+//       tokens.push({ type: "supAndSub", value: t });
+//     }
+//     else if (new RegExp(`^[${subscriptChars}]+$`).test(t)){
+//       tokens.push({type: "subscriptValue", value: t });
+//     }
+//     else if (/^\d*\.\d+$/.test(t)){
+//       tokens.push({ type: "numberWithDecimal", value: parseFloat(t) });
+//     }
+//     else if (/^\d+$/.test(t)) {
+//       tokens.push({ type: "number", value: parseFloat(t) });
+//     }
+//     else if (/\(/.test(t)) {
+//       tokens.push({type: "parenOpen", value: t});
+//     }
+//     else if (/\)/.test(t)) {
+//       tokens.push({type: "parenClose", value: t});
+//     }
+//     else if (t === "□") {
+//       tokens.push({ type: "box", value: "□" });
+//     }
+//     else if (/[+*/%!-]/.test(t)) {
+//       tokens.push({ type: "operator", value: t });
+//     }
+//     else if (t === "√") {
+//       tokens.push({ type: "singleRoot", degree: 2, raw: t }); // single √
+//     }
+//     else if (/^\d+√$/.test(t) || new RegExp(`[${superscriptChars}]+√`).test(t)) { //^[²³⁴⁵⁶⁷⁸⁹]+√$/ (older)
+//       tokens.push({ type: "nthRoot", degree: extractDegree(t), raw: t }); // multi-digit root
+//     }
+//     else {
+//       tokens.push({ type: "unknown", value: t });
+//     }
+//   }
+
+//   console.log(tokens);
+//   return tokens;
+// }
+
+
+
+
+
 export function tokenize(expr){
   console.log(expr);
+
+  const tokens = [];
+
+  // ---- Precompile regexes (for performance & clarity) ----
   const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln|C|P|□|π|e)` +                  // functions
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
-  `|(?:\\d+\\.\\d+|\\d+|\\.\\d+)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
+  `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
   `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
   `|[+\\-*/√%!()]`,                           // operators
   'g');
   console.log(expr.match(tokenRegEx));
   // return expr.match(tokenRegEx);
-  const rawTokens = expr.match(tokenRegEx) || [];
-  const tokens = [];
+  // const rawTokens = expr.match(tokenRegEx) || [];
+
+  // Classification regexes
+  const reNthRoot      = new RegExp(`[${superscriptChars}]+√`); 
+  const reSuperscript  = new RegExp(`^[${superscriptChars}]+$`);
+  const reSubscript    = new RegExp(`^[${subscriptChars}]+$`);
+  const reSuperSubNum  = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]+`);
+  const reDecimal      = /^\d*\.\d+$/;
+  const reInteger      = /^\d+$/;
+  const reOperator     = /[+\-*/%!]/;
+
+  let match;
   
-  for (const t of rawTokens) {
+  while ((match = tokenRegEx.exec(expr)) !== null) {
+    const t = match[0];
+    const start = match.index;
+    const end = start + t.length;
+
+    //function
     if (["sin", "cos", "tan", "log", "ln"].includes(t)) {
-      tokens.push({ type: "function", value: t });
+      tokens.push({ type: "function", value: t, start, end });
+      continue;
     }
-    else if (t === "C" || t === "P") {
-      tokens.push({ type: "combAndPerm", value: t });
+    //single root
+    if (t === root) {
+      tokens.push({ type: "singleRoot", degree: 2, raw: t, start, end }); // single √
+      continue;
     }
-    else if (t === 'π' || t === 'e'){
-      tokens.push({ type: "constant", value: t });
+    //nth root
+    if (reNthRoot.test(t)) { //^[²³⁴⁵⁶⁷⁸⁹]+√$/ (older), /^\d+√$/.test(t) || (for like 3√5, 5√9)
+      tokens.push({ type: "nthRoot", degree: extractDegree(t), raw: t, start, end }); // multi-digit root
+      continue;
     }
-    else if (new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]+`).test(t)){
-      tokens.push({ type: "supAndSub", value: t });
+    //permutation and combination
+    if (t === "C" || t === "P") {
+      tokens.push({ type: "combAndPerm", value: t, start, end });
+      continue;
     }
-    else if (new RegExp(`^[${subscriptChars}]+$`).test(t)){
-      tokens.push({type: "subscriptValue", value: t });
+    //constant
+    if (t === 'π' || t === 'e'){
+      tokens.push({ type: "constant", value: t, start, end });
+      continue;
     }
-    else if (/^\d*\.\d+$/.test(t)){
-      tokens.push({ type: "numberWithDecimal", value: parseFloat(t) });
+    //number with superscript and subscript number
+    if (reSuperSubNum.test(t)){
+      tokens.push({ type: "supAndSub", value: t, start, end });
+      continue;
     }
-    else if (/^\d+$/.test(t)) {
-      tokens.push({ type: "number", value: parseFloat(t) });
+    //standalone superscript number
+    if (reSuperscript.test(t)){
+      tokens.push({type: "superscriptValue", value: t, start, end });
+      continue;
     }
-    else if (/\(/.test(t)) {
-      tokens.push({type: "parenOpen", value: t});
+    //standalone subscript number
+    if (reSubscript.test(t)){
+      tokens.push({type: "subscriptValue", value: t, start, end });
+      continue;
     }
-    else if (/\)/.test(t)) {
-      tokens.push({type: "parenClose", value: t});
+    //number with decimal number
+    if (reDecimal.test(t)){
+      tokens.push({ type: "numberWithDecimal", value: parseFloat(t), start, end });
+      continue;
     }
-    else if (t === "□") {
-      tokens.push({ type: "box", value: "□" });
+    //number
+    if (reInteger.test(t)) {
+      tokens.push({ type: "number", value: parseFloat(t), start, end });
+      continue;
     }
-    else if (/[+*/%!-]/.test(t)) {
-      tokens.push({ type: "operator", value: t });
+    //parentheses open and close
+    if (t === "(") {
+      tokens.push({type: "parenOpen", value: t, start, end });
+      continue;
     }
-    else if (t === "√") {
-      tokens.push({ type: "singleRoot", degree: 2, raw: t }); // single √
+    if (t === ")") {
+      tokens.push({type: "parenClose", value: t, start, end });
+      continue;
     }
-    else if (/^\d+√$/.test(t) || new RegExp(`[${superscriptChars}]+√`).test(t)) { //^[²³⁴⁵⁶⁷⁸⁹]+√$/ (older)
-      tokens.push({ type: "nthRoot", degree: extractDegree(t), raw: t }); // multi-digit root
+    //box for exponents and indices
+    if (t === "□") {
+      tokens.push({ type: "box", value: t, start, end });
+      continue;
     }
-    else {
-      tokens.push({ type: "unknown", value: t });
+    //operators
+    if (reOperator.test(t)) {
+      tokens.push({ type: "operator", value: t, start, end });
+      continue;
     }
+    //unknown
+    tokens.push({ type: "unknown", value: t, start, end });
   }
 
   console.log(tokens);
@@ -216,9 +329,20 @@ export function evaluatePostfix(postfix) {
   return stack[0];
 }
 
+function tokenValues(expr){
+  const tokenObjects = tokenize(expr);
+  const initialFilter = tokenObjects.map(t => {
+  // some tokens have .value, some have .raw
+  if ("value" in t) return t.value;
+  if ("raw" in t) return t.raw;
+  return null; // fallback (should not happen)
+  });
+  return initialFilter.filter(v => v !== null);
+}
+
 // Calculate entry point
 export function calculate(expr) {
-  const tokens = tokenize(expr);
+  const tokens = tokenValues(expr);
   const postfix = toPostfix(tokens);
   const result = evaluatePostfix(postfix);
   return result.toString();
