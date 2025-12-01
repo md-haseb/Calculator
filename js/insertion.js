@@ -181,18 +181,18 @@ function getTokens(currentInput){
   return tokenize(currentInput);
 }
 
-function getTokenAtCaret(tokens, caretPos) {
+export function getTokenAtCaret(tokens, caretPos) {
   return tokens.find(t => caretPos >= t.start && caretPos <= t.end);
 }
 
-function getPrevToken(tokens, token) {
+export function getPrevToken(tokens, token) {
   // Find all tokens that end before the current token starts
   const previousTokens = tokens.filter(t => t.end <= token.start);
   // Return the one with the **largest end position**
   return previousTokens.sort((a, b) => b.end - a.end)[0];
 }
 
-function getNextToken(tokens, token) {
+export function getNextToken(tokens, token) {
   // Find all tokens that end before the current token starts
   const nextTokens = tokens.filter(t => t.start >= token.end);
   // Return the one with the **largest end position**

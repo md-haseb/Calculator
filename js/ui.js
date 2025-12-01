@@ -1,6 +1,6 @@
 import {validateForDisplay, validateForEvaluation} from './validation.js';
-import {calculate} from './calculation.js';
-import {insertValue, replaceOperator} from './insertion.js';
+import {calculate, tokenize} from './calculation.js';
+import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToken} from './insertion.js';
 import {operatorsSet, superscripts} from './constants.js';
 import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
 
@@ -99,12 +99,34 @@ export function init() {
       showMessage();
 
       if (validated.allowed){
-        // caret movement
+        // caret movement based on token
         if (btn.classList.contains('left_arrow')) {
+          const tokens = tokenize(input.textContent);
+          const currentToken = getTokenAtCaret(tokens, caretPosition);
+          const prevToken = getPrevToken(tokens, currentToken);
+          if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function' && prevToken?.value === 'ln'){
+            caretShowWithFocus(input, caretPosition - 3);
+            return;
+          }
+          if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
+            caretShowWithFocus(input, caretPosition - 4);
+            return;
+          }
           caretShowWithFocus(input, caretPosition - 1);
           return;
         }
         if (btn.classList.contains('right_arrow')) {
+          const tokens = tokenize(input.textContent);
+          const currentToken = getTokenAtCaret(tokens, caretPosition);
+          const nextToken = getNextToken(tokens, currentToken);
+          if(nextToken?.type === 'function' && nextToken?.value === 'ln'){
+            caretShowWithFocus(input, caretPosition + 3);
+            return;
+          }
+          if(nextToken?.type === 'function'){
+            caretShowWithFocus(input, caretPosition + 4);
+            return;
+          }
           caretShowWithFocus(input, caretPosition + 1);
           return;
         }
