@@ -17,6 +17,22 @@ function showMessage(msg = "Message: All is well") {
 export function init() {
   caretShowWithFocus(input);
 
+  //move caret based on user clicks on input display, if clicks on function operators caret moves to the beginning and other things caret moves normally
+  input.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+
+    const clickedRange = document.caretPositionFromPoint(e.clientX, e.clientY);
+
+    const tokens = tokenize(input.textContent);
+    const currentToken = getTokenAtCaret(tokens, clickedRange.offset);
+
+    const finalOffset = currentToken?.type === 'function' 
+    ? currentToken.start 
+    : clickedRange.offset;
+
+    caretShowWithFocus(input, finalOffset);
+  });
+
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const value = btn.textContent;
