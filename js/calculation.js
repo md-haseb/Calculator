@@ -6,7 +6,11 @@ import {getMode} from './ui.js';
 const superscriptChars = Array.from(superscripts).join('');
 const subscriptChars = Array.from(subscripts).join('');
 
-//tokenize the expression and make object of each token
+/**
+ * Tokenizes a mathematical expression into an array of token objects.
+ * @param {string} expr - The expression to tokenize.
+ * @returns {Array<Object>} Array of token objects with type, value/raw, start, and end.
+ */
 export function tokenize(expr){
 
   const tokens = [];
@@ -115,39 +119,43 @@ export function tokenize(expr){
   return tokens;
 }
 
-// Convert to Postfix (Shunting Yard)
+/**
+ * Converts a tokenized expression to postfix notation using Shunting Yard algorithm.
+ * @param {Array} tokens - Array of token strings.
+ * @returns {Array} Postfix array of tokens.
+ */
 export function toPostfix(tokens) {
   const output = [];
   const stack = [];
 
   for (let i = 0; i < tokens.length; i++) {
-    //when token is number, superscripted number, percent, factorial, then push to the output stack
+    //number, superscripted number, percent, factorial > push to the output stack
     if (!isNaN(tokens[i]) || isSuperscriptedNumber(tokens[i]) || [percent, factorial].includes(tokens[i])) {
       output.push(tokens[i]);
     } 
-    //when token is subscripted number, then push to the output stack
+    //subscripted number > push to the output stack
     else if (isSubscriptedNumber(tokens[i])) {
       output.push(parseSubscripted(tokens[i]));
     } 
-    //(when token is singleRoot, ends with root, sin, cos, tan), then push to the stack
+    //singleRoot, ends with root(nth root), (sin, cos, tan) > push to the stack
     else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan'].includes(tokens[i])) { 
       stack.push(tokens[i]);
     } 
-    //when token is log and the next token is not parenOpen, then push to the stack
+    //log and the next token is not parenOpen > push to the stack
     else if(tokens[i] === 'log' && tokens[i+1] !== '(') {
       stack.push(tokens[i]);
     } 
-    //when token is log and next token is parenOpen, then push to the stack + push '10' to the output stack
+    //log and next token is parenOpen > push to the stack + push '10' to the output stack
     else if(tokens[i] === 'log' && tokens[i+1] === '(') {
       stack.push(tokens[i]);
       output.push('10');
     } 
-    //when token is ln, then push to the stack + push value of 'Math.E' to the output stack
+    //ln > push to the stack + push value of 'Math.E' to the output stack
     else if(tokens[i] === 'ln') {
       stack.push(tokens[i]);
       output.push(Math.E);
     } 
-    //when token is one of the operators, push/pop token based on associativity and precedence for both stack
+    //one of the operators, push/pop token based on associativity and precedence for both stack
     else if (operatorsSet.has(tokens[i])) {
         while (stack.length) {
           const top = stack[stack.length - 1];
@@ -174,11 +182,11 @@ export function toPostfix(tokens) {
         }
       stack.push(tokens[i]);
     } 
-    //when token is parenOpen, then push to the stack
+    //parenOpen > push to the stack
     else if (tokens[i] === '(') {
       stack.push(tokens[i]);
     } 
-    //when token is parenClose, push/pop token based on stack length and until the parenOpen comes
+    //parenClose > push/pop token based on stack length and until the parenOpen comes
     else if (tokens[i] === ')') {
       while (stack.length && stack[stack.length - 1] !== '(') {
         output.push(stack.pop());
@@ -186,7 +194,7 @@ export function toPostfix(tokens) {
       stack.pop(); // remove '('
     }
   }
-  //if stack still has length, pop from stack and push to the output stack
+  //pop from stack and push to the output stack
   while (stack.length) {
     output.push(stack.pop());
   }
@@ -194,38 +202,42 @@ export function toPostfix(tokens) {
   return output;
 }
 
-//evaluate postfix
+/**
+ * Evaluates a postfix expression array and returns the computed result.
+ * @param {Array} postfix - Postfix array of tokens.
+ * @returns {number} Computed value.
+ */
 export function evaluatePostfix(postfix) {
   const stack = [];
 
   for (let i = 0; i < postfix.length; i++) {
-    //when postfix token is number, then push to the stack
+    //number > push to the stack
     if (!isNaN(postfix[i])) {
       stack.push(Number(postfix[i]));
     } 
-    //when postfix token is superscripted number, then parse and calculate using parseSuperscripted and calculateExponent function, then push the result to the stack
+    //evaluate superscripted number
     else if (isSuperscriptedNumber(postfix[i])) {
       const {base, exponent} = parseSuperscripted(postfix[i]);
       const expResult = calculateExponent(base, exponent);
       stack.push(expResult);
     } 
-    //when postfix token is singleRoot, then do the calculation using customRootLogic function, then push the result to the stack
+    //evaluate square root 
     else if (postfix[i] === root) {
       const val = stack.pop();
       stack.push(customRootLogic(val, '2') || Math.sqrt(val));
     } 
-    //when postfix token is ends with root (nth root), then do the calculation using customRootLogic and rootOfValue function, then push the result to the stack
+    //evaluate nth root
     else if (postfix[i].endsWith('√')) {
       const val = stack.pop();
       stack.push(customRootLogic(val, rootOfValue(postfix[i])));
     } 
-    //when postfix token is log or ln, calculate the result using calculateLogarithm function and push to the stack
+    //evaluate logarithm
     else if (postfix[i] === 'log' || postfix[i] === 'ln') {
       const logarithmNum = stack.pop();
       const logarithmBase = stack.pop();
       stack.push(calculateLogarithm(logarithmBase, logarithmNum));
     } 
-    //when postfix token is percent, do the calculation and push the result to the stack
+    //evaluate percentage
     else if (postfix[i] === '%') {
       const percent = stack.pop();  // e.g. 5
       const base = stack[stack.length - 1]; // peek, don’t pop
@@ -236,18 +248,18 @@ export function evaluatePostfix(postfix) {
         stack.push(percent / 100);
       }
     } 
-    //when postfix token is factorial, do the calculation using calculateFactorial function and push the result to the stack
+    //evaluate factorial
     else if(postfix[i] === factorial){
         let factorialNum = stack.pop();
         const factorialResult = calculateFactorial(factorialNum);
         stack.push(factorialResult);
     } 
-    //when postfix token is (sin, cos, tan), calculate the result using calculateTrig function and push to the stack
+    //evaluate trigonometry functions
     else if(['sin', 'cos', 'tan'].includes(postfix[i])){
         const result = calculateTrig(postfix[i], stack.pop(), getMode());
         stack.push(result);
     }
-    //when postfix token is (+, -, *, /), calculate the result and push to the stack
+    //addition, substraction, multiplication, division (+, -, *, /)
     else {
       const b = stack.pop();
       const a = stack.pop();
@@ -268,7 +280,27 @@ export function evaluatePostfix(postfix) {
   return stack[0];
 }
 
-//function to generate array of tokens (from array of token objects)
+/**
+ * Main function to calculate a string expression.
+ * @param {string} expr - The expression to calculate.
+ * @returns {string} Computed result as a string.
+ */
+export function calculate(expr) {
+  const tokens = tokenValues(expr);
+  const postfix = toPostfix(tokens);
+  const result = evaluatePostfix(postfix);
+  return result.toString();
+}
+
+// Helpers
+
+/**
+ * Generates array of token values from token objects.
+ * Extracts the string value from token objects for processing.
+ * Some tokens use `.value`, others use `.raw`.
+ * @param {string} expr 
+ * @returns {Array<string>}
+ */
 function tokenValues(expr){
   const tokenObjects = tokenize(expr);
   const initialFilter = tokenObjects.map(t => {
@@ -280,39 +312,51 @@ function tokenValues(expr){
   return initialFilter.filter(v => v !== null);
 }
 
-// Calculate entry point
-export function calculate(expr) {
-  const tokens = tokenValues(expr);
-  const postfix = toPostfix(tokens);
-  const result = evaluatePostfix(postfix);
-  return result.toString();
-}
-
-// Helpers
-
-//function for divide
+/**
+ * Performs division and rounds to 10 decimal places.
+ * @param {number} a 
+ * @param {number} b 
+ * @returns {number}
+ */
 function divide(a, b){
   const result = a / b;
   const tenDigitResult = Number(result.toFixed(10));
   return tenDigitResult;
 }
 
-//function for check, is token a superscripted number
+/**
+ * Checks if a token is a superscripted number.
+ * @param {string} token
+ * @returns {boolean}
+ */
 function isSuperscriptedNumber(token) {
   return new RegExp(`\\d+[${superscriptChars}]+`).test(token);
 }
 
-//function for check, is token a subscripted number
+/**
+ * Checks if a token is a subscripted number.
+ * @param {string} token
+ * @returns {boolean}
+ */
 function isSubscriptedNumber(token){
   return new RegExp(`^[₀-₉]+$`).test(token);
 }
 
-//function to calculate exponents
+/**
+ * Calculate exponents: base^exp.
+ * @param {number} base 
+ * @param {number} exp 
+ * @returns {number}
+ */
 function calculateExponent(base, exp){
   return base ** exp;
 }
 
-//function to calculate factorial
+/**
+ * Calculates factorial of a non-negative integer.
+ * @param {number} num
+ * @returns {number}
+ */
 function calculateFactorial(num){
   let result = 1;
   for(let i = 2; i <= num; i++){
@@ -321,14 +365,20 @@ function calculateFactorial(num){
   return result;
 }
 
-/* Normalize any radian angle to the range [-π, +π].
-   Removes full 2π rotations while keeping the angle direction.
-*/
+/**
+ * Normalize an angle to the range [-π, π].
+ * @param {number} angle
+ * @returns {number}
+ */
 function reduceRadian(angle){
   return angle - Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
 }
 
-//function to calculate 'sin'
+/**
+ * Compute sin(x) using Taylor series approximation.
+ * @param {number} degreeToRadian - Angle in radians.
+ * @returns {number}
+ */
 function calculateSin(degreeToRadian){
     const sinResult = degreeToRadian 
                       - (calculateExponent(degreeToRadian, 3)/calculateFactorial(3)) 
@@ -341,7 +391,11 @@ function calculateSin(degreeToRadian){
     return tenDigitResult;
 }
 
-//function to calculate 'cos'
+/**
+ * Compute cos(x) using Taylor series approximation.
+ * @param {number} degreeToRadian - Angle in radians.
+ * @returns {number}
+ */
 function calculateCos(degreeToRadian){
     const cosResult = 1 
                       - (calculateExponent(degreeToRadian, 2)/calculateFactorial(2)) 
@@ -354,14 +408,24 @@ function calculateCos(degreeToRadian){
     return tenDigitResult;
 }
 
-//function to calculate 'tan'
+/**
+ * Compute tan(x) using Taylor series approximation.
+ * @param {number} degreeToRadian - Angle in radians.
+ * @returns {number}
+ */
 function calculateTan(degreeToRadian){
   const tanResult = calculateSin(degreeToRadian)/calculateCos(degreeToRadian);
   const tenDigitResult = Number(tanResult.toFixed(10));
   return tenDigitResult;
 }
 
-//function to calculate trigometry operators based on mode (degree or radian)
+/**
+ * Calculates trigonometric function based on mode ('deg' or 'rad').
+ * @param {'sin'|'cos'|'tan'} func 
+ * @param {number} angle 
+ * @param {'deg'|'rad'} mode 
+ * @returns {number}
+ */
 function calculateTrig(func, angle, mode){
   let rad = mode === 'deg' ? (angle * Math.PI)/180 : reduceRadian(angle);
   if(func === 'sin') return calculateSin(rad);
@@ -369,10 +433,16 @@ function calculateTrig(func, angle, mode){
   if(func === 'tan') return calculateTan(rad);
 }
 
-//function to calculate logarithm
+/**
+ * Calculates logarithm of a number with a given base using binary search.
+ * @param {number} base 
+ * @param {number} num 
+ * @returns {number}
+ * @throws Will throw error if invalid input.
+ */
 function calculateLogarithm(base, num) {
   if (base <= 0 || base === 1 || num <= 0) {
-    throw new Error("Invalid input: base must nume > 0 basend != 1, num must nume > 0");
+    throw new Error("Invalid input: base must be > 0 and != 1, num must be > 0");
   }
 
   // Step 1: find the rbasenge dynbasemicbaselly
@@ -396,7 +466,11 @@ function calculateLogarithm(base, num) {
   return (low + high) / 2;
 }
 
-//function to parse superscripted number, separate base and convert superscripted number to normal digit
+/**
+ * Parses a superscripted number token into base and exponent.
+ * @param {string} token 
+ * @returns {{base: number, exponent: number}}
+ */
 function parseSuperscripted(token) {
   const match = token.match(new RegExp(`(\\d+)([${superscriptChars}]+)`));
   const base = Number(match[1]);
@@ -407,12 +481,20 @@ function parseSuperscripted(token) {
   return { base, exponent: Number(exponentStr) };
 }
 
-//function to parse subscripted number, convert subscripted number to normal digit
+/**
+ * Converts a subscripted number token to normal digits.
+ * @param {string} token 
+ * @returns {string}
+ */
 function parseSubscripted(token){
   return token.split("").map(ch => subscriptToNormal[ch] || ch).join("");
 }
 
-//function to convert superscripted rootOf value to normal digit
+/**
+ * Converts a superscripted root value to normal digits.
+ * @param {string} val 
+ * @returns {string}
+ */
 function rootOfValue(val){
   return val
   .split('')
@@ -421,7 +503,11 @@ function rootOfValue(val){
   .join('');         
 }
 
-//function to extract degree from attached degree with root
+/**
+ * Extracts root degree from token like "³√", "10√".
+ * @param {string} t 
+ * @returns {number}
+ */
 function extractDegree(t) {
   // Case 1: normal digits before √, e.g., "10√"
   if (/^\d+√$/.test(t)) {
@@ -438,14 +524,23 @@ function extractDegree(t) {
   return parseInt(digits, 10);             // convert to number
 }
 
-// Optional: fallback for single √
+/** 
+ * Optional: fallback for single √.
+ * @param {string} t
+ * @returns {number}
+*/
 function extractDegreeWithFallback(t) {
   if (t === "√") return 2; // square root by default
   return extractDegree(t);
 }
 
 
-//custom root logic
+/**
+ * Custom root evaluation using binary search.
+ * @param {number} num 
+ * @param {number} rootOf 
+ * @returns {number}
+ */
 function customRootLogic(num, rootOf) {
   if (num === 0 || num === 1) return num;
 

@@ -2,63 +2,17 @@ import { validateForDisplay, isOperator } from "./validation.js";
 import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "./constants.js";
 import { tokenize } from "./calculation.js";
 
-// Main insertion function
+/**
+ * Inserts a new value into the current input string at the caret position.
+ * Handles exponent box, exponents, indices, brackets, functions, and normal characters.
+ * @param {string} currentInput - Current input string from display.
+ * @param {number} caretPosition - Current caret position in the input.
+ * @param {string} newValue - Value to insert (number, operator, function, or special symbol).
+ * @returns {{newInput: string, newCaret: number}} Updated input string and new caret position.
+ */
 export function insertValue(currentInput, caretPosition, newValue) {
   const lastChar = currentInput[caretPosition - 1];
-  // if(currentInput){
-  //   const token = getTokenAtCaret(tokens, caretPosition);
-  //   const prevToken = getPrevToken(tokens, token);
-  //   const nextToken = getNextToken(tokens, token);
-  //   console.log(tokens);
-  //   console.log(token);
-  //   console.log(prevToken);
-  //   console.log(nextToken);
-  // }
-
-  // Case 1: inserting exponent box
-  // if (newValue.includes("□") && newValue.includes('x')) {
-  //   if (validateForDisplay(currentInput, newValue).allowed) {
-  //     return {
-  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
-  //       // newCaret: caretPosition + 1, // caret lands inside □
-  //       newCaret: caretPosition,
-  //     };
-  //   }
-  // }
-
-  // if (newValue.includes("□") && newValue.includes('log')){
-  //   if (validateForDisplay(currentInput, newValue).allowed) {
-  //     return {
-  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
-  //       // newCaret: caretPosition + 1, // caret lands inside □
-  //       newCaret: caretPosition + 3,
-  //     };
-  //   }
-  // }
-
-  // if(newValue.includes("□") && newValue.includes('√')) {
-  //   if (validateForDisplay(currentInput, newValue).allowed) {
-  //     return {
-  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
-  //       // newCaret: caretPosition + 1, // caret lands inside □
-  //       newCaret: caretPosition - 1,
-  //     };
-  //   }
-  // }
-
-  // if(newValue.includes('C')){
-  //   if (validateForDisplay(currentInput, newValue).allowed) {
-  //     return {
-  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
-  //       // newCaret: caretPosition + 1, // caret lands inside □
-  //       newCaret: caretPosition,
-  //     };
-  //   }
-  // }
-
-
-
-
+  
   if (newValue.includes("□")) {
       return {
         newInput: showExponentBox(currentInput, caretPosition, newValue),
@@ -177,14 +131,31 @@ export function insertValue(currentInput, caretPosition, newValue) {
   };
 }
 
+/**
+ * Tokenizes the current input string.
+ * @param {string} currentInput - Input string to tokenize.
+ * @returns {Array} Array of token objects.
+ */
 function getTokens(currentInput){
   return tokenize(currentInput);
 }
 
+/**
+ * Finds the token at a given caret position.
+ * @param {Array} tokens - Array of token objects.
+ * @param {number} caretPos - Caret position.
+ * @returns {Object|undefined} Token object at caret, or undefined.
+ */
 export function getTokenAtCaret(tokens, caretPos) {
   return tokens.find(t => caretPos >= t.start && caretPos <= t.end);
 }
 
+/**
+ * Finds the previous token before a given token.
+ * @param {Array} tokens - Array of token objects.
+ * @param {Object} token - Current token.
+ * @returns {Object|undefined} Previous token, or undefined.
+ */
 export function getPrevToken(tokens, token) {
   // Find all tokens that end before the current token starts
   const previousTokens = tokens.filter(t => t.end <= token.start);
@@ -192,6 +163,12 @@ export function getPrevToken(tokens, token) {
   return previousTokens.sort((a, b) => b.end - a.end)[0];
 }
 
+/**
+ * Finds the next token after a given token.
+ * @param {Array} tokens - Array of token objects.
+ * @param {Object} token - Current token.
+ * @returns {Object|undefined} Next token, or undefined.
+ */
 export function getNextToken(tokens, token) {
   // Find all tokens that end before the current token starts
   const nextTokens = tokens.filter(t => t.start >= token.end);
@@ -199,6 +176,13 @@ export function getNextToken(tokens, token) {
   return nextTokens.sort((a, b) => a.start - b.start)[0];
 }
 
+/**
+ * Inserts an exponent box (□) or special notation at the caret position.
+ * @param {string} currentInput - Current input string.
+ * @param {number} caretPos - Current caret position.
+ * @param {string} newValue - Value to insert.
+ * @returns {string} Updated input string with exponent box inserted.
+ */
 function showExponentBox(currentInput, caretPos, newValue) {
   if(newValue.includes('log')){
     return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos);
@@ -217,12 +201,25 @@ function showExponentBox(currentInput, caretPos, newValue) {
   );
 }
 
+/**
+ * Computes new caret position after inserting a special value.
+ * @param {string} newValue - Value being inserted.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Updated caret position.
+ */
 function getCaretAfterInsertion(newValue, caretPos) {
   if (newValue.includes('log')) return caretPos + 3;
   if (newValue.includes('√'))   return caretPos - 1;
   return caretPos; // default for x, C, P, etc.
 }
 
+/**
+ * Replaces the box or placeholder with superscripted value.
+ * @param {string} currentInput - Current input string.
+ * @param {number} caretPos - Current caret position.
+ * @param {string} newValue - Value to insert as superscript.
+ * @returns {string} Updated input string with superscript applied.
+ */
 function showExponent(currentInput, caretPos, newValue) {
   const boxForExponent = currentInput[caretPos];
   // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
@@ -255,6 +252,13 @@ function showExponent(currentInput, caretPos, newValue) {
   return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
 }
 
+/**
+ * Replaces a box or placeholder with subscripted indices (used for log or functions).
+ * @param {string} currentInput - Current input string.
+ * @param {number} caretPos - Current caret position.
+ * @param {string} newValue - Value to insert as subscript.
+ * @returns {string} Updated input string with subscript applied.
+ */
 function showIndicesForLog(currentInput, caretPos, newValue) {
   // const lastChar = currentInput[caretPos];
   const boxForIndices = currentInput[caretPos];
@@ -284,6 +288,12 @@ function showIndicesForLog(currentInput, caretPos, newValue) {
   return currentInput.slice(0, caretPos) + subs + currentInput.slice(caretPos);
 }
 
+/**
+ * Replaces the last character in the input with a new operator.
+ * @param {string} currentInput - Current input string.
+ * @param {string} newValue - New operator to replace the last one.
+ * @returns {string} Updated input string with operator replaced.
+ */
 export function replaceOperator(currentInput, newValue) {
   return currentInput.slice(0, -1) + newValue;
 }
