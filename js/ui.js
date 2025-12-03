@@ -4,20 +4,40 @@ import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToke
 import {operatorsSet, superscripts} from './constants.js';
 import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
 
+/**
+ * DOM elements
+ */
 export const input = document.querySelector(".input_display");
 const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".message_display");
 
+/**
+ * Current angle mode: 'deg' or 'rad'
+ */
 let DegRadMode = 'deg';
 
+/**
+ * Display a message to the user
+ * @param {string} msg - Message text
+ */
 function showMessage(msg = "Message: All is well") {
   messageDiv.textContent = msg;
 }
 
+/**
+ * Initialize the calculator UI
+ * - Sets caret position
+ * - Adds event listeners for clicks on input and buttons
+ */
 export function init() {
+  // Set initial caret focus
   caretShowWithFocus(input);
 
-  //move caret based on user clicks on input display, if clicks on function operators caret moves to the beginning and other things caret moves normally
+  /**
+   * Handle mouse clicks on input display
+   * - Moves caret according to click position
+   * - For functions, caret jumps to the beginning of the function token
+   */
   input.addEventListener('mousedown', (e) => {
     e.preventDefault();
 
@@ -33,13 +53,18 @@ export function init() {
     caretShowWithFocus(input, finalOffset);
   });
 
+  /**
+   * Handle button clicks
+   */
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const value = btn.textContent;
       const caretPosition = caretIndex(input);
       const lastChar = input.textContent[caretPosition - 1];
 
-      // AC button
+      // ----------------------------
+      // Clear button (AC)
+      // ----------------------------
       if (value === "AC") {
         showMessage();
         input.textContent = "";
@@ -47,7 +72,9 @@ export function init() {
         return;
       }
 
-      //delete button
+      // ----------------------------
+      // Delete button
+      // ----------------------------
       if (btn.classList.contains('delete_btn')) {
         showMessage();
         if(caretPosition == 0){
@@ -59,11 +86,17 @@ export function init() {
         return;
       }
 
+      // ----------------------------
+      // Angle mode buttons (deg/rad)
+      // ----------------------------
       if(value === 'rad' || value === 'deg'){
         setMode(value);
         return;
       }
 
+      // ----------------------------
+      // Insert functions (sin, cos, tan, log, ln)
+      // ----------------------------
       if(value === 'sin'){
         showMessage();
         input.textContent = input.textContent.slice(0, caretPosition)+ 'sin()' + input.textContent.slice(caretPosition);
@@ -99,7 +132,9 @@ export function init() {
         return;
       }
 
+      // ----------------------------
       // Equal button
+      // ----------------------------
       if (value === "=") {
         const validated = validateForEvaluation(input.textContent, value);
         if (validated.allowed) {
@@ -110,12 +145,16 @@ export function init() {
         return;
       }
 
+      // ----------------------------
       // Validate before insertion
+      // ----------------------------
       const validated = validateForDisplay(input.textContent, value);
       showMessage();
 
       if (validated.allowed){
-        // caret movement based on token
+        // ------------------------
+        // Arrow key logic
+        // ------------------------
         if (btn.classList.contains('left_arrow')) {
           const tokens = tokenize(input.textContent);
           const currentToken = getTokenAtCaret(tokens, caretPosition);
@@ -147,7 +186,9 @@ export function init() {
           return;
         }
 
-        // universal insert logic
+        // ------------------------
+        // Universal insert logic
+        // ------------------------
         const { newInput, newCaret } = insertValue(
           input.textContent,
           caretPosition,
@@ -157,6 +198,10 @@ export function init() {
         caretShowWithFocus(input, newCaret);
         return;
       }
+
+      // ----------------------------
+      // Replace operator logic
+      // ----------------------------
       if (validated.action === "replace") {
         showMessage();
         input.textContent = replaceOperator(input.textContent, value);
@@ -164,7 +209,9 @@ export function init() {
         return;
       }
 
-      // fallback: invalid
+      // ----------------------------
+      // Fallback for invalid input
+      // ----------------------------
       showMessage(validated.message);
       caretShowWithFocus(input, caretPosition);
     });
@@ -172,6 +219,11 @@ export function init() {
 }
 
 //helpers
+
+/**
+ * Helper: Replace '×' with '*' for calculation
+ * @returns {string} Modified input text
+ */
 function changeMultiplySign(){
   let inpText = input.textContent;
   for(let i = 0; i < inpText.length; i++){
@@ -182,12 +234,20 @@ function changeMultiplySign(){
   return inpText;
 }
 
+/**
+ * Set angle mode ('deg' or 'rad')
+ * @param {string} value
+ */
 function setMode(value){
   if (value === 'deg' || value === 'rad') {
     DegRadMode = value;
   } 
 }
 
+/**
+ * Get current angle mode
+ * @returns {string} 'deg' or 'rad'
+ */
 export function getMode(){
   return DegRadMode;
 }
