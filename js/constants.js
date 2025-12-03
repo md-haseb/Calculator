@@ -1,13 +1,35 @@
+// -------------------------------
 // Operators
-export const operators = ['+', '-', '*', '/', '^'];
+// -------------------------------
+
+/**
+ * List of arithmetic operators supported by the expression parser.
+ * Used primarily during tokenization and Shunting-Yard processing.
+ */
+export const operators = ['+', '-', '*', '/'];
+
+/**
+ * Set version of the operators array.
+ */
 export const operatorsSet = new Set(operators);
 
+/**
+ * operator symbols.
+ */
 export const root = '√';
 export const decimal = '.';
 export const percent = '%';
 export const factorial = '!';
 
-// Precedence and associativity
+// -------------------------------
+// Operator Precedence & Associativity
+// -------------------------------
+
+/**
+ * Operator precedence mapping.
+ * Higher numbers represent higher priority during parsing.
+ * Unary functions like √, sin, log, ln have highest precedence.
+ */
 export const precedence = {
   '+': 1,
   '-': 1,
@@ -20,6 +42,11 @@ export const precedence = {
   'sin': 4,
 };
 
+/**
+ * Operator associativity rules.
+ * L = Left-to-right, R = Right-to-left.
+ * Exponentiation and unary operators are right-associative.
+ */
 export const associativity = {
   '+': 'L',
   '-': 'L',
@@ -30,7 +57,14 @@ export const associativity = {
   'sin': 'R',
 };
 
-// Superscript mapping
+// -------------------------------
+// Superscript / Subscript Mapping
+// -------------------------------
+
+/**
+ * Mapping from normal digits (0–9) to their Unicode superscript equivalents.
+ * Example: "2" → "²".
+ */
 export const normalToSuperscript = {
   "0": "\u2070",
   "1": "\u00B9",
@@ -44,6 +78,10 @@ export const normalToSuperscript = {
   "9": "\u2079"
 };
 
+/**
+ * Reverse mapping from superscript digits back to normal digits.
+ * Example: "²" → "2".
+ */
 export const superscriptToNormal = {
   "\u2070": "0",
   "\u00B9": "1",
@@ -57,6 +95,10 @@ export const superscriptToNormal = {
   "\u2079": "9"
 };
 
+/**
+ * Mapping from normal digits (0–9) to their Unicode subscript equivalents.
+ * Example: "2" → "₂".
+ */
 export const normalToSubscript = {
   "0": "\u2080",
   "1": "\u2081",
@@ -70,6 +112,10 @@ export const normalToSubscript = {
   "9": "\u2089"
 };
 
+/**
+ * Reverse mapping from subscript digits back to normal digits.
+ * Example: "₂" → "2".
+ */
 export const subscriptToNormal = {
   "\u2080": "0",
   "\u2081": "1",
@@ -83,6 +129,13 @@ export const subscriptToNormal = {
   "\u2089": "9"
 };
 
+/**
+ * A Set of all superscript characters for quick membership checks.
+ */
 export const superscripts = new Set(Object.values(normalToSuperscript));
+
+/**
+ * A Set of all subscript characters for quick membership checks.
+ */
 export const subscripts = new Set(Object.values(normalToSubscript));
 
