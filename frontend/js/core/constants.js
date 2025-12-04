@@ -139,3 +139,7 @@ export const superscripts = new Set(Object.values(normalToSuperscript));
  */
 export const subscripts = new Set(Object.values(normalToSubscript));
 
+//string of superscript and subscript numbers
+export const superscriptChars = Array.from(superscripts).join('');
+export const subscriptChars = Array.from(subscripts).join('');
+

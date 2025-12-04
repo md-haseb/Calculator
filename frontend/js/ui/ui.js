@@ -2,7 +2,7 @@ import {validateForDisplay, validateForEvaluation} from '../core/validation.js';
 import {calculate, tokenize} from '../core/calculation.js';
 import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToken} from '../editor/insertion.js';
 import {operatorsSet, superscripts} from '../core/constants.js';
-import {caretShowWithFocus, caretIndex} from '../editor/caretAndArrow.js';
+import {caretShowWithFocus, caretIndex} from '../editor/caretHandler.js';
 
 /**
  * DOM elements
