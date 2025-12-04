@@ -1,6 +1,6 @@
-import { validateForDisplay, isOperator } from "./validation.js";
-import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "./constants.js";
-import { tokenize } from "./calculation.js";
+import { validateForDisplay, isOperator } from "../core/validation.js";
+import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "../core/constants.js";
+import { tokenize } from "../core/calculation.js";
 
 /**
  * Inserts a new value into the current input string at the caret position.

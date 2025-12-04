@@ -1,8 +1,8 @@
-import {validateForDisplay, validateForEvaluation} from './validation.js';
-import {calculate, tokenize} from './calculation.js';
-import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToken} from './insertion.js';
-import {operatorsSet, superscripts} from './constants.js';
-import {caretShowWithFocus, caretIndex} from './caretAndArrow.js';
+import {validateForDisplay, validateForEvaluation} from '../core/validation.js';
+import {calculate, tokenize} from '../core/calculation.js';
+import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToken} from '../editor/insertion.js';
+import {operatorsSet, superscripts} from '../core/constants.js';
+import {caretShowWithFocus, caretIndex} from '../editor/caretAndArrow.js';
 
 /**
  * DOM elements

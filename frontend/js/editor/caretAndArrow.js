@@ -1,4 +1,4 @@
-import {input} from './ui.js';
+import {input} from '../ui/ui.js';
 
 /**
  * Returns the current caret (cursor) index inside a contenteditable element.

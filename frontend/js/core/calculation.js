@@ -1,6 +1,6 @@
 import {operatorsSet, precedence, associativity, superscripts, subscripts, superscriptToNormal, subscriptToNormal, root, percent, factorial} from './constants.js';
 
-import {getMode} from './ui.js';
+import {getMode} from '../ui/ui.js';
 
 //array of superscript and subscript number
 const superscriptChars = Array.from(superscripts).join('');
