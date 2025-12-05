@@ -1,5 +1,7 @@
 import {operatorsSet, precedence, associativity, root, percent, factorial} from './constants.js';
 
+import { divide, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic } from './mathHelpers.js';
+
 import {getMode} from '../ui/ui.js';
 
 /**
@@ -51,7 +53,8 @@ export function toPostfix(tokens) {
 
           // 2. REGULAR OPERATORS / FUNCTIONS
           const isTopOperator =
-            operatorsSet.has(top) || functionsSet.has(top);
+          operatorsSet.has(top);
+            // operatorsSet.has(top) || functionsSet.has(top);
 
           if (!isTopOperator) break;
 

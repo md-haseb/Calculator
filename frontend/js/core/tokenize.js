@@ -1,4 +1,5 @@
-import { superscriptChars, subscriptChars } from "./constants.js";
+import { superscriptChars, subscriptChars, root } from "./constants.js";
+import { extractDegree } from "./mathHelpers.js";
 
 // //string of superscript and subscript numbers
 // const superscriptChars = Array.from(superscripts).join('');
@@ -14,7 +15,7 @@ export function tokenize(expr){
   const tokens = [];
 
   // ---- Precompile regexes (for performance & clarity) ----
-  const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln|C|P|□|π|e)` +                  // functions
+  const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln|C|P|□|π|e|×)` +                  // functions
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
   `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
   `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts

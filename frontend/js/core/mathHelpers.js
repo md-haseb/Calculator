@@ -6,7 +6,7 @@ import {superscriptToNormal, subscriptToNormal, superscriptChars} from './consta
  * @param {number} b 
  * @returns {number}
  */
-function divide(a, b){
+export function divide(a, b){
   const result = a / b;
   const tenDigitResult = Number(result.toFixed(10));
   return tenDigitResult;
@@ -17,7 +17,7 @@ function divide(a, b){
  * @param {string} token
  * @returns {boolean}
  */
-function isSuperscriptedNumber(token) {
+export function isSuperscriptedNumber(token) {
   return new RegExp(`\\d+[${superscriptChars}]+`).test(token);
 }
 
@@ -26,7 +26,7 @@ function isSuperscriptedNumber(token) {
  * @param {string} token
  * @returns {boolean}
  */
-function isSubscriptedNumber(token){
+export function isSubscriptedNumber(token){
   return new RegExp(`^[₀-₉]+$`).test(token);
 }
 
@@ -36,7 +36,7 @@ function isSubscriptedNumber(token){
  * @param {number} exp 
  * @returns {number}
  */
-function calculateExponent(base, exp){
+export function calculateExponent(base, exp){
   return base ** exp;
 }
 
@@ -45,7 +45,7 @@ function calculateExponent(base, exp){
  * @param {number} num
  * @returns {number}
  */
-function calculateFactorial(num){
+export function calculateFactorial(num){
   let result = 1;
   for(let i = 2; i <= num; i++){
     result *= i;
@@ -58,7 +58,7 @@ function calculateFactorial(num){
  * @param {number} angle
  * @returns {number}
  */
-function reduceRadian(angle){
+export function reduceRadian(angle){
   return angle - Math.round(angle / (2 * Math.PI)) * 2 * Math.PI;
 }
 
@@ -114,7 +114,7 @@ function calculateTan(degreeToRadian){
  * @param {'deg'|'rad'} mode 
  * @returns {number}
  */
-function calculateTrig(func, angle, mode){
+export function calculateTrig(func, angle, mode){
   let rad = mode === 'deg' ? (angle * Math.PI)/180 : reduceRadian(angle);
   if(func === 'sin') return calculateSin(rad);
   if(func === 'cos') return calculateCos(rad);
@@ -128,7 +128,7 @@ function calculateTrig(func, angle, mode){
  * @returns {number}
  * @throws Will throw error if invalid input.
  */
-function calculateLogarithm(base, num) {
+export function calculateLogarithm(base, num) {
   if (base <= 0 || base === 1 || num <= 0) {
     throw new Error("Invalid input: base must be > 0 and != 1, num must be > 0");
   }
@@ -159,7 +159,7 @@ function calculateLogarithm(base, num) {
  * @param {string} token 
  * @returns {{base: number, exponent: number}}
  */
-function parseSuperscripted(token) {
+export function parseSuperscripted(token) {
   const match = token.match(new RegExp(`(\\d+)([${superscriptChars}]+)`));
   const base = Number(match[1]);
   const exponentStr = match[2]
@@ -174,7 +174,7 @@ function parseSuperscripted(token) {
  * @param {string} token 
  * @returns {string}
  */
-function parseSubscripted(token){
+export function parseSubscripted(token){
   return token.split("").map(ch => subscriptToNormal[ch] || ch).join("");
 }
 
@@ -183,7 +183,7 @@ function parseSubscripted(token){
  * @param {string} val 
  * @returns {string}
  */
-function rootOfValue(val){
+export function rootOfValue(val){
   return val
   .split('')
   .map(ch => superscriptToNormal[ch])  // convert superscripts
@@ -196,7 +196,7 @@ function rootOfValue(val){
  * @param {string} t 
  * @returns {number}
  */
-function extractDegree(t) {
+export function extractDegree(t) {
   // Case 1: normal digits before √, e.g., "10√"
   if (/^\d+√$/.test(t)) {
     return parseInt(t.replace("√", ""), 10);
@@ -217,7 +217,7 @@ function extractDegree(t) {
  * @param {string} t
  * @returns {number}
 */
-function extractDegreeWithFallback(t) {
+export function extractDegreeWithFallback(t) {
   if (t === "√") return 2; // square root by default
   return extractDegree(t);
 }
@@ -229,7 +229,7 @@ function extractDegreeWithFallback(t) {
  * @param {number} rootOf 
  * @returns {number}
  */
-function customRootLogic(num, rootOf) {
+export function customRootLogic(num, rootOf) {
   if (num === 0 || num === 1) return num;
 
   let low = 0, high = Math.max(1, num), result = 0;

@@ -1,8 +1,7 @@
 import {validateForDisplay, validateForEvaluation} from '../core/validation.js';
-import {calculate, tokenize} from '../core/calculation.js';
-import {insertValue, replaceOperator, getTokenAtCaret, getPrevToken, getNextToken} from '../editor/insertion.js';
-import {operatorsSet, superscripts} from '../core/constants.js';
+import {insertValue, replaceOperator} from '../editor/insertion.js';
 import {caretShowWithFocus, caretIndex} from '../editor/caretHandler.js';
+import {handleAC, handleDelete, handleEqual, handleFunctions, handleInputClick, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
 
 /**
  * DOM elements
@@ -43,12 +42,14 @@ export function init() {
 
     const clickedRange = document.caretPositionFromPoint(e.clientX, e.clientY);
 
-    const tokens = tokenize(input.textContent);
-    const currentToken = getTokenAtCaret(tokens, clickedRange.offset);
+    // const tokens = tokenize(input.textContent);
+    // const currentToken = getTokenAtCaret(tokens, clickedRange.offset);
 
-    const finalOffset = currentToken?.type === 'function' 
-    ? currentToken.start 
-    : clickedRange.offset;
+    // const finalOffset = currentToken?.type === 'function' 
+    // ? currentToken.start 
+    // : clickedRange.offset;
+
+    const finalOffset = handleInputClick(input, clickedRange);
 
     caretShowWithFocus(input, finalOffset);
   });
@@ -66,9 +67,13 @@ export function init() {
       // Clear button (AC)
       // ----------------------------
       if (value === "AC") {
-        showMessage();
-        input.textContent = "";
-        caretShowWithFocus(input);
+        // showMessage();
+        // input.textContent = "";
+        // caretShowWithFocus(input);
+        const {newInput, newCaret, showMsg} = handleAC();
+        if(showMsg) showMessage();
+        input.textContent = newInput;
+        caretShowWithFocus(input, newCaret);
         return;
       }
 
@@ -76,13 +81,17 @@ export function init() {
       // Delete button
       // ----------------------------
       if (btn.classList.contains('delete_btn')) {
-        showMessage();
-        if(caretPosition == 0){
-          caretShowWithFocus(input, caretPosition);
-          return;
-        }
-        input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition - 1);
+        // showMessage();
+        // if(caretPosition == 0){
+        //   caretShowWithFocus(input, caretPosition);
+        //   return;
+        // }
+        // input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
+        // caretShowWithFocus(input, caretPosition - 1);
+        const {newInput, newCaret, showMsg} = handleDelete(input.textContent, caretPosition);
+        if (showMsg) showMessage();
+        input.textContent = newInput;
+        caretShowWithFocus(input, newCaret);
         return;
       }
 
@@ -97,38 +106,15 @@ export function init() {
       // ----------------------------
       // Insert functions (sin, cos, tan, log, ln)
       // ----------------------------
-      if(value === 'sin'){
-        showMessage();
-        input.textContent = input.textContent.slice(0, caretPosition)+ 'sin()' + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition + 4);
-        return;
-      }
-
-      if(value === 'cos'){
-        showMessage();
-        input.textContent = input.textContent.slice(0, caretPosition)+ 'cos()' + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition + 4);
-        return;
-      }
-
-      if(value === 'tan'){
-        showMessage();
-        input.textContent = input.textContent.slice(0, caretPosition)+ 'tan()' + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition + 4);
-        return;
-      }
-
-      if(value === 'log'){
-        showMessage();
-        input.textContent = input.textContent.slice(0, caretPosition)+ 'log()' + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition + 4);
-        return;
-      }
-
-      if(value === 'ln'){
-        showMessage();
-        input.textContent = input.textContent.slice(0, caretPosition)+ 'ln()' + input.textContent.slice(caretPosition);
-        caretShowWithFocus(input, caretPosition + 3);
+      if(['sin', 'cos', 'tan', 'log', 'ln'].includes(value)){
+        // showMessage();
+        // input.textContent = input.textContent.slice(0, caretPosition)+ 'sin()' + input.textContent.slice(caretPosition);
+        // caretShowWithFocus(input, caretPosition + 4);
+        
+        const {newInput, newCaret, showMsg} = handleFunctions(value, input.textContent, caretPosition);
+        if (showMsg) showMessage();
+        input.textContent = newInput;
+        caretShowWithFocus(input, newCaret);
         return;
       }
 
@@ -136,11 +122,20 @@ export function init() {
       // Equal button
       // ----------------------------
       if (value === "=") {
+        // const validated = validateForEvaluation(input.textContent, value);
+        // if (validated.allowed) {
+        //   const ModifiedInputText = changeMultiplySign();
+        //   input.textContent = calculate(ModifiedInputText);
+        //   caretShowWithFocus(input, input.textContent.length);
+        // }
+        // return;
         const validated = validateForEvaluation(input.textContent, value);
         if (validated.allowed) {
           const ModifiedInputText = changeMultiplySign();
-          input.textContent = calculate(ModifiedInputText);
-          caretShowWithFocus(input, input.textContent.length);
+          const {newInput, newCaret, showMsg} = handleEqual(ModifiedInputText);
+          if(showMsg) showMessage();
+          input.textContent = newInput;
+          caretShowWithFocus(input, newCaret);
         }
         return;
       }
@@ -149,41 +144,52 @@ export function init() {
       // Validate before insertion
       // ----------------------------
       const validated = validateForDisplay(input.textContent, value);
-      showMessage();
+      // showMessage();
 
       if (validated.allowed){
         // ------------------------
         // Arrow key logic
         // ------------------------
         if (btn.classList.contains('left_arrow')) {
-          const tokens = tokenize(input.textContent);
-          const currentToken = getTokenAtCaret(tokens, caretPosition);
-          const prevToken = getPrevToken(tokens, currentToken);
-          if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function' && prevToken?.value === 'ln'){
-            caretShowWithFocus(input, caretPosition - 3);
-            return;
-          }
-          if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
-            caretShowWithFocus(input, caretPosition - 4);
-            return;
-          }
-          caretShowWithFocus(input, caretPosition - 1);
+          const { newInput, newCaret, showMsg } = handleLeftArrow(input.textContent, caretPosition);
+          if (showMsg) showMessage();
+          input.textContent = newInput;
+          caretShowWithFocus(input, newCaret);
           return;
         }
+        //   const tokens = tokenize(input.textContent);
+        //   const currentToken = getTokenAtCaret(tokens, caretPosition);
+        //   const prevToken = getPrevToken(tokens, currentToken);
+        //   if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function' && prevToken?.value === 'ln'){
+        //     caretShowWithFocus(input, caretPosition - 3);
+        //     return;
+        //   }
+        //   if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
+        //     caretShowWithFocus(input, caretPosition - 4);
+        //     return;
+        //   }
+        //   caretShowWithFocus(input, caretPosition - 1);
+        //   return;
+        // }
         if (btn.classList.contains('right_arrow')) {
-          const tokens = tokenize(input.textContent);
-          const currentToken = getTokenAtCaret(tokens, caretPosition);
-          const nextToken = getNextToken(tokens, currentToken);
-          if(nextToken?.type === 'function' && nextToken?.value === 'ln'){
-            caretShowWithFocus(input, caretPosition + 3);
-            return;
-          }
-          if(nextToken?.type === 'function'){
-            caretShowWithFocus(input, caretPosition + 4);
-            return;
-          }
-          caretShowWithFocus(input, caretPosition + 1);
+          const { newInput, newCaret, showMsg } = handleRightArrow(input.textContent, caretPosition);
+          if (showMsg) showMessage();
+          input.textContent = newInput;
+          caretShowWithFocus(input, newCaret);
           return;
+          // const tokens = tokenize(input.textContent);
+          // const currentToken = getTokenAtCaret(tokens, caretPosition);
+          // const nextToken = getNextToken(tokens, currentToken);
+          // if(nextToken?.type === 'function' && nextToken?.value === 'ln'){
+          //   caretShowWithFocus(input, caretPosition + 3);
+          //   return;
+          // }
+          // if(nextToken?.type === 'function'){
+          //   caretShowWithFocus(input, caretPosition + 4);
+          //   return;
+          // }
+          // caretShowWithFocus(input, caretPosition + 1);
+          // return;
         }
 
         // ------------------------

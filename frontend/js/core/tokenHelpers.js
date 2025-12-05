@@ -5,7 +5,7 @@ import { tokenize } from './tokenize.js';
  * @param {string} currentInput - Input string to tokenize.
  * @returns {Array} Array of token objects.
  */
-function getTokens(currentInput){
+export function getTokens(currentInput){
   return tokenize(currentInput);
 }
 
@@ -52,7 +52,7 @@ export function getNextToken(tokens, token) {
  * @param {string} expr 
  * @returns {Array<string>}
  */
-function tokenValues(expr){
+export function tokenValues(expr){
   const tokenObjects = tokenize(expr);
   const initialFilter = tokenObjects.map(t => {
   // some tokens have .value, some have .raw
