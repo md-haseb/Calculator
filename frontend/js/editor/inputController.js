@@ -60,26 +60,14 @@ export function handleLeftArrow(inputText, caretPosition){
   const tokens = tokenize(inputText);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const prevToken = getPrevToken(tokens, currentToken);
-  if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function' && prevToken?.value === 'ln'){
-    // caretShowWithFocus(input, caretPosition - 3);
-    // return;
+  const prevTokenLength = prevToken.value.length;
+  if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
     return{
       newInput: inputText,
-      newCaret: caretPosition - 3,
+      newCaret: caretPosition - (prevTokenLength + 1),
       showMsg: true,
     }
   }
-  if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
-    // caretShowWithFocus(input, caretPosition - 4);
-    // return;
-    return{
-      newInput: inputText,
-      newCaret: caretPosition - 4,
-      showMsg: true,
-    }
-    }
-  // caretShowWithFocus(input, caretPosition - 1);
-  // return;
   return{
       newInput: inputText,
       newCaret: caretPosition - 1,
@@ -91,26 +79,14 @@ export function handleRightArrow(inputText, caretPosition){
   const tokens = tokenize(inputText);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const nextToken = getNextToken(tokens, currentToken);
-  if(nextToken?.type === 'function' && nextToken?.value === 'ln'){
-    // caretShowWithFocus(input, caretPosition + 3);
-    // return;
-    return{
-      newInput: inputText,
-      newCaret: caretPosition + 3,
-      showMsg: true,
-    }
-  }
+  const nextTokenLength = nextToken.value.length;
   if(nextToken?.type === 'function'){
-    // caretShowWithFocus(input, caretPosition + 4);
-    // return;
     return{
       newInput: inputText,
-      newCaret: caretPosition + 4,
+      newCaret: caretPosition + (nextTokenLength + 1),
       showMsg: true,
     }
   }
-  // caretShowWithFocus(input, caretPosition + 1);
-  // return;
   return{
       newInput: inputText,
       newCaret: caretPosition + 1,
