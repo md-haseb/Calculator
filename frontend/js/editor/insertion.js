@@ -15,6 +15,15 @@ import {getCaretAfterInsertion, showExponentBox, showExponent, showIndicesForLog
  */
 export function insertValue(currentInput, caretPosition, newValue) {
   const lastChar = currentInput[caretPosition - 1];
+
+  const tokens = getTokens(currentInput);
+  const currentToken = getTokenAtCaret(tokens, caretPosition);
+  const prevToken = getPrevToken(tokens, currentToken);
+  const nextToken = getNextToken(tokens, currentToken);
+  console.log(tokens);
+  console.log(currentToken);
+  console.log(prevToken);
+  console.log(nextToken);
   
   if (newValue.includes("□")) {
       return {
@@ -34,18 +43,11 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   if(newValue.includes('x2') || newValue.includes('x3')){
     return{
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
-  const tokens = getTokens(currentInput);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
-  const prevToken = getPrevToken(tokens, currentToken);
-  const nextToken = getNextToken(tokens, currentToken);
-  console.log(tokens);
-  console.log(currentToken);
-  console.log(prevToken);
-  console.log(nextToken);
+  
   // Case 2: filling exponent and indices (subscript)
   if(currentToken?.type === 'function' && nextToken?.type === 'box'){
     return {
@@ -56,7 +58,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   if ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && nextToken?.type === 'box') {
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
@@ -70,14 +72,14 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   if(currentToken?.type === 'box' && nextToken?.type === 'singleRoot'){ 
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
 
   if(currentToken?.type === 'box' && nextToken?.type === 'combAndPerm'){ 
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
@@ -85,21 +87,21 @@ export function insertValue(currentInput, caretPosition, newValue) {
   // Case 3: appending to superscript and subscript
   if (currentToken?.type === 'nthRoot' && caretPosition < currentToken?.end) {
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
 
   if (currentToken?.type === 'supAndSub') {
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
 
   if(currentToken?.type === 'superscriptValue'){
     return {
-      newInput: showExponent(currentInput, caretPosition, newValue),
+      newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }

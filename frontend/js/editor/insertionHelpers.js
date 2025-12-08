@@ -1,4 +1,5 @@
 import { normalToSuperscript, normalToSubscript } from "../core/constants.js";
+import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 
 /**
  * Computes new caret position after inserting a special value.
@@ -44,36 +45,44 @@ export function showExponentBox(currentInput, caretPos, newValue) {
  * @param {string} newValue - Value to insert as superscript.
  * @returns {string} Updated input string with superscript applied.
  */
-export function showExponent(currentInput, caretPos, newValue) {
-  const boxForExponent = currentInput[caretPos];
-  // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
+
+export function showExponent(currentInput, caretPos, newValue, currentToken, nextToken) {
   const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
   const filterOut_baseX = supers.split("").filter(v => v !== 'x');
-  console.log(supers);
-  console.log(filterOut_baseX);
-  if (boxForExponent === "□" && currentInput[caretPos + 1] === 'C') {
+
+  const boxForExponent = "□";
+  const boxLength = boxForExponent.length;
+  const combinationTemp = `C<sub>□</sub>`;
+  const combinationTempLength = combinationTemp.length;
+
+  if (currentToken?.value === "□" && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
     return (
-      currentInput.slice(0, caretPos) +
-      supers + `C<sub>□</sub>` + 
-      currentInput.slice(caretPos + 3)
+      replaceAt(currentInput, caretPos, combinationTempLength, supers + combinationTemp)
     );
   }
-  if (boxForExponent === "□") {
+  if (nextToken?.value === "□") {
     return (
-      currentInput.slice(0, caretPos) +
-      supers +
-      currentInput.slice(caretPos + 1)
+      replaceAt(currentInput, caretPos, boxLength, supers)
     );
   }
-  if (Object.values(normalToSuperscript).includes(currentInput[caretPos - 1])) {
+  if (currentToken?.type === 'superscriptValue' && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
     return (
-      currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos)
+      replaceAt(currentInput, caretPos, combinationTempLength, supers + combinationTemp)
+    );
+  }
+  if (currentToken?.type === 'superscriptValue') {
+    return (
+      replaceAt(currentInput, caretPos, 0, supers)
     );
   }
   if (newValue.includes('x2') || newValue.includes('x3')){
-    return currentInput.slice(0, caretPos) + filterOut_baseX + currentInput.slice(caretPos);
+    return replaceAt(currentInput, caretPos, 0, filterOut_baseX)
   }
-  return currentInput.slice(0, caretPos) + supers + currentInput.slice(caretPos);
+  return replaceAt(currentInput, caretPos, 0, supers);
+}
+
+function replaceAt(currentInput, caretPos, charsToRemove, insert) {
+  return currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
 }
 
 /**
