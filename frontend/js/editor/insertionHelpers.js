@@ -8,9 +8,21 @@ import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/to
  * @returns {number} Updated caret position.
  */
 export function getCaretAfterInsertion(newValue, caretPos) {
-  if (newValue.includes('log')) return caretPos + 3;
-  if (newValue.includes('√'))   return caretPos - 1;
-  return caretPos; // default for x, C, P, etc.
+  const valueWithoutExpBox = filterOut_expBox(newValue);
+
+  if (newValue.includes('log') && newValue.includes("□")) {
+    return caretPos + valueWithoutExpBox.length;
+  }
+  if (newValue.includes('√')) {
+    return caretPos - valueWithoutExpBox;
+  };
+  if (newValue.includes('x2') || newValue.includes('x3')) {
+    const valueWithoutX = filterOut_baseX(newValue);
+    return caretPos + valueWithoutX.length;
+  }
+  if ((newValue.includes('x') && newValue.includes('□')) || newValue.includes('C') || newValue.includes('P')) return caretPos;
+
+  return caretPos + 1; // default for x, C, P, etc.
 }
 
 /**
@@ -21,16 +33,16 @@ export function getCaretAfterInsertion(newValue, caretPos) {
  * @returns {string} Updated input string with exponent box inserted.
  */
 export function showExponentBox(currentInput, caretPos, newValue) {
-  if(newValue.includes('log')){
+  if (newValue.includes('log')) {
     return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos);
   }
-  if(newValue.includes('√')){
+  if (newValue.includes('√')) {
     return currentInput.slice(0, caretPos) + `<sup>□</sup>√` + currentInput.slice(caretPos);
   }
-  if(newValue.includes('C')){
+  if (newValue.includes('C')) {
     return currentInput.slice(0, caretPos) + `<sup>□</sup>C<sub>□</sub>` + currentInput.slice(caretPos);
   }
-  if(newValue.includes('P')){
+  if (newValue.includes('P')) {
     return currentInput.slice(0, caretPos) + `<sup>□</sup>P<sub>□</sub>` + currentInput.slice(caretPos);
   }
   return (
@@ -47,8 +59,8 @@ export function showExponentBox(currentInput, caretPos, newValue) {
  */
 
 export function showExponent(currentInput, caretPos, newValue, currentToken, nextToken) {
-  const supers = newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
-  const filterOut_baseX = supers.split("").filter(v => v !== 'x');
+  const supers = convertToSupers(newValue);
+  const valueWithoutX = filterOut_baseX(supers);
 
   const boxForExponent = "□";
   const boxLength = boxForExponent.length;
@@ -59,6 +71,11 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
     return (
       replaceAt(currentInput, caretPos, combinationTempLength, supers + combinationTemp)
     );
+  }
+  if (currentToken?.value === "□" && nextToken?.raw === "√"){
+    return (
+      replaceAt(currentInput, caretPos, boxLength, supers)
+  );
   }
   if (nextToken?.value === "□") {
     return (
@@ -76,15 +93,26 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
     );
   }
   if (newValue.includes('x2') || newValue.includes('x3')){
-    return replaceAt(currentInput, caretPos, 0, filterOut_baseX)
+    return replaceAt(currentInput, caretPos, 0, valueWithoutX)
   }
   return replaceAt(currentInput, caretPos, 0, supers);
 }
 
-function replaceAt(currentInput, caretPos, charsToRemove, insert) {
+export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
   return currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
 }
 
+function convertToSupers(newValue){
+  return newValue.split("").map((d) => normalToSuperscript[d] || d).join("");
+}
+
+function filterOut_baseX(value){
+  return value.split("").filter(v => v !== 'x');
+}
+
+function filterOut_expBox(value){
+  return value.split("").filter(v => v !== '□');
+}
 /**
  * Replaces a box or placeholder with subscripted indices (used for log or functions).
  * @param {string} currentInput - Current input string.
@@ -92,31 +120,25 @@ function replaceAt(currentInput, caretPos, charsToRemove, insert) {
  * @param {string} newValue - Value to insert as subscript.
  * @returns {string} Updated input string with subscript applied.
  */
-export function showIndicesForLog(currentInput, caretPos, newValue) {
-  // const lastChar = currentInput[caretPos];
-  const boxForIndices = currentInput[caretPos];
-  console.log(boxForIndices);
-  // const filterOut_baseX = newValue.split("").map(v => normalToSuperscript[v]);
-  const subs = newValue.split("").map((d) => normalToSubscript[d] || d).join("");
-  // const filterOut_baseX = supers.split("").filter(v => v !== 'x');
-  // console.log(supers);
-  // console.log(filterOut_baseX);
+export function showIndices(currentInput, caretPos, newValue, currentToken, nextToken) {
+  const subs = convertToSubs(newValue);
 
-  if (boxForIndices === "□") {
-    console.log(currentInput[caretPos + 1]);
+  const boxForExponent = "□";
+  const boxLength = boxForExponent.length;
+
+  if (nextToken?.value === "□") {
     return (
-      currentInput.slice(0, caretPos) +
-      subs +
-      currentInput.slice(caretPos + 1)
+      replaceAt(currentInput, caretPos, boxLength, subs)
     );
   }
-  if (Object.values(normalToSubscript).includes(currentInput[caretPos - 1])) {
+  if (currentToken?.type === 'subscriptValue') {
     return (
-      currentInput.slice(0, caretPos) + subs + currentInput.slice(caretPos)
+      replaceAt(currentInput, caretPos, 0, subs)
     );
   }
-  // if (newValue.includes('x2') || newValue.includes('x3')){
-  //   return currentInput.slice(0, caretPos) + filterOut_baseX + currentInput.slice(caretPos);
-  // }
-  return currentInput.slice(0, caretPos) + subs + currentInput.slice(caretPos);
+  return replaceAt(currentInput, caretPos, 0, subs);
+}
+
+function convertToSubs(newValue){
+  return newValue.split("").map((d) => normalToSubscript[d] || d).join("");
 }

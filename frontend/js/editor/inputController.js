@@ -3,6 +3,7 @@ import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { validateForDisplay, validateForEvaluation } from "../core/validation.js";
 import { calculate } from "../core/calculation.js";
+import { replaceAt } from "../editor/insertionHelpers.js";
 
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
@@ -79,7 +80,19 @@ export function handleRightArrow(inputText, caretPosition){
   const tokens = tokenize(inputText);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const nextToken = getNextToken(tokens, currentToken);
-  const nextTokenLength = nextToken.value.length;
+  const nextTokenLength = nextToken?.value.length;
+
+  const boxForExponent = "□";
+  const boxLength = boxForExponent.length;
+  const insertTemplate = `C<sub>□</sub>`;
+
+  if(nextToken?.type === "combAndPerm"){
+    return{
+      newInput: replaceAt(inputText, caretPosition, nextTokenLength + boxLength, insertTemplate),
+      newCaret: caretPosition + 1,
+      showMsg: true,
+    }
+  }
   if(nextToken?.type === 'function'){
     return{
       newInput: inputText,

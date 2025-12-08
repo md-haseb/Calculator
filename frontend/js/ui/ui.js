@@ -153,7 +153,7 @@ export function init() {
         if (btn.classList.contains('left_arrow')) {
           const { newInput, newCaret, showMsg } = handleLeftArrow(input.textContent, caretPosition);
           if (showMsg) showMessage();
-          input.textContent = newInput;
+          input.innerHTML = newInput;
           caretShowWithFocus(input, newCaret);
           return;
         }
@@ -174,7 +174,7 @@ export function init() {
         if (btn.classList.contains('right_arrow')) {
           const { newInput, newCaret, showMsg } = handleRightArrow(input.textContent, caretPosition);
           if (showMsg) showMessage();
-          input.textContent = newInput;
+          input.innerHTML = newInput;
           caretShowWithFocus(input, newCaret);
           return;
           // const tokens = tokenize(input.textContent);

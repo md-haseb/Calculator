@@ -1,5 +1,5 @@
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
-import {getCaretAfterInsertion, showExponentBox, showExponent, showIndicesForLog} from "./insertionHelpers.js";
+import {getCaretAfterInsertion, showExponentBox, showExponent, showIndices} from "./insertionHelpers.js";
 
 // import { validateForDisplay, isOperator } from "../core/validation.js";
 // import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "../core/constants.js";
@@ -44,43 +44,44 @@ export function insertValue(currentInput, caretPosition, newValue) {
   if(newValue.includes('x2') || newValue.includes('x3')){
     return{
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      // newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
   
   // Case 2: filling exponent and indices (subscript)
   if(currentToken?.type === 'function' && nextToken?.type === 'box'){
     return {
-      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
+      newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && nextToken?.type === 'box') {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if(currentToken?.type === 'combAndPerm' && nextToken?.type === 'box'){
     return {
-      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
-      newCaret: caretPosition + 1,
+      newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if(currentToken?.type === 'box' && nextToken?.type === 'singleRoot'){ 
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if(currentToken?.type === 'box' && nextToken?.type === 'combAndPerm'){ 
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
@@ -88,7 +89,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
   if (currentToken?.type === 'nthRoot' && caretPosition < currentToken?.end) {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
@@ -108,7 +109,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   if(currentToken?.type === 'subscriptValue'){
     return {
-      newInput: showIndicesForLog(currentInput, caretPosition, newValue),
+      newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
       newCaret: caretPosition + 1,
     };
   }
@@ -264,7 +265,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
 //  * @param {string} newValue - Value to insert as subscript.
 //  * @returns {string} Updated input string with subscript applied.
 //  */
-// function showIndicesForLog(currentInput, caretPos, newValue) {
+// function showIndices(currentInput, caretPos, newValue) {
 //   // const lastChar = currentInput[caretPos];
 //   const boxForIndices = currentInput[caretPos];
 //   console.log(boxForIndices);
