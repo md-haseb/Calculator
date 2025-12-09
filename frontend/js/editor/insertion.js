@@ -96,21 +96,21 @@ export function insertValue(currentInput, caretPosition, newValue) {
   if (currentToken?.type === 'supAndSub') {
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if(currentToken?.type === 'superscriptValue'){
     return {
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
   if(currentToken?.type === 'subscriptValue'){
     return {
       newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
-      newCaret: caretPosition + 1,
+      newCaret: getCaretAfterInsertion(newValue, caretPosition),
     };
   }
 
@@ -123,7 +123,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
         currentInput.slice(0, caretPosition) +
         "()" +
         currentInput.slice(caretPosition),
-      newCaret: caretPosition + 1, // caret is inside the brackets
+      newCaret: getCaretAfterInsertion(newValue, caretPosition), // caret is inside the brackets
     };
   }
 

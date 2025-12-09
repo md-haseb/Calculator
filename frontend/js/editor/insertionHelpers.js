@@ -9,20 +9,21 @@ import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/to
  */
 export function getCaretAfterInsertion(newValue, caretPos) {
   const valueWithoutExpBox = filterOut_expBox(newValue);
+  const stepForward = 1;
 
   if (newValue.includes('log') && newValue.includes("□")) {
     return caretPos + valueWithoutExpBox.length;
   }
   if (newValue.includes('√')) {
-    return caretPos - valueWithoutExpBox;
-  };
+    return caretPos - valueWithoutExpBox.length;
+  }
   if (newValue.includes('x2') || newValue.includes('x3')) {
     const valueWithoutX = filterOut_baseX(newValue);
     return caretPos + valueWithoutX.length;
   }
   if ((newValue.includes('x') && newValue.includes('□')) || newValue.includes('C') || newValue.includes('P')) return caretPos;
 
-  return caretPos + 1; // default for x, C, P, etc.
+  return caretPos + stepForward; // default for x, C, P, etc.
 }
 
 /**
