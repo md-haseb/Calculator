@@ -1,5 +1,6 @@
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {getCaretAfterInsertion, showExponentBox, showExponent, showIndices} from "./insertionHelpers.js";
+import {classifyButtonValue} from '../core/classifyBtn.js';
 
 // import { validateForDisplay, isOperator } from "../core/validation.js";
 // import { normalToSuperscript, normalToSubscript, superscripts, superscriptToNormal } from "../core/constants.js";
@@ -14,7 +15,10 @@ import {getCaretAfterInsertion, showExponentBox, showExponent, showIndices} from
  * @returns {{newInput: string, newCaret: number}} Updated input string and new caret position.
  */
 export function insertValue(currentInput, caretPosition, newValue) {
-  const lastChar = currentInput[caretPosition - 1];
+  // const lastChar = currentInput[caretPosition - 1];
+  const clickedValue = classifyButtonValue(newValue);
+  const typesWithBox = ['logWithBox', 'baseWithBox', 'boxWithRoot', 'combOrPerm'];
+
 
   const tokens = getTokens(currentInput);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
@@ -25,23 +29,23 @@ export function insertValue(currentInput, caretPosition, newValue) {
   console.log(prevToken);
   console.log(nextToken);
   
-  if (newValue.includes("□")) {
+  if (typesWithBox.includes(clickedValue.type)) {
       return {
-        newInput: showExponentBox(currentInput, caretPosition, newValue),
+        newInput: showExponentBox(currentInput, caretPosition, clickedValue.value),
         // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: getCaretAfterInsertion(newValue, caretPosition),
+        newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition),
       };
   }
 
-  if(newValue.includes("n") && newValue.includes("r")){
-      return {
-        newInput: showExponentBox(currentInput, caretPosition, newValue),
-        // newCaret: caretPosition + 1, // caret lands inside □
-        newCaret: getCaretAfterInsertion(newValue, caretPosition),
-      };
-  }
+  // if(newValue.includes("n") && newValue.includes("r")){
+  //     return {
+  //       newInput: showExponentBox(currentInput, caretPosition, newValue),
+  //       // newCaret: caretPosition + 1, // caret lands inside □
+  //       newCaret: getCaretAfterInsertion(newValue, caretPosition),
+  //     };
+  // }
 
-  if(newValue.includes('x2') || newValue.includes('x3')){
+  if(clickedValue.type === 'baseWithSupers'){
     return{
       newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
       // newCaret: caretPosition + 1,
@@ -117,7 +121,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
 
   // Case 4: bracket handling → place caret inside
-  if (newValue === "()") {
+  if (clickedValue.type === 'parentheses') {
     return {
       newInput:
         currentInput.slice(0, caretPosition) +
@@ -131,9 +135,9 @@ export function insertValue(currentInput, caretPosition, newValue) {
   return {
     newInput:
       currentInput.slice(0, caretPosition) +
-      newValue +
+      clickedValue.value +
       currentInput.slice(caretPosition),
-    newCaret: caretPosition + newValue.length,
+    newCaret: caretPosition + clickedValue.value.length,
   };
 }
 

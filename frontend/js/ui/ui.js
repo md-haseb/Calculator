@@ -1,4 +1,5 @@
 import {validateForDisplay, validateForEvaluation} from '../core/validation.js';
+import {classifyButton} from '../core/classifyBtn.js';
 import {insertValue, replaceOperator} from '../editor/insertion.js';
 import {caretShowWithFocus, caretIndex} from '../editor/caretHandler.js';
 import {handleAC, handleDelete, handleEqual, handleFunctions, handleInputClick, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
@@ -41,16 +42,7 @@ export function init() {
     e.preventDefault();
 
     const clickedRange = document.caretPositionFromPoint(e.clientX, e.clientY);
-
-    // const tokens = tokenize(input.textContent);
-    // const currentToken = getTokenAtCaret(tokens, clickedRange.offset);
-
-    // const finalOffset = currentToken?.type === 'function' 
-    // ? currentToken.start 
-    // : clickedRange.offset;
-
     const finalOffset = handleInputClick(input, clickedRange);
-
     caretShowWithFocus(input, finalOffset);
   });
 
@@ -59,17 +51,15 @@ export function init() {
    */
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const value = btn.textContent;
+      const clickedBtn = classifyButton(btn);
       const caretPosition = caretIndex(input);
-      const lastChar = input.textContent[caretPosition - 1];
+      // const lastChar = input.textContent[caretPosition - 1];
 
       // ----------------------------
       // Clear button (AC)
       // ----------------------------
-      if (value === "AC") {
-        // showMessage();
-        // input.textContent = "";
-        // caretShowWithFocus(input);
+      if (clickedBtn.type === 'ac') {
+        console.log(clickedBtn.type, clickedBtn.value);
         const {newInput, newCaret, showMsg} = handleAC();
         if(showMsg) showMessage();
         input.textContent = newInput;
@@ -80,14 +70,8 @@ export function init() {
       // ----------------------------
       // Delete button
       // ----------------------------
-      if (btn.classList.contains('delete_btn')) {
-        // showMessage();
-        // if(caretPosition == 0){
-        //   caretShowWithFocus(input, caretPosition);
-        //   return;
-        // }
-        // input.textContent = input.textContent.slice(0, caretPosition - 1) + input.textContent.slice(caretPosition);
-        // caretShowWithFocus(input, caretPosition - 1);
+      if (clickedBtn.type === 'delete') {
+        console.log(clickedBtn.type, clickedBtn.value);
         const {newInput, newCaret, showMsg} = handleDelete(input.textContent, caretPosition);
         if (showMsg) showMessage();
         input.textContent = newInput;
@@ -98,20 +82,18 @@ export function init() {
       // ----------------------------
       // Angle mode buttons (deg/rad)
       // ----------------------------
-      if(value === 'rad' || value === 'deg'){
-        setMode(value);
+      if(clickedBtn.type === 'radian' || clickedBtn.type === 'degree'){
+        console.log(clickedBtn.type, clickedBtn.value);
+        setMode(clickedBtn.value);
         return;
       }
 
       // ----------------------------
       // Insert functions (sin, cos, tan, log, ln)
       // ----------------------------
-      if(['sin', 'cos', 'tan', 'log', 'ln'].includes(value)){
-        // showMessage();
-        // input.textContent = input.textContent.slice(0, caretPosition)+ 'sin()' + input.textContent.slice(caretPosition);
-        // caretShowWithFocus(input, caretPosition + 4);
-        
-        const {newInput, newCaret, showMsg} = handleFunctions(value, input.textContent, caretPosition);
+      if(clickedBtn.type === 'function'){
+        console.log(clickedBtn.type, clickedBtn.value);
+        const {newInput, newCaret, showMsg} = handleFunctions(clickedBtn.value, input.textContent, caretPosition);
         if (showMsg) showMessage();
         input.textContent = newInput;
         caretShowWithFocus(input, newCaret);
@@ -121,15 +103,9 @@ export function init() {
       // ----------------------------
       // Equal button
       // ----------------------------
-      if (value === "=") {
-        // const validated = validateForEvaluation(input.textContent, value);
-        // if (validated.allowed) {
-        //   const ModifiedInputText = changeMultiplySign();
-        //   input.textContent = calculate(ModifiedInputText);
-        //   caretShowWithFocus(input, input.textContent.length);
-        // }
-        // return;
-        const validated = validateForEvaluation(input.textContent, value);
+      if (clickedBtn.type === 'equal') {
+        console.log(clickedBtn.type, clickedBtn.value);
+        const validated = validateForEvaluation(input.textContent, clickedBtn.value);
         if (validated.allowed) {
           const ModifiedInputText = changeMultiplySign();
           const {newInput, newCaret, showMsg} = handleEqual(ModifiedInputText);
@@ -140,65 +116,42 @@ export function init() {
         return;
       }
 
-      // ----------------------------
-      // Validate before insertion
-      // ----------------------------
-      const validated = validateForDisplay(input.textContent, value);
-      // showMessage();
+      // ------------------------
+      // Arrow key logic
+      // ------------------------
 
-      if (validated.allowed){
-        // ------------------------
-        // Arrow key logic
-        // ------------------------
-        if (btn.classList.contains('left_arrow')) {
+      if (clickedBtn.type === 'leftArrow') {
+          console.log(clickedBtn.type, clickedBtn.value);
           const { newInput, newCaret, showMsg } = handleLeftArrow(input.textContent, caretPosition);
           if (showMsg) showMessage();
           input.innerHTML = newInput;
           caretShowWithFocus(input, newCaret);
           return;
-        }
-        //   const tokens = tokenize(input.textContent);
-        //   const currentToken = getTokenAtCaret(tokens, caretPosition);
-        //   const prevToken = getPrevToken(tokens, currentToken);
-        //   if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function' && prevToken?.value === 'ln'){
-        //     caretShowWithFocus(input, caretPosition - 3);
-        //     return;
-        //   }
-        //   if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
-        //     caretShowWithFocus(input, caretPosition - 4);
-        //     return;
-        //   }
-        //   caretShowWithFocus(input, caretPosition - 1);
-        //   return;
-        // }
-        if (btn.classList.contains('right_arrow')) {
+      }
+
+      if (clickedBtn.type === 'rightArrow') {
+          console.log(clickedBtn.type, clickedBtn.value);
           const { newInput, newCaret, showMsg } = handleRightArrow(input.textContent, caretPosition);
           if (showMsg) showMessage();
           input.innerHTML = newInput;
           caretShowWithFocus(input, newCaret);
           return;
-          // const tokens = tokenize(input.textContent);
-          // const currentToken = getTokenAtCaret(tokens, caretPosition);
-          // const nextToken = getNextToken(tokens, currentToken);
-          // if(nextToken?.type === 'function' && nextToken?.value === 'ln'){
-          //   caretShowWithFocus(input, caretPosition + 3);
-          //   return;
-          // }
-          // if(nextToken?.type === 'function'){
-          //   caretShowWithFocus(input, caretPosition + 4);
-          //   return;
-          // }
-          // caretShowWithFocus(input, caretPosition + 1);
-          // return;
-        }
+      }
 
+      // ----------------------------
+      // Validate before insertion
+      // ----------------------------
+      const validated = validateForDisplay(input.textContent, clickedBtn.value);
+      // showMessage();
+
+      if (validated.allowed){
         // ------------------------
         // Universal insert logic
         // ------------------------
         const { newInput, newCaret } = insertValue(
           input.textContent,
           caretPosition,
-          value
+          clickedBtn.value
         );
         input.innerHTML = newInput;
         caretShowWithFocus(input, newCaret);
@@ -210,7 +163,7 @@ export function init() {
       // ----------------------------
       if (validated.action === "replace") {
         showMessage();
-        input.textContent = replaceOperator(input.textContent, value);
+        input.textContent = replaceOperator(input.textContent, clickedBtn.value);
         caretShowWithFocus(input, input.textContent.length);
         return;
       }

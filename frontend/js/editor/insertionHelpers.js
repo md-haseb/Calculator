@@ -65,12 +65,12 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
 
   const boxForExponent = "□";
   const boxLength = boxForExponent.length;
-  const combinationTemp = `C<sub>□</sub>`;
-  const combinationTempLength = combinationTemp.length;
+  const combPermTemplate = makeCombPermTemplate(nextToken?.value);
+  const combPermTemplateLen = combPermTemplate.length;
 
   if (currentToken?.value === "□" && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
     return (
-      replaceAt(currentInput, caretPos, combinationTempLength, supers + combinationTemp)
+      replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate)
     );
   }
   if (currentToken?.value === "□" && nextToken?.raw === "√"){
@@ -85,7 +85,7 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
   }
   if (currentToken?.type === 'superscriptValue' && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
     return (
-      replaceAt(currentInput, caretPos, combinationTempLength, supers + combinationTemp)
+      replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate)
     );
   }
   if (currentToken?.type === 'superscriptValue') {
@@ -113,6 +113,10 @@ function filterOut_baseX(value){
 
 function filterOut_expBox(value){
   return value.split("").filter(v => v !== '□');
+}
+
+function makeCombPermTemplate(token){
+  return `${token}<sub>□</sub>`;
 }
 /**
  * Replaces a box or placeholder with subscripted indices (used for log or functions).
