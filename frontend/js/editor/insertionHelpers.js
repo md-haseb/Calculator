@@ -9,21 +9,21 @@ import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/to
  */
 export function getCaretAfterInsertion(newValue, caretPos) {
   const valueWithoutExpBox = filterOut_expBox(newValue);
-  const stepForward = 1;
+  const stepForward = newValue.length;
 
   if (newValue.includes('log') && newValue.includes("□")) {
     return caretPos + valueWithoutExpBox.length;
   }
-  if (newValue.includes('√')) {
-    return caretPos - valueWithoutExpBox.length;
-  }
+  // if (newValue.includes('√')) {
+  //   return caretPos - valueWithoutExpBox.length;
+  // }
   if (newValue.includes('x2') || newValue.includes('x3')) {
     const valueWithoutX = filterOut_baseX(newValue);
     return caretPos + valueWithoutX.length;
   }
   if ((newValue.includes('x') && newValue.includes('□')) || newValue.includes('C') || newValue.includes('P')) return caretPos;
 
-  return caretPos + stepForward; // default for x, C, P, etc.
+  return caretPos + stepForward; // default for single insert
 }
 
 /**
@@ -101,6 +101,10 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
 
 export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
   return currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
+}
+
+export function insertAt(currentInput, caretPos, newValue) {
+  return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
 }
 
 function convertToSupers(newValue){

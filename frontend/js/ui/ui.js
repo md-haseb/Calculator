@@ -163,8 +163,13 @@ export function init() {
       // ----------------------------
       if (validated.action === "replace") {
         showMessage();
-        input.textContent = replaceOperator(input.textContent, clickedBtn.value);
-        caretShowWithFocus(input, input.textContent.length);
+        const { newInput, newCaret } = replaceOperator(
+          input.textContent,
+          caretPosition,
+          clickedBtn.value
+        );
+        input.innerHTML = newInput;
+        caretShowWithFocus(input, newCaret);
         return;
       }
 
