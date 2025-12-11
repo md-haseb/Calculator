@@ -9,26 +9,37 @@ import {classifyButtonValue} from '../core/classifyBtn.js';
  * @returns {number} Updated caret position.
  */
 export function getCaretAfterInsertion(newValue, caretPos) {
-  const classifiedValue = classifyButtonValue(newValue);
-  const value = classifiedValue.value;
+  const {type, value} = classifyButtonValue(newValue);
+  let caretMovement;
+  let cleaned;
   const stepForward = value.length;
   const caretInsideParens = 1;
 
-  if (classifiedValue.type === 'logWithBox') {
-    const cleaned = filterOut_expBox(value);
-    return caretPos + cleaned.length;
+  switch (type) {
+    case 'logWithBox':
+      cleaned = filterOut_expBox(value);
+      caretMovement = cleaned.length;
+      break;
+
+    case 'baseWithSupers':
+      cleaned = filterOut_baseX(value);
+      caretMovement = cleaned.length;
+      break;
+
+    case 'parentheses':
+      caretMovement = caretInsideParens;
+      break;
+
+    case 'baseWithBox':
+    case 'combOrPerm':
+      caretMovement = 0;
+      break;
+
+    default:
+      caretMovement = stepForward; // default for single insert
   }
-  if (classifiedValue.type === 'baseWithSupers') {
-    const cleaned = filterOut_baseX(value);
-    return caretPos + cleaned.length;
-  }
-  if (classifiedValue.type === 'parentheses') {
-    return caretPos + caretInsideParens;
-  }
-  if (classifiedValue.type === 'baseWithBox' || classifiedValue.type === 'combOrPerm') {
-    return caretPos;
-  }
-  return caretPos + stepForward; // default for single insert
+
+  return caretPos + caretMovement; 
 }
 
 /**
@@ -39,21 +50,25 @@ export function getCaretAfterInsertion(newValue, caretPos) {
  * @returns {string} Updated input string with exponent box inserted.
  */
 export function showExponentBox(currentInput, caretPos, newValue) {
-  if (newValue.includes('log')) {
-    return currentInput.slice(0, caretPos) + `log<sub>□</sub>()` + currentInput.slice(caretPos);
+  const {type, value} = classifyButtonValue(newValue);
+  let valueToInsert;
+
+  switch (type) {
+    case 'logWithBox':
+      valueToInsert = `log<sub>□</sub>()`;
+      break;
+    case 'boxWithRoot':
+      valueToInsert = `<sup>□</sup>√`;
+      break;
+    case 'combOrPerm':
+      const combOrPermSymbol = filterOut_nAndr(value);
+      valueToInsert = `<sup>□</sup>${combOrPermSymbol}<sub>□</sub>`;
+      break;
+    default:
+      valueToInsert = `<sup>□</sup>`;
   }
-  if (newValue.includes('√')) {
-    return currentInput.slice(0, caretPos) + `<sup>□</sup>√` + currentInput.slice(caretPos);
-  }
-  if (newValue.includes('C')) {
-    return currentInput.slice(0, caretPos) + `<sup>□</sup>C<sub>□</sub>` + currentInput.slice(caretPos);
-  }
-  if (newValue.includes('P')) {
-    return currentInput.slice(0, caretPos) + `<sup>□</sup>P<sub>□</sub>` + currentInput.slice(caretPos);
-  }
-  return (
-    currentInput.slice(0, caretPos) + `<sup>□</sup>` + currentInput.slice(caretPos)
-  );
+
+  return insertAt(currentInput, caretPos, valueToInsert);
 }
 
 /**
@@ -65,40 +80,32 @@ export function showExponentBox(currentInput, caretPos, newValue) {
  */
 
 export function showExponent(currentInput, caretPos, newValue, currentToken, nextToken) {
-  const supers = convertToSupers(newValue);
+  const {type, value} = classifyButtonValue(newValue);
+  const supers = convertToSupers(value);
   const valueWithoutX = filterOut_baseX(supers);
 
   const boxForExponent = "□";
   const boxLength = boxForExponent.length;
+  const nextIsCombOrPerm = nextToken?.value === 'C' || nextToken?.value === 'P';
   const combPermTemplate = makeCombPermTemplate(nextToken?.value);
   const combPermTemplateLen = combPermTemplate.length;
 
-  if (currentToken?.value === "□" && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
-    return (
-      replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate)
-    );
+  if (currentToken?.value === "□" && nextIsCombOrPerm) {
+    return replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate);
   }
   if (currentToken?.value === "□" && nextToken?.raw === "√"){
-    return (
-      replaceAt(currentInput, caretPos, boxLength, supers)
-  );
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === "□") {
-    return (
-      replaceAt(currentInput, caretPos, boxLength, supers)
-    );
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
-  if (currentToken?.type === 'superscriptValue' && (nextToken?.value === 'C' || nextToken?.value === 'P')) {
-    return (
-      replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate)
-    );
+  if (currentToken?.type === 'superscriptValue' && nextIsCombOrPerm) {
+    return replaceAt(currentInput, caretPos, combPermTemplateLen, supers + combPermTemplate)
   }
   if (currentToken?.type === 'superscriptValue') {
-    return (
-      replaceAt(currentInput, caretPos, 0, supers)
-    );
+    return replaceAt(currentInput, caretPos, 0, supers)
   }
-  if (newValue.includes('x2') || newValue.includes('x3')){
+  if (type === 'baseWithSupers'){
     return replaceAt(currentInput, caretPos, 0, valueWithoutX)
   }
   return replaceAt(currentInput, caretPos, 0, supers);
@@ -124,6 +131,10 @@ function filterOut_expBox(value){
   return value.split("").filter(v => v !== '□');
 }
 
+function filterOut_nAndr(value){
+  return value.split("").filter(v => (v !== 'n' && v!== 'r')).join('');
+}
+
 function makeCombPermTemplate(token){
   return `${token}<sub>□</sub>`;
 }
@@ -140,16 +151,11 @@ export function showIndices(currentInput, caretPos, newValue, currentToken, next
   const boxForExponent = "□";
   const boxLength = boxForExponent.length;
 
+  // Replace box with subscript if next token is a box
   if (nextToken?.value === "□") {
-    return (
-      replaceAt(currentInput, caretPos, boxLength, subs)
-    );
+    return replaceAt(currentInput, caretPos, boxLength, subs);
   }
-  if (currentToken?.type === 'subscriptValue') {
-    return (
-      replaceAt(currentInput, caretPos, 0, subs)
-    );
-  }
+  // Default: insert subscript at caret
   return replaceAt(currentInput, caretPos, 0, subs);
 }
 
