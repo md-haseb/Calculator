@@ -26,8 +26,8 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   function applyExponentBox(value){
     return {
-      newInput: showExponentBox(currentInput, caretPosition, clickedValue.value),
-      newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition),
+      newInput: showExponentBox(currentInput, caretPosition, value),
+      newCaret: getCaretAfterInsertion(value, caretPosition),
     };
   }
 

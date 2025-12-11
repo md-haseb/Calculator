@@ -1,5 +1,6 @@
 import { normalToSuperscript, normalToSubscript } from "../core/constants.js";
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
+import {classifyButtonValue} from '../core/classifyBtn.js';
 
 /**
  * Computes new caret position after inserting a special value.
@@ -8,21 +9,25 @@ import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/to
  * @returns {number} Updated caret position.
  */
 export function getCaretAfterInsertion(newValue, caretPos) {
-  const valueWithoutExpBox = filterOut_expBox(newValue);
-  const stepForward = newValue.length;
+  const classifiedValue = classifyButtonValue(newValue);
+  const value = classifiedValue.value;
+  const stepForward = value.length;
+  const caretInsideParens = 1;
 
-  if (newValue.includes('log') && newValue.includes("□")) {
-    return caretPos + valueWithoutExpBox.length;
+  if (classifiedValue.type === 'logWithBox') {
+    const cleaned = filterOut_expBox(value);
+    return caretPos + cleaned.length;
   }
-  // if (newValue.includes('√')) {
-  //   return caretPos - valueWithoutExpBox.length;
-  // }
-  if (newValue.includes('x2') || newValue.includes('x3')) {
-    const valueWithoutX = filterOut_baseX(newValue);
-    return caretPos + valueWithoutX.length;
+  if (classifiedValue.type === 'baseWithSupers') {
+    const cleaned = filterOut_baseX(value);
+    return caretPos + cleaned.length;
   }
-  if ((newValue.includes('x') && newValue.includes('□')) || newValue.includes('C') || newValue.includes('P')) return caretPos;
-
+  if (classifiedValue.type === 'parentheses') {
+    return caretPos + caretInsideParens;
+  }
+  if (classifiedValue.type === 'baseWithBox' || classifiedValue.type === 'combOrPerm') {
+    return caretPos;
+  }
   return caretPos + stepForward; // default for single insert
 }
 
