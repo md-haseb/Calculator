@@ -3,6 +3,7 @@ import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { validateForDisplay, validateForEvaluation } from "../core/validation.js";
 import { calculate } from "../core/calculation.js";
+import { insertAt } from "../editor/insertionHelpers.js";
 
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
@@ -24,6 +25,11 @@ export function handleAC(){
 }
 
 export function handleDelete(inputText, caretPosition){
+  const tokens = tokenize(inputText);
+  const currentToken = getTokenAtCaret(tokens, caretPosition);
+  const prevToken = getPrevToken(tokens, currentToken);
+  const nextToken = getNextToken(tokens, currentToken);
+
   if(caretPosition === 0){
     return{
       newInput: inputText,
@@ -31,18 +37,25 @@ export function handleDelete(inputText, caretPosition){
       showMsg: true,
     }
   }
-  return{
-    newInput: inputText.slice(0, caretPosition - 1) + inputText.slice(caretPosition),
-    newCaret: caretPosition - 1,
-    showMsg: true,
+
+  if(currentToken.type === 'parenClose'){
+    return deleteForParens(inputText, caretPosition, currentToken);
   }
+
+  if(currentToken.type === 'parenOpen' && prevToken.type === 'function'){
+    return deleteForFunction(inputText, caretPosition, prevToken, nextToken);
+  }
+
+  return deleteBeforeCaret(inputText, caretPosition);
 }
 
 export function handleFunctions(value, inputText, caretPosition){
   const funcLength = value.length;
+  const insertValue = `${value}()`;
+  const parenOpenLen = 1;
   return{
-    newInput: inputText.slice(0, caretPosition)+ `${value}()` + inputText.slice(caretPosition), 
-    newCaret: caretPosition + funcLength + 1,
+    newInput: insertAt(inputText, caretPosition, insertValue),
+    newCaret: caretPosition + funcLength + parenOpenLen,
     showMsg: true,
   }
 }
@@ -60,17 +73,23 @@ export function handleLeftArrow(inputText, caretPosition){
   const tokens = tokenize(inputText);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const prevToken = getPrevToken(tokens, currentToken);
+
+  const currentTokenLen = currentToken.value.length;
   const prevTokenLength = prevToken?.value.length;
+  const charsToRemove = prevTokenLength + currentTokenLen;
+
+  const moveLeft = 1;
+
   if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
     return{
       newInput: inputText,
-      newCaret: caretPosition - (prevTokenLength + 1),
+      newCaret: caretPosition - charsToRemove,
       showMsg: true,
     }
   }
   return{
       newInput: inputText,
-      newCaret: caretPosition - 1,
+      newCaret: caretPosition - moveLeft,
       showMsg: true,
   }
 }
@@ -80,18 +99,59 @@ export function handleRightArrow(inputText, caretPosition){
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const nextToken = getNextToken(tokens, currentToken);
   const nextTokenLength = nextToken?.value.length;
+
+  const parenOpenLen = 1;
+  const moveRight = 1;
+  const charsToRemove = nextTokenLength + parenOpenLen;
+
   if(nextToken?.type === 'function'){
     return{
       newInput: inputText,
-      newCaret: caretPosition + (nextTokenLength + 1),
+      newCaret: caretPosition + charsToRemove,
       showMsg: true,
     }
   }
   return{
       newInput: inputText,
-      newCaret: caretPosition + 1,
+      newCaret: caretPosition + moveRight,
       showMsg: true,
     }
 }
 
+//helpers
+export function deleteBeforeCaret(inputText, caretPos) {
+  const defaultdeleteStep = 1;
+  return {
+    newInput: inputText.slice(0, caretPos - defaultdeleteStep) + inputText.slice(caretPos),
+    newCaret: caretPos - defaultdeleteStep,
+    showMsg: true,
+  }
+}
 
+export function deleteForParens(inputText, caretPos, currentToken) {
+  const parenCloseLen = 1;
+  const lastChLen = 1;
+  const charsToRemove = parenCloseLen + lastChLen; // ")" + inside char
+  const start = caretPos - charsToRemove;
+  const end = currentToken.start;
+
+  return{
+      newInput: inputText.slice(0, start) + inputText.slice(end),
+      newCaret: caretPos - charsToRemove,
+      showMsg: true,
+    }
+}
+
+export function deleteForFunction(inputText, caretPos, funcToken, nextToken) {
+  const parenOpenLen = 1;
+  const lastOperatorLen = 1;
+  const charsToRemove = parenOpenLen + funcToken.value.length + lastOperatorLen; // "(" + "func" + operator before func
+  const start = caretPos - charsToRemove;
+  const end = nextToken.end;
+
+  return{
+      newInput: inputText.slice(0, start) + inputText.slice(end),
+      newCaret: caretPos - charsToRemove,
+      showMsg: true,
+    }
+}
