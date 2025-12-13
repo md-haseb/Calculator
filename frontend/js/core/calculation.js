@@ -9,6 +9,7 @@ import { toPostfix, evaluatePostfix } from "./postfix.js";
 export function calculate(expr) {
   const tokens = tokenValues(expr);
   const postfix = toPostfix(tokens);
+  console.log(postfix);
   const result = evaluatePostfix(postfix);
   return result.toString();
 }

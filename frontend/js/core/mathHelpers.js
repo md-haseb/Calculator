@@ -17,8 +17,17 @@ export function divide(a, b){
  * @param {string} token
  * @returns {boolean}
  */
-export function isSuperscriptedNumber(token) {
+export function isNumWithSuperscript(token) {
   return new RegExp(`\\d+[${superscriptChars}]+`).test(token);
+}
+
+/**
+ * Checks if a token is a superscripted number.
+ * @param {string} token
+ * @returns {boolean}
+ */
+export function isSuperscriptedNumber(token){
+  return new RegExp(`^[${superscriptChars}]+$`).test(token);
 }
 
 /**
@@ -159,7 +168,7 @@ export function calculateLogarithm(base, num) {
  * @param {string} token 
  * @returns {{base: number, exponent: number}}
  */
-export function parseSuperscripted(token) {
+export function parseNumWithSuperscript(token) {
   const match = token.match(new RegExp(`(\\d+)([${superscriptChars}]+)`));
   const base = Number(match[1]);
   const exponentStr = match[2]
@@ -167,6 +176,15 @@ export function parseSuperscripted(token) {
     .map(ch => superscriptToNormal[ch])
     .join('');
   return { base, exponent: Number(exponentStr) };
+}
+
+/**
+ * Converts a superscripted number token to normal digits.
+ * @param {string} token 
+ * @returns {string}
+ */
+export function parseSuperscripted(token){
+  return token.split("").map(ch => superscriptToNormal[ch] || ch).join("");
 }
 
 /**
@@ -256,5 +274,33 @@ export function customRootLogic(num, rootOf) {
       low = mid;
     }
   }
+  return result;
+}
+
+export function evaluateComb(n, r) {
+  const difference = n - r;
+
+  const logOfn = logForComb(n);
+  const logOfr = logForComb(r);
+  const logOfdifference = logForComb(difference);
+
+  const logOfnCr = logOfn - logOfr - logOfdifference;
+  const calculateExp = calculateExponent(Math.E, logOfnCr);
+
+  const result = Math.round(calculateExp);
+
+  return result;
+}
+
+export function logForComb(value){
+  let result = 0;
+  const base = Math.E;
+
+  for(let i = 1; i <= value; i++) {
+    console.log(typeof(base));
+    const tempLog = calculateLogarithm(base, i);
+    result = result + tempLog;
+  }
+
   return result;
 }

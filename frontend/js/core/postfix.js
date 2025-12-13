@@ -1,6 +1,6 @@
 import {operatorsSet, precedence, associativity, root, percent, factorial} from './constants.js';
 
-import { divide, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic } from './mathHelpers.js';
+import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb } from './mathHelpers.js';
 
 import {getMode} from '../ui/ui.js';
 
@@ -15,15 +15,19 @@ export function toPostfix(tokens) {
 
   for (let i = 0; i < tokens.length; i++) {
     //number, superscripted number, percent, factorial > push to the output stack
-    if (!isNaN(tokens[i]) || isSuperscriptedNumber(tokens[i]) || [percent, factorial].includes(tokens[i])) {
+    if (!isNaN(tokens[i]) || isNumWithSuperscript(tokens[i]) || [percent, factorial].includes(tokens[i])) {
       output.push(tokens[i]);
+    } 
+    //superscripted number > push to the output stack
+    else if (isSuperscriptedNumber(tokens[i])) {
+      output.push(parseSuperscripted(tokens[i]));
     } 
     //subscripted number > push to the output stack
     else if (isSubscriptedNumber(tokens[i])) {
       output.push(parseSubscripted(tokens[i]));
     } 
     //singleRoot, ends with root(nth root), (sin, cos, tan) > push to the stack
-    else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan'].includes(tokens[i])) { 
+    else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan'].includes(tokens[i]) || tokens[i] === 'C' || tokens[i] === 'P') { 
       stack.push(tokens[i]);
     } 
     //log and the next token is not parenOpen > push to the stack
@@ -46,7 +50,7 @@ export function toPostfix(tokens) {
           const top = stack[stack.length - 1];
 
           // 1. ROOT OPERATORS POP IMMEDIATELY
-          if (top.endsWith(root)) {
+          if (top.endsWith(root) || top === 'C' || top === 'P') {
             output.push(stack.pop());
             continue;
           }
@@ -85,6 +89,7 @@ export function toPostfix(tokens) {
     output.push(stack.pop());
   }
   //retun the output stack (which is the actual array of postfix tokens)
+  console.log(output);
   return output;
 }
 
@@ -104,8 +109,8 @@ export function evaluatePostfix(postfix) {
       stack.push(Number(postfix[i]));
     } 
     //evaluate superscripted number
-    else if (isSuperscriptedNumber(postfix[i])) {
-      const {base, exponent} = parseSuperscripted(postfix[i]);
+    else if (isNumWithSuperscript(postfix[i])) {
+      const {base, exponent} = parseNumWithSuperscript(postfix[i]);
       const expResult = calculateExponent(base, exponent);
       stack.push(expResult);
     } 
@@ -146,6 +151,14 @@ export function evaluatePostfix(postfix) {
     else if(['sin', 'cos', 'tan'].includes(postfix[i])){
         const result = calculateTrig(postfix[i], stack.pop(), getMode());
         stack.push(result);
+    }
+    //evaluate combination
+    else if(postfix[i] === 'C'){
+      const r = stack.pop();
+      const n = stack.pop();
+      console.log(n, r);
+      const result = evaluateComb(n, r);
+      stack.push(result);
     }
     //addition, substraction, multiplication, division (+, -, *, /)
     else {
