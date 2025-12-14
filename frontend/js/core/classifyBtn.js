@@ -30,7 +30,7 @@ export function classifyButtonValue(newValue) {
   }
 
   // --- function keywords ---
-  if (/^(log|ln|sin|cos|tan)$/.test(newValue)) {
+  if (/^(log|ln|sin|cos|tan|cot|sec|csc)$/.test(newValue)) {
     return { type: 'function', value: newValue };
   }
 

@@ -52,6 +52,7 @@ export function handleDelete(inputText, caretPosition){
 export function handleFunctions(value, inputText, caretPosition){
   const funcLength = value.length;
   const insertValue = `${value}()`;
+  console.log(insertValue);
   const parenOpenLen = 1;
   return{
     newInput: insertAt(inputText, caretPosition, insertValue),

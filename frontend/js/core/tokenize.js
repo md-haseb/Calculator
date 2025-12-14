@@ -15,7 +15,7 @@ export function tokenize(expr){
   const tokens = [];
 
   // ---- Precompile regexes (for performance & clarity) ----
-  const tokenRegEx = new RegExp(`(?:sin|cos|tan|log|ln|C|P|□|π|e|×)` +                  // functions
+  const tokenRegEx = new RegExp(`(?:sin|cos|tan|cot|sec|csc|log|ln|C|P|□|π|e|×)` +                  // functions
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
   `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
   `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
@@ -42,7 +42,7 @@ export function tokenize(expr){
     const end = start + t.length;
 
     //function
-    if (["sin", "cos", "tan", "log", "ln"].includes(t)) {
+    if (["sin", "cos", "tan", "cot", "sec", "csc", "log", "ln"].includes(t)) {
       tokens.push({ type: "function", value: t, start, end });
       continue;
     }

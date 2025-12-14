@@ -117,6 +117,34 @@ function calculateTan(degreeToRadian){
 }
 
 /**
+ * Compute cot(x) using Taylor series approximation.
+ * @param {number} degreeToRadian - Angle in radians.
+ * @returns {number}
+ */
+function calculateCot(degreeToRadian){
+  const cotResult = calculateCos(degreeToRadian)/calculateSin(degreeToRadian);
+  const tenDigitResult = Number(cotResult.toFixed(10));
+  return tenDigitResult;
+}
+
+/**
+ * Compute sec(x) using Taylor series approximation.
+ * @param {number} degreeToRadian - Angle in radians.
+ * @returns {number}
+ */
+function calculateSec(degreeToRadian){
+  const secResult = 1/calculateCos(degreeToRadian);
+  const tenDigitResult = Number(secResult.toFixed(10));
+  return tenDigitResult;
+}
+
+function calculateCsc(degreeToRadian){
+  const cscResult = 1/calculateSin(degreeToRadian);
+  const tenDigitResult = Number(cscResult.toFixed(10));
+  return tenDigitResult;
+}
+
+/**
  * Calculates trigonometric function based on mode ('deg' or 'rad').
  * @param {'sin'|'cos'|'tan'} func 
  * @param {number} angle 
@@ -128,6 +156,9 @@ export function calculateTrig(func, angle, mode){
   if(func === 'sin') return calculateSin(rad);
   if(func === 'cos') return calculateCos(rad);
   if(func === 'tan') return calculateTan(rad);
+  if(func === 'cot') return calculateCot(rad);
+  if(func === 'sec') return calculateSec(rad);
+  if(func === 'csc') return calculateCsc(rad);
 }
 
 /**

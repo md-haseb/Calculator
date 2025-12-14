@@ -27,7 +27,7 @@ export function toPostfix(tokens) {
       output.push(parseSubscripted(tokens[i]));
     } 
     //singleRoot, ends with root(nth root), (sin, cos, tan) > push to the stack
-    else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan'].includes(tokens[i]) || tokens[i] === 'C' || tokens[i] === 'P') { 
+    else if (tokens[i] === root || tokens[i].endsWith(root) || ['sin', 'cos', 'tan', 'cot', 'sec', 'csc'].includes(tokens[i]) || tokens[i] === 'C' || tokens[i] === 'P') { 
       stack.push(tokens[i]);
     } 
     //log and the next token is not parenOpen > push to the stack
@@ -148,7 +148,7 @@ export function evaluatePostfix(postfix) {
         stack.push(factorialResult);
     } 
     //evaluate trigonometry functions
-    else if(['sin', 'cos', 'tan'].includes(postfix[i])){
+    else if(['sin', 'cos', 'tan', 'cot', 'sec', 'csc'].includes(postfix[i])){
         const result = calculateTrig(postfix[i], stack.pop(), getMode());
         stack.push(result);
     }
