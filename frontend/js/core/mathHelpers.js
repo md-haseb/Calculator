@@ -13,6 +13,17 @@ export function divide(a, b){
 }
 
 /**
+ * Performs to calculate num multiplied with PI.
+ * @param {number} token 
+ * @returns {number}
+ */
+export function calculateNumWithPi(token){
+  const num = filterOutPi(token);
+  const result = num * Math.PI;
+  return result;
+}
+
+/**
  * Checks if a token is a superscripted number.
  * @param {string} token
  * @returns {boolean}
@@ -216,6 +227,15 @@ export function parseNumWithSuperscript(token) {
  */
 export function parseSuperscripted(token){
   return token.split("").map(ch => superscriptToNormal[ch] || ch).join("");
+}
+
+/**
+ * Converts a numberWithPI token to normal digits.
+ * @param {string} token 
+ * @returns {string}
+ */
+export function filterOutPi(token){
+  return token.split("").filter(ch => ch !== 'π').join("");
 }
 
 /**
