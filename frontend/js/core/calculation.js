@@ -11,9 +11,12 @@ export function calculate(expr) {
   const tokens = tokenValues(expr);
   const postfix = toPostfix(tokens);
   const result = evaluatePostfix(postfix);
+  return showResult(result);
+}
 
-  if (result === Infinity) {
-    return result.toString();
+function showResult(result){
+  if (result === Infinity || result === -Infinity || result === NaN) {
+    return 'Math Error';
   } else if (shouldUseScientific(result)) {
     return toScientific(result);
   } else {

@@ -312,7 +312,6 @@ export function evaluatePerm(n, r) {
   const calculateExp = calculateExponent(10, logOfnPr);
 
   const result = Math.round(calculateExp);
-  console.log(result);
   return result;
 }
 
@@ -321,7 +320,6 @@ export function logForCombAndPerm(value){
   const base = 10;
 
   for(let i = 1; i <= value; i++) {
-    console.log(typeof(base));
     const tempLog = calculateLogarithm(base, i);
     result = result + tempLog;
   }
