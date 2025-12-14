@@ -1,6 +1,6 @@
 import {operatorsSet, precedence, associativity, root, percent, factorial} from './constants.js';
 
-import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb } from './mathHelpers.js';
+import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb, evaluatePerm } from './mathHelpers.js';
 
 import {getMode} from '../ui/ui.js';
 
@@ -158,6 +158,14 @@ export function evaluatePostfix(postfix) {
       const n = stack.pop();
       console.log(n, r);
       const result = evaluateComb(n, r);
+      stack.push(result);
+    }
+    //evaluate permutation
+    else if(postfix[i] === 'P'){
+      const r = stack.pop();
+      const n = stack.pop();
+      console.log(n, r);
+      const result = evaluatePerm(n, r);
       stack.push(result);
     }
     //addition, substraction, multiplication, division (+, -, *, /)

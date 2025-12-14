@@ -278,11 +278,16 @@ export function customRootLogic(num, rootOf) {
 }
 
 export function evaluateComb(n, r) {
+  if (r < 0 || n < 0 || r > n) {
+    throw new Error('Invalid nPr input');
+  }
+  if (r === 0) return 1;
+
   const difference = n - r;
 
-  const logOfn = logForComb(n);
-  const logOfr = logForComb(r);
-  const logOfdifference = logForComb(difference);
+  const logOfn = logForCombAndPerm(n);
+  const logOfr = logForCombAndPerm(r);
+  const logOfdifference = logForCombAndPerm(difference);
 
   const logOfnCr = logOfn - logOfr - logOfdifference;
   const calculateExp = calculateExponent(10, logOfnCr);
@@ -292,7 +297,26 @@ export function evaluateComb(n, r) {
   return result;
 }
 
-export function logForComb(value){
+export function evaluatePerm(n, r) {
+  if (r < 0 || n < 0 || r > n) {
+    throw new Error('Invalid nPr input');
+  }
+  if (r === 0) return 1;
+
+  const difference = n - r;
+
+  const logOfn = logForCombAndPerm(n);
+  const logOfdifference = logForCombAndPerm(difference);
+
+  const logOfnPr = logOfn - logOfdifference;
+  const calculateExp = calculateExponent(10, logOfnPr);
+
+  const result = Math.round(calculateExp);
+  console.log(result);
+  return result;
+}
+
+export function logForCombAndPerm(value){
   let result = 0;
   const base = 10;
 

@@ -12,7 +12,9 @@ export function calculate(expr) {
   const postfix = toPostfix(tokens);
   const result = evaluatePostfix(postfix);
 
-  if (shouldUseScientific(result)) {
+  if (result === Infinity) {
+    return result.toString();
+  } else if (shouldUseScientific(result)) {
     return toScientific(result);
   } else {
     return result.toString();
