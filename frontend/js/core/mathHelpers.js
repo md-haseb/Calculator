@@ -285,7 +285,7 @@ export function evaluateComb(n, r) {
   const logOfdifference = logForComb(difference);
 
   const logOfnCr = logOfn - logOfr - logOfdifference;
-  const calculateExp = calculateExponent(Math.E, logOfnCr);
+  const calculateExp = calculateExponent(10, logOfnCr);
 
   const result = Math.round(calculateExp);
 
@@ -294,7 +294,7 @@ export function evaluateComb(n, r) {
 
 export function logForComb(value){
   let result = 0;
-  const base = Math.E;
+  const base = 10;
 
   for(let i = 1; i <= value; i++) {
     console.log(typeof(base));
@@ -303,4 +303,21 @@ export function logForComb(value){
   }
 
   return result;
+}
+
+//to show big number with 10^x instead of e
+export function toScientific(num, precision = 8) {
+  if (num === 0) return '0';
+
+  // Convert to exponential form
+  const [mantissa, exponent] = num.toExponential(precision).split('e');
+
+  // Format as mantissa × 10^exponent
+  return `${mantissa}×10<sup>${parseInt(exponent, 10)}</sup>`;
+}
+
+//check if the number is too big or not
+export function shouldUseScientific(num) {
+  const absNum = Math.abs(num);
+  return absNum !== 0 && (absNum >= 1e7 || absNum < 1e-3);
 }

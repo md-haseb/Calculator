@@ -1,5 +1,6 @@
 import {tokenValues} from "./tokenHelpers.js";
 import { toPostfix, evaluatePostfix } from "./postfix.js";
+import { toScientific, shouldUseScientific } from "./mathHelpers.js";
 
 /**
  * Main function to calculate a string expression.
@@ -9,9 +10,13 @@ import { toPostfix, evaluatePostfix } from "./postfix.js";
 export function calculate(expr) {
   const tokens = tokenValues(expr);
   const postfix = toPostfix(tokens);
-  console.log(postfix);
   const result = evaluatePostfix(postfix);
-  return result.toString();
+
+  if (shouldUseScientific(result)) {
+    return toScientific(result);
+  } else {
+    return result.toString();
+  }
 }
 
 
