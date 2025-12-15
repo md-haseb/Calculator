@@ -17,9 +17,20 @@ export function divide(a, b){
  * @param {number} token 
  * @returns {number}
  */
-export function calculateNumWithPi(token){
+export function calculateNumWithPi(token) {
   const num = filterOutPi(token);
   const result = num * Math.PI;
+  return result;
+}
+
+/**
+ * Performs to calculate num multiplied with e.
+ * @param {number} token 
+ * @returns {number}
+ */
+export function calculateNumWithE(token) {
+  const num = filterOutE(token);
+  const result = num * Math.E;
   return result;
 }
 
@@ -236,6 +247,15 @@ export function parseSuperscripted(token){
  */
 export function filterOutPi(token){
   return token.split("").filter(ch => ch !== 'π').join("");
+}
+
+/**
+ * Converts a numberWithE token to normal digits.
+ * @param {string} token 
+ * @returns {string}
+ */
+export function filterOutE(token){
+  return token.split("").filter(ch => ch !== 'e').join("");
 }
 
 /**

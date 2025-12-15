@@ -1,6 +1,6 @@
 import {operatorsSet, precedence, associativity, root, percent, factorial} from './constants.js';
 
-import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb, evaluatePerm, calculateNumWithPi } from './mathHelpers.js';
+import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb, evaluatePerm, calculateNumWithPi, calculateNumWithE } from './mathHelpers.js';
 
 import {getMode} from '../ui/ui.js';
 
@@ -23,7 +23,7 @@ export function toPostfix(tokens) {
       output.push(parseSuperscripted(tokens[i]));
     } 
     //constant (π, e) and numberWithPi > push to the output stack
-    else if (tokens[i] === 'π' || tokens[i].endsWith('π') || tokens[i] === 'e') {
+    else if (tokens[i] === 'π' || tokens[i].endsWith('π') || tokens[i] === 'e' || tokens[i].endsWith('e')) {
       output.push(tokens[i]);
     }
     //subscripted number > push to the output stack
@@ -112,11 +112,22 @@ export function evaluatePostfix(postfix) {
     if (!isNaN(postfix[i])) {
       stack.push(Number(postfix[i]));
     } 
+    // PI > push to the stack
     else if (postfix[i] === 'π') {
       stack.push(Math.PI);
     }
+    // evaluate num With PI
     else if (postfix[i].endsWith('π')) {
       const result = calculateNumWithPi(postfix[i]);
+      stack.push(result);
+    }
+    // e > push to the stack
+    else if (postfix[i] === 'e') {
+      stack.push(Math.E);
+    }
+    // evaluate num with e
+    else if (postfix[i].endsWith('e')) {
+      const result = calculateNumWithE(postfix[i]);
       stack.push(result);
     }
     //evaluate superscripted number

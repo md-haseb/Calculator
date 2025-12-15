@@ -15,13 +15,17 @@ export function calculate(expr) {
 }
 
 function showResult(result){
-  if (result === Infinity || result === -Infinity || result === NaN) {
+  if (!Number.isFinite(result)) {
     return 'Math Error';
-  } else if (shouldUseScientific(result)) {
-    return toScientific(result);
-  } else {
-    return result.toString();
   }
+
+  if (shouldUseScientific(result)) {
+    return toScientific(result);
+  }
+
+  return result
+    .toPrecision(11)
+    .replace(/\.?0+$/, '');
 }
 
 

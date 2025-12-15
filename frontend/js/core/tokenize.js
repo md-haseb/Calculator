@@ -16,6 +16,7 @@ export function tokenize(expr){
 
   // ---- Precompile regexes (for performance & clarity) ----
   const tokenRegEx = new RegExp(`(?:sin|cos|tan|cot|sec|csc|log|ln|C|P|□|π|e|×)` +                  // functions
+  `|(?:\\d+(?:\\.\\d+)?e)` + //numbers with e
   `|(?:\\d+(?:\\.\\d+)?π)` + //numbers with pi
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
   `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
@@ -35,6 +36,7 @@ export function tokenize(expr){
   const reInteger      = /^\d+$/;
   const reOperator     = /[+\-*/%!]/;
   const numWithPi      = /\d+(?:\.\d+)?π/;
+  const numWithE       = /\d+(?:\.\d+)?e/;
 
   let match;
   
@@ -68,8 +70,13 @@ export function tokenize(expr){
       tokens.push({ type: "constant", value: t, start, end });
       continue;
     }
+    //number with PI
     if (numWithPi.test(t)) {
       tokens.push({ type: "numWithPi", value: t, start, end });
+      continue;
+    }
+    if (numWithE.test(t)) {
+      tokens.push({ type: "numWithE", value: t, start, end });
       continue;
     }
     //number with superscript and subscript number
