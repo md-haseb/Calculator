@@ -256,7 +256,7 @@ html, body{
   margin-top: 6px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
-.active_theme{
+.active_toggle_btn{
   background-color: #1C2A40;
   border-color: none;
   color: white;

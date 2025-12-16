@@ -11,10 +11,19 @@ export const input = document.querySelector(".input_display");
 const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".message_display");
 
+const angleToggleContainer = document.querySelector(".radDegToggle");
+const themeToggleContainer = document.querySelector(".theme_toggle");
+const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
+
 /**
  * Current angle mode: 'deg' or 'rad'
+ * Current theme : 'dark' or 'light'
  */
-let DegRadMode = 'deg';
+// let DegRadMode = 'deg';
+const state = {
+  theme: 'light',
+  angle: 'deg',
+}
 
 /**
  * Display a message to the user
@@ -45,6 +54,28 @@ export function init() {
     const finalOffset = handleInputClick(input, clickedRange);
     caretShowWithFocus(input, finalOffset);
   });
+
+  /**
+   * Handle theme toggle button clicks
+   */
+
+  themeToggleButtons.forEach( btn => {
+    btn.addEventListener('click', () => {
+      const clickedBtn = classifyButton(btn);
+
+      switch(clickedBtn.type) {
+        // ------------------------------------
+        // Theme Selection buttons (dark/light)
+        // ------------------------------------
+        case "dark":
+        case "light": {
+        console.log(clickedBtn.type, clickedBtn.value);
+        setState(themeToggleContainer, 'theme');
+        return;
+        }
+      }
+    })
+  })
 
   /**
    * Handle button clicks
@@ -88,7 +119,7 @@ export function init() {
         case "radian":
         case "degree": {
           console.log(clickedBtn.type, clickedBtn.value);
-          setMode(clickedBtn.value);
+          setState(angleToggleContainer, 'angle');
           return;
         }
 
@@ -228,13 +259,35 @@ function changeMultiplySign(){
 }
 
 /**
- * Set angle mode ('deg' or 'rad')
+ * Set state ('deg' or 'rad'), ('dark' or 'light')
  * @param {string} value
  */
-function setMode(value){
-  if (value === 'deg' || value === 'rad') {
-    DegRadMode = value;
-  } 
+
+function setState(toggleContainer, statePropertyKey) {
+  toggleContainer.addEventListener('click', (e) => {
+    const clickedBtn = e.target.closest('[data-toggle="true"]');
+
+    if (!clickedBtn) return;
+
+    const clickedBtnValue = clickedBtn.dataset.value;
+
+    state[statePropertyKey] = clickedBtnValue;
+    console.log(state[statePropertyKey]);
+    render();
+  })
+}
+
+function renderToggle(toggleContainer, statePropertyValue) {
+  const buttons = toggleContainer.querySelectorAll('.toggleBtn');
+
+  buttons.forEach( btn => {
+    btn.classList.toggle('active_toggle_btn', statePropertyValue === btn.dataset.value);
+  })
+}
+
+function render() {
+  renderToggle(angleToggleContainer, state.angle);
+  renderToggle(themeToggleContainer, state.theme);
 }
 
 /**
@@ -242,5 +295,6 @@ function setMode(value){
  * @returns {string} 'deg' or 'rad'
  */
 export function getMode(){
-  return DegRadMode;
+  // return DegRadMode;
+  return state.angle;
 }

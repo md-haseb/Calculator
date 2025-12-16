@@ -17,6 +17,8 @@ export function classifyButtonValue(newValue) {
     '√': 'singleRoot',
     'rad': 'radian',
     'deg': 'degree',
+    'dark': 'dark', 
+    'light': 'light',
   };
 
   // --- exact single values ---
