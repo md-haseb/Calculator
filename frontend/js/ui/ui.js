@@ -150,7 +150,7 @@ export function init() {
           );
 
           if (validated.allowed) {
-            const ModifiedInputText = changeMultiplySign();
+            const ModifiedInputText = changeMultiplySign(input.textContent);
             const { newInput, newCaret, showMsg } = handleEqual(
               ModifiedInputText
             );
@@ -248,14 +248,14 @@ export function init() {
  * Helper: Replace '×' with '*' for calculation
  * @returns {string} Modified input text
  */
-function changeMultiplySign(){
-  let inpText = input.textContent;
-  for(let i = 0; i < inpText.length; i++){
-    if(inpText[i] === '×'){
-      inpText = inpText.slice(0, i) + '*' + inpText.slice(i + 1);
+function changeMultiplySign(inputText){
+  let newInputText = inputText;
+  for(let i = 0; i < newInputText.length; i++){
+    if(newInputText[i] === '×'){
+      newInputText = newInputText.slice(0, i) + '*' + newInputText.slice(i + 1);
     }
   }
-  return inpText;
+  return newInputText;
 }
 
 /**
