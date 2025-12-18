@@ -21,8 +21,9 @@ const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
  */
 // let DegRadMode = 'deg';
 const state = {
-  theme: 'light',
-  angle: 'deg',
+  theme: 'light',  //ui theme
+  angle: 'deg',  //angle mode
+  inputTextBeforeEqual: '',  // stores input before pressing '='
 }
 
 /**
@@ -120,6 +121,7 @@ export function init() {
         case "degree": {
           console.log(clickedBtn.type, clickedBtn.value);
           setState('angle', clickedBtn.value);
+          executeEqual(input, state.inputTextBeforeEqual, clickedBtn.value);
           return;
         }
 
@@ -143,21 +145,8 @@ export function init() {
         // Equal button
         // ----------------------------
         case "equal": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const validated = validateForEvaluation(
-            input.textContent,
-            clickedBtn.value
-          );
-
-          if (validated.allowed) {
-            const ModifiedInputText = changeMultiplySign(input.textContent);
-            const { newInput, newCaret, showMsg } = handleEqual(
-              ModifiedInputText
-            );
-            if (showMsg) showMessage();
-            input.innerHTML = newInput;
-            caretShowWithFocus(input, newCaret);
-          }
+          state.inputTextBeforeEqual = input.textContent;
+          executeEqual(input, input.textContent, clickedBtn.value);
           return;
         }
 
@@ -243,6 +232,26 @@ export function init() {
 }
 
 //helpers
+
+function executeEqual(input, inputText, BtnValue){
+  console.log(inputText);
+  const validated = validateForEvaluation(
+    inputText,
+    BtnValue
+  );
+
+  if (validated.allowed) {
+    const ModifiedInputText = changeMultiplySign(inputText);
+    console.log(ModifiedInputText);
+    const { newInput, newCaret, showMsg } = handleEqual(
+      ModifiedInputText
+    );
+    if (showMsg) showMessage();
+      input.innerHTML = newInput;
+      caretShowWithFocus(input, newCaret);
+    }
+    return;
+  }
 
 /**
  * Helper: Replace '×' with '*' for calculation

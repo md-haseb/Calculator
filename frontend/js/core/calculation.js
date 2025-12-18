@@ -11,6 +11,7 @@ export function calculate(expr) {
   const tokens = tokenValues(expr);
   const postfix = toPostfix(tokens);
   const result = evaluatePostfix(postfix);
+  console.log(result, typeof(result));
   return showResult(result);
 }
 
