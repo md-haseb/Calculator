@@ -70,7 +70,7 @@ export function init() {
         case "dark":
         case "light": {
         console.log(clickedBtn.type, clickedBtn.value);
-        setState(themeToggleContainer, 'theme');
+        setState('theme', clickedBtn.value);
         return;
         }
       }
@@ -119,7 +119,7 @@ export function init() {
         case "radian":
         case "degree": {
           console.log(clickedBtn.type, clickedBtn.value);
-          setState(angleToggleContainer, 'angle');
+          setState('angle', clickedBtn.value);
           return;
         }
 
@@ -259,24 +259,26 @@ function changeMultiplySign(){
 }
 
 /**
- * Set state ('deg' or 'rad'), ('dark' or 'light')
- * @param {string} value
+ * Attaches a click listener to a toggle container
+ * and updates a specific property of the global state
+ * (e.g. 'angle' → 'deg' | 'rad', 'theme' → 'dark' | 'light')
+ *
+ * @param {HTMLElement} toggleContainer - Parent element that contains toggle buttons
+ * @param {string} statePropertyKey - Key of the state object to update
  */
-
-function setState(toggleContainer, statePropertyKey) {
-  toggleContainer.addEventListener('click', (e) => {
-    const clickedBtn = e.target.closest('[data-toggle="true"]');
-
-    if (!clickedBtn) return;
-
-    const clickedBtnValue = clickedBtn.dataset.value;
-
-    state[statePropertyKey] = clickedBtnValue;
+function setState(statePropertyKey, statePropertyValue) {
+    state[statePropertyKey] = statePropertyValue;
     console.log(state[statePropertyKey]);
     render();
-  })
 }
 
+/**
+ * Updates the UI of a toggle group based on current state
+ * Adds 'active_toggle_btn' class to the active button
+ *
+ * @param {HTMLElement} toggleContainer - Parent element of toggle buttons
+ * @param {string} statePropertyValue - Current value from state
+ */
 function renderToggle(toggleContainer, statePropertyValue) {
   const buttons = toggleContainer.querySelectorAll('.toggleBtn');
 
@@ -285,6 +287,11 @@ function renderToggle(toggleContainer, statePropertyValue) {
   })
 }
 
+/**
+ * Main render function
+ * Keeps the UI in sync with the state object
+ * Should be called after any state change
+ */
 function render() {
   renderToggle(angleToggleContainer, state.angle);
   renderToggle(themeToggleContainer, state.theme);
