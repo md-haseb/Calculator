@@ -72,6 +72,8 @@ export function init() {
         case "light": {
         console.log(clickedBtn.type, clickedBtn.value);
         setState('theme', clickedBtn.value);
+        console.log(state.theme);
+        applyTheme(state.theme);
         return;
         }
       }
@@ -313,4 +315,8 @@ function render() {
 export function getMode(){
   // return DegRadMode;
   return state.angle;
+}
+
+export function applyTheme(theme){
+  document.body.classList.toggle('dark_theme', theme === 'dark');
 }
