@@ -101,12 +101,18 @@ html, body{
  padding-left: 35px;
  padding-right: 35px;
 }
+.logo{
+  display: flex;
+  flex-direction: column;
+}
 .logo_text{
- font-size: 24px;
+ font-size:23.5px;
+ font-weight: 700;
 }
 .sub_title{
- font-size: 11px;
- padding-left: 3px;
+ font-size: 13px;
+ font-weight: 400;
+ opacity: 75%;
 }
 .theme_toggle{
   display: flex;
@@ -135,7 +141,7 @@ html, body{
 }
 .left_part{
   width: 62%;
-  min-height: 85vh;
+  min-height: 84vh;
   background-color: #FEFEFE;
   display: flex;
   flex-direction: column;
@@ -203,9 +209,10 @@ html, body{
   border-radius: 4px;
 }
 .radDegToggle{
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
+  align-items: center;
   border: 1px solid #1C2A40;
   border-radius: 4px;
   padding: 5px;
@@ -247,7 +254,7 @@ html, body{
 }
 .right_part{
   width: 33%;
-  min-height: 85vh;
+  min-height: 84vh;
   background-color: #FEFEFE;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 12px;
