@@ -21,7 +21,7 @@ const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
  */
 // let DegRadMode = 'deg';
 const state = {
-  theme: 'light',  //ui theme
+  theme: localStorage.getItem('theme') || 'light',  //ui theme
   angle: 'deg',  //angle mode
   inputTextBeforeEqual: '',  // stores input before pressing '='
 }
@@ -42,6 +42,12 @@ function showMessage(msg = "Message: All is well") {
 export function init() {
   // Set initial caret focus
   caretShowWithFocus(input);
+  //apply theme first
+  applyTheme(state.theme);
+  
+    // themeToggleButtons.forEach( btn => {
+    //   btn.classList.toggle('active_toggle_btn', btn.dataset.value === state.theme);
+    // })
 
   /**
    * Handle mouse clicks on input display
@@ -61,6 +67,7 @@ export function init() {
    */
 
   themeToggleButtons.forEach( btn => {
+    btn.classList.toggle('active_toggle_btn', btn.dataset.value === state.theme);
     btn.addEventListener('click', () => {
       const clickedBtn = classifyButton(btn);
 
@@ -72,6 +79,7 @@ export function init() {
         case "light": {
         console.log(clickedBtn.type, clickedBtn.value);
         setState('theme', clickedBtn.value);
+        localStorage.setItem('theme', state.theme);
         console.log(state.theme);
         applyTheme(state.theme);
         return;
