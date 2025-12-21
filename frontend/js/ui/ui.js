@@ -41,8 +41,10 @@ function showMessage(msg = "Message: All is well") {
  */
 export function init() {
   // Set initial caret focus
-  caretShowWithFocus(input);
-  //apply theme first
+  const caretPosition = caretIndex(input);
+  caretShowWithFocus(input, caretPosition);
+
+  //apply theme first, persist the existing theme
   applyTheme(state.theme);
   
     // themeToggleButtons.forEach( btn => {
@@ -82,6 +84,7 @@ export function init() {
         localStorage.setItem('theme', state.theme);
         console.log(state.theme);
         applyTheme(state.theme);
+        caretShowWithFocus(input, caretPosition);
         return;
         }
       }
