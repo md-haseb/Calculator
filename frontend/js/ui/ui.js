@@ -23,7 +23,7 @@ const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
 const state = {
   theme: localStorage.getItem('theme') || 'light',  //ui theme
   angle: 'deg',  //angle mode
-  inputTextBeforeEqual: '',  // stores input before pressing '='
+  lastExpression: '',  // stores input before pressing '='
 }
 
 /**
@@ -41,55 +41,22 @@ function showMessage(msg = "Message: All is well") {
  */
 export function init() {
   // Set initial caret focus
-  const caretPosition = caretIndex(input);
-  caretShowWithFocus(input, caretPosition);
+  initCaret(input);
 
-  //apply theme first, persist the existing theme
-  applyTheme(state.theme);
-  
-    // themeToggleButtons.forEach( btn => {
-    //   btn.classList.toggle('active_toggle_btn', btn.dataset.value === state.theme);
-    // })
+  // applies initial theme,active button & persist the theme
+  render();
 
   /**
    * Handle mouse clicks on input display
    * - Moves caret according to click position
    * - For functions, caret jumps to the beginning of the function token
    */
-  input.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-
-    const clickedRange = document.caretPositionFromPoint(e.clientX, e.clientY);
-    const finalOffset = handleInputClick(input, clickedRange);
-    caretShowWithFocus(input, finalOffset);
-  });
+  initInputClick(input);
 
   /**
    * Handle theme toggle button clicks
    */
-
-  themeToggleButtons.forEach( btn => {
-    btn.classList.toggle('active_toggle_btn', btn.dataset.value === state.theme);
-    btn.addEventListener('click', () => {
-      const clickedBtn = classifyButton(btn);
-
-      switch(clickedBtn.type) {
-        // ------------------------------------
-        // Theme Selection buttons (dark/light)
-        // ------------------------------------
-        case "dark":
-        case "light": {
-        console.log(clickedBtn.type, clickedBtn.value);
-        setState('theme', clickedBtn.value);
-        localStorage.setItem('theme', state.theme);
-        console.log(state.theme);
-        applyTheme(state.theme);
-        caretShowWithFocus(input, caretPosition);
-        return;
-        }
-      }
-    })
-  })
+  initThemeToggle(themeToggleButtons);
 
   /**
    * Handle button clicks
@@ -134,7 +101,7 @@ export function init() {
         case "degree": {
           console.log(clickedBtn.type, clickedBtn.value);
           setState('angle', clickedBtn.value);
-          executeEqual(input, state.inputTextBeforeEqual, clickedBtn.value);
+          executeEqual(input, state.lastExpression, clickedBtn.value);
           return;
         }
 
@@ -158,7 +125,7 @@ export function init() {
         // Equal button
         // ----------------------------
         case "equal": {
-          state.inputTextBeforeEqual = input.textContent;
+          state.lastExpression = input.textContent;
           executeEqual(input, input.textContent, clickedBtn.value);
           return;
         }
@@ -317,6 +284,8 @@ function renderToggle(toggleContainer, statePropertyValue) {
 function render() {
   renderToggle(angleToggleContainer, state.angle);
   renderToggle(themeToggleContainer, state.theme);
+  applyTheme(state.theme);
+  restoreCaret(input); // ensures caret is always synced after state change
 }
 
 /**
@@ -330,4 +299,36 @@ export function getMode(){
 
 export function applyTheme(theme){
   document.body.classList.toggle('dark_theme', theme === 'dark');
+}
+
+
+
+
+
+function initCaret(input) {
+  const caretPosition = caretIndex(input);
+  caretShowWithFocus(input, caretPosition);
+}
+
+function initInputClick(input){
+  input.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+
+    const clickedRange = document.caretPositionFromPoint(e.clientX, e.clientY);
+    const finalOffset = handleInputClick(input, clickedRange);
+    caretShowWithFocus(input, finalOffset);
+  });
+}
+
+function initThemeToggle(buttons){
+  buttons.forEach( btn => {
+    btn.addEventListener('click', () => {
+      setState('theme', btn.dataset.value);
+      localStorage.setItem('theme', btn.dataset.value);
+    })
+  })
+}
+
+function restoreCaret(input) { 
+  caretShowWithFocus(input, caretIndex(input)); 
 }
