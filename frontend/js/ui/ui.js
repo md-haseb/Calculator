@@ -15,6 +15,14 @@ const angleToggleContainer = document.querySelector(".radDegToggle");
 const themeToggleContainer = document.querySelector(".theme_toggle");
 const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
 
+const simpleHandlers = {
+  ac: handleAC,
+  delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
+  leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
+  rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
+  function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
+};
+
 /**
  * Current angle mode: 'deg' or 'rad'
  * Current theme : 'dark' or 'light'
@@ -67,145 +75,26 @@ export function init() {
       const caretPosition = caretIndex(input);
 
       switch (clickedBtn.type) {
-        // ----------------------------
-        // Clear button (AC)
-        // ----------------------------
-        case "ac": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const { newInput, newCaret, showMsg } = handleAC();
-          if (showMsg) showMessage();
-          input.innerHTML = newInput;
-          caretShowWithFocus(input, newCaret);
-          return;
-        }
-
-        // ----------------------------
-        // Delete button
-        // ----------------------------
-        case "delete": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const { newInput, newCaret, showMsg } = handleDelete(
-            input.textContent,
-            caretPosition
-          );
-          if (showMsg) showMessage();
-          input.innerHTML = newInput;
-          caretShowWithFocus(input, newCaret);
-          return;
-        }
-
-        // ----------------------------
-        // Angle mode buttons (deg/rad)
-        // ----------------------------
         case "radian":
-        case "degree": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          setState('angle', clickedBtn.value);
-          executeEqual(input, state.lastExpression, clickedBtn.value);
+        case "degree":
+          setState("angle", clickedBtn.value);
+          executeEqual(input, state.lastExpression, caretPosition, clickedBtn.value);
           return;
-        }
 
-        // ----------------------------
-        // Functions (sin, cos, tan, log, ln)
-        // ----------------------------
-        case "function": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const { newInput, newCaret, showMsg } = handleFunctions(
-            clickedBtn.value,
-            input.textContent,
-            caretPosition
-          );
-          if (showMsg) showMessage();
-          input.innerHTML = newInput;
-          caretShowWithFocus(input, newCaret);
+        case "equal":
+          setState("lastExpression", input.textContent);
+          executeEqual(input, input.textContent, caretPosition, clickedBtn.value);
           return;
-        }
 
-        // ----------------------------
-        // Equal button
-        // ----------------------------
-        case "equal": {
-          state.lastExpression = input.textContent;
-          executeEqual(input, input.textContent, clickedBtn.value);
-          return;
-        }
-
-        // ----------------------------
-        // Left Arrow
-        // ----------------------------
-        case "leftArrow": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const { newInput, newCaret, showMsg } = handleLeftArrow(
-            input.textContent,
-            caretPosition
-          );
-          if (showMsg) showMessage();
-          input.innerHTML = newInput;
-          caretShowWithFocus(input, newCaret);
-          return;
-        }
-
-        // ----------------------------
-        // Right Arrow
-        // ----------------------------
-        case "rightArrow": {
-          console.log(clickedBtn.type, clickedBtn.value);
-          const { newInput, newCaret, showMsg } = handleRightArrow(
-            input.textContent,
-            caretPosition
-          );
-          if (showMsg) showMessage();
-          input.innerHTML = newInput;
-          caretShowWithFocus(input, newCaret);
-          return;
-        }
-
-        // ----------------------------
-        // Default (numbers, operators, parentheses, etc.)
-        // Validate before insert
-        // ----------------------------
-        default: {
-          const validated = validateForDisplay(
-            input.textContent,
-            clickedBtn.value
-          );
-
-          // ------------------------
-          // Universal insert logic
-          // ------------------------
-          if (validated.allowed) {
-            const { newInput, newCaret } = insertValue(
-              input.textContent,
-              caretPosition,
-              clickedBtn.value
-            );
-            input.innerHTML = newInput;
-            caretShowWithFocus(input, newCaret);
+        default:
+          if (simpleHandlers[clickedBtn.type]) {
+            const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtn.type](input.textContent,    caretPosition, clickedBtn.value);
+            updateInput(input, newInput, newCaret, showMsg);
             return;
           }
 
-          // ----------------------------
-          // Replace operator logic
-          // ----------------------------
-          if (validated.action === "replace") {
-            showMessage();
-            const { newInput, newCaret } = replaceOperator(
-              input.textContent,
-              caretPosition,
-              clickedBtn.value
-            );
-            input.innerHTML = newInput;
-            caretShowWithFocus(input, newCaret);
-            return;
-          }
-
-          // ----------------------------
-          // Fallback for invalid input
-          // ----------------------------
-          showMessage(validated.message);
-          caretShowWithFocus(input, caretPosition);
+          handleDefaultButton(input, input.textContent, caretPosition, clickedBtn.value);
           return;
-        }
       }
     });
   });
@@ -213,38 +102,35 @@ export function init() {
 
 //helpers
 
-function executeEqual(input, inputText, BtnValue){
+function executeEqual(input, inputText, caretPosition, btnValue){
   console.log(inputText);
   const validated = validateForEvaluation(
     inputText,
-    BtnValue
+    btnValue
   );
 
   if (validated.allowed) {
-    const ModifiedInputText = changeMultiplySign(inputText);
-    console.log(ModifiedInputText);
+    const modifiedInputText = changeMultiplySign(inputText);
+    console.log(modifiedInputText);
     const { newInput, newCaret, showMsg } = handleEqual(
-      ModifiedInputText
+      modifiedInputText
     );
-    if (showMsg) showMessage();
-      input.innerHTML = newInput;
-      caretShowWithFocus(input, newCaret);
-    }
+    updateInput(input, newInput, newCaret, showMsg);
     return;
   }
+  // ----------------------------
+  // Fallback for invalid input
+  // ----------------------------
+  handleInvalidInput(input, caretPosition, validated.message);
+  return; 
+}
 
 /**
  * Helper: Replace '×' with '*' for calculation
  * @returns {string} Modified input text
  */
 function changeMultiplySign(inputText){
-  let newInputText = inputText;
-  for(let i = 0; i < newInputText.length; i++){
-    if(newInputText[i] === '×'){
-      newInputText = newInputText.slice(0, i) + '*' + newInputText.slice(i + 1);
-    }
-  }
-  return newInputText;
+  return inputText.replaceAll('×', '*');
 }
 
 /**
@@ -332,3 +218,46 @@ function initThemeToggle(buttons){
 function restoreCaret(input) { 
   caretShowWithFocus(input, caretIndex(input)); 
 }
+
+function updateInput (inputElm, newInput, newCaret, showMsg = false) {
+  if (showMsg) showMessage();
+  inputElm.innerHTML = newInput;
+  caretShowWithFocus(inputElm, newCaret);
+}
+
+function handleInvalidInput(inputElm, caretPosition, message) {
+  showMessage(message);
+  caretShowWithFocus(inputElm, caretPosition);
+}
+
+
+
+  // ----------------------------
+  // Default button handler
+  // ----------------------------
+  function handleDefaultButton(input, inputText, caretPosition, btnValue) {
+    const validated = validateForDisplay(inputText, btnValue);
+
+    if (validated.allowed) {
+      const { newInput, newCaret } = insertValue(
+        inputText,
+        caretPosition,
+        btnValue
+      );
+      updateInput(input, newInput, newCaret);
+      return;
+    }
+
+    if (validated.action === "replace") {
+      const { newInput, newCaret } = replaceOperator(
+        inputText,
+        caretPosition,
+        btnValue
+      );
+      updateInput(input, newInput, newCaret);
+      return;
+    }
+
+    handleInvalidInput(input, caretPosition, validated.message);
+    return;
+  }
