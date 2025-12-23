@@ -2,7 +2,7 @@ import {operatorsSet, precedence, associativity, root, percent, factorial} from 
 
 import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb, evaluatePerm, calculateNumWithPi, calculateNumWithE } from './mathHelpers.js';
 
-import {getMode} from '../ui/ui.js';
+import {getMode} from '../ui/uiState.js';
 
 /**
  * Converts a tokenized expression to postfix notation using Shunting Yard algorithm.
