@@ -81,3 +81,5 @@ export function handleDefaultButton(input, inputText, caretPosition, btnValue) {
     handleInvalidInput(input, caretPosition, validated.message);
     return;
   }
+
+  

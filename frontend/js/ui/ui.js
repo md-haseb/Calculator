@@ -16,6 +16,8 @@ export const angleToggleContainer = document.querySelector(".radDegToggle");
 export const themeToggleContainer = document.querySelector(".theme_toggle");
 const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
 
+const historyContainer = document.querySelector('.history_list_container');
+
 
 /**
  * Map of simple button types to their handlers
@@ -81,11 +83,13 @@ export function init() {
         case "degree":
           setState("angle", clickedBtn.value);
           executeEqual(input, state.lastExpression, caretPosition, clickedBtn.value);
+          appendHistory(input);
           return;
 
         case "equal":
-          setState("lastExpression", input.textContent);
+          setState("lastExpression", input.innerHTML);
           executeEqual(input, input.textContent, caretPosition, clickedBtn.value);
+          appendHistory(input);
           return;
 
         default:
@@ -190,6 +194,24 @@ export function handleInvalidInput(inputElm, caretPosition, message) {
   caretShowWithFocus(inputElm, caretPosition);
 }
 
+function appendHistory(input){
+    const result = input.textContent;
+    console.log(result);
+    const newElm = document.createElement('div');
+    const itemExp = document.createElement('div');
+    const itemResult = document.createElement('div');
 
+    itemExp.innerHTML = state.lastExpression;
+    itemResult.innerHTML = `= ${result}`;
+
+    newElm.appendChild(itemExp);
+    newElm.appendChild(itemResult);
+    // newElm.innerHTML = `${state.lastExpression}   =   ${result}`;
+    newElm.classList.add('history_item');
+    itemExp.classList.add('history_item_exp');
+    itemResult.classList.add('history_item_result');
+
+    historyContainer.appendChild(newElm);
+  }
 
   
