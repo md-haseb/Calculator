@@ -63,6 +63,7 @@ export function handleFunctions(value, inputText, caretPosition){
 
 export function handleEqual(inputText){
   const newInput = calculate(inputText);
+  console.log(newInput);
     return{
       newInput,
       newCaret: newInput.length,

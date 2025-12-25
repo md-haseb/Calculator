@@ -32,6 +32,7 @@ export function getCaretAfterInsertion(newValue, caretPos) {
 
     case 'baseWithBox':
     case 'combOrPerm':
+    case 'boxWithRoot':
       caretMovement = 0;
       break;
 

@@ -195,7 +195,7 @@ export function handleInvalidInput(inputElm, caretPosition, message) {
 }
 
 function appendHistory(input){
-    const result = input.textContent;
+    const result = input.innerHTML;
     console.log(result);
     const newElm = document.createElement('div');
     const itemExp = document.createElement('div');

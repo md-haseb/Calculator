@@ -23,12 +23,21 @@ export function caretIndex(inputElm){
 }
 
 /**
- * Sets the caret (cursor) at a given character position inside
- * a contenteditable element. Works even when the element is empty.
+ * Sets the caret (cursor) at the specified character index inside a contenteditable element.
+ * 
+ * This function works correctly even when the element contains multiple text nodes
+ * (for example, due to formatting like <sup>, <span>, etc.). It uses a TreeWalker
+ * to traverse text nodes and locate the proper position for the caret.
+ * 
+ * Behavior:
+ * - If the element is empty, it simply focuses it.
+ * - If the caret position is within the total text length, it places the caret precisely.
+ * - If the caret position exceeds the total text length, it falls back to placing
+ *   the caret at the end of the element.
  *
- * @param {HTMLElement} inputElm - The contenteditable element.
- * @param {number} caretPos - Desired caret position (auto-clamped to valid range).
- */
+ * @param {HTMLElement} inputElm - The contenteditable element in which to set the caret.
+ * @param {number} caretPos - Desired caret index (0-based). Automatically clamped to [0, text length].
+*/
 export function caretShow(inputElm, caretPos){
   const text = inputElm.textContent;
   caretPos = Math.max(0, Math.min(caretPos, text.length));
@@ -37,13 +46,28 @@ export function caretShow(inputElm, caretPos){
     inputElm.focus();
   }else{
     const range = document.createRange();
-    // range.selectNodeContents(inputElm);
-    const textNode = inputElm.firstChild || inputElm.appendChild(document.createTextNode("")); 
-    range.setStart(textNode, caretPos);
-    range.collapse(true);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
+    const sel = window.getSelection();
+    console.log(inputElm.childNodes);
+
+    let remaining = caretPos;
+    const walker = document.createTreeWalker(inputElm, NodeFilter.SHOW_TEXT);
+
+    let node;
+    while ((node = walker.nextNode())) {
+      if (remaining <= node.textContent.length) {
+        range.setStart(node, remaining);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return;
+      }
+      remaining -= node.textContent.length;
+    }
+    // fallback: place caret at end if index too large
+    range.selectNodeContents(container);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 }
 
