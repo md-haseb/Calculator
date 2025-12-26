@@ -3,6 +3,7 @@ import {caretShowWithFocus, caretIndex} from '../editor/caretHandler.js';
 import {handleAC, handleDelete, handleFunctions, handleInputClick, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
 import {setState, render} from "./uiState.js";
 import {executeEqual, handleDefaultButton} from "./uiHandlers.js";
+import { appendHistory, handleRemoveHistory } from './history.js';
 
 
 /**
@@ -16,8 +17,8 @@ export const angleToggleContainer = document.querySelector(".radDegToggle");
 export const themeToggleContainer = document.querySelector(".theme_toggle");
 const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
 
-const historyContainer = document.querySelector('.history_list_container');
-
+export const historyContainer = document.querySelector('.history_list_container');
+export const historyRemoveBtn = document.querySelector('.history_remove_btn');
 
 /**
  * Map of simple button types to their handlers
@@ -36,12 +37,12 @@ const simpleHandlers = {
  * Global UI state
  * - theme: 'dark' | 'light'
  * - angle: 'deg' | 'rad'
- * - lastExpression: stores the input before pressing '='
+ * - lastExpressionHTML: stores the input before pressing '='
 */
 export const state = {
   theme: localStorage.getItem('theme') || 'light',  //ui theme
   angle: 'deg',  //angle mode
-  lastExpression: '',  // stores input before pressing '='
+  lastExpressionHTML: '',  // stores input before pressing '='
 }
 
 
@@ -66,11 +67,19 @@ export function init() {
   // Render initial theme and toggle buttons
   render();
 
+  //persist history on page reload
+  appendHistory(input, state.lastExpressionHTML, historyContainer, historyRemoveBtn);
+
   // Handle mouse clicks on input display
   initInputClick(input);
 
   // handle theme toggle buttons
   initThemeToggle(themeToggleButtons);
+
+  // handle history remove button
+  historyRemoveBtn.addEventListener('click', () => {
+    handleRemoveHistory(historyContainer, historyRemoveBtn);
+  })
 
   // handle all calculator button clicks
   buttons.forEach((btn) => {
@@ -82,19 +91,19 @@ export function init() {
         case "radian":
         case "degree":
           setState("angle", clickedBtn.value);
-          executeEqual(input, state.lastExpression, caretPosition, clickedBtn.value);
-          appendHistory(input);
+          executeEqual(input, state.lastExpressionHTML, caretPosition, clickedBtn.value);
+          appendHistory(input, state.lastExpressionHTML, historyContainer, historyRemoveBtn);
           return;
 
         case "equal":
-          setState("lastExpression", input.innerHTML);
+          setState("lastExpressionHTML", input.innerHTML);
           executeEqual(input, input.textContent, caretPosition, clickedBtn.value);
-          appendHistory(input);
+          appendHistory(input, state.lastExpressionHTML, historyContainer, historyRemoveBtn);
           return;
 
         default:
           if (simpleHandlers[clickedBtn.type]) {
-            const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtn.type](input.textContent,    caretPosition, clickedBtn.value);
+            const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtn.type](input.textContent, caretPosition, clickedBtn.value);
             updateInput(input, newInput, newCaret, showMsg);
             return;
           }
@@ -194,24 +203,3 @@ export function handleInvalidInput(inputElm, caretPosition, message) {
   caretShowWithFocus(inputElm, caretPosition);
 }
 
-function appendHistory(input){
-    const result = input.innerHTML;
-    console.log(result);
-    const newElm = document.createElement('div');
-    const itemExp = document.createElement('div');
-    const itemResult = document.createElement('div');
-
-    itemExp.innerHTML = state.lastExpression;
-    itemResult.innerHTML = `= ${result}`;
-
-    newElm.appendChild(itemExp);
-    newElm.appendChild(itemResult);
-    // newElm.innerHTML = `${state.lastExpression}   =   ${result}`;
-    newElm.classList.add('history_item');
-    itemExp.classList.add('history_item_exp');
-    itemResult.classList.add('history_item_result');
-
-    historyContainer.appendChild(newElm);
-  }
-
-  

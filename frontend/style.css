@@ -266,14 +266,28 @@ html, body{
 }
 .right_part .history_title_container{
   height: 12%;
+  display: flex;
+  justify-content: space-between;
 }
 .history_underline{
   width: 112px;
   margin-top: 6px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
+.history_remove_btn button{
+  padding: 3px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  color: #538DE7;
+  font-weight: 700;
+  cursor: pointer;
+}
+.remove_btn_visibility{
+  visibility: hidden;
+}
 .right_part .history_list_container{
   height: 88%;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
