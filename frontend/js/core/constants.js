@@ -20,6 +20,57 @@ export const root = '√';
 export const decimal = '.';
 export const percent = '%';
 export const factorial = '!';
+export const pi = 'π';
+export const E = 'e';
+export const plus = '+';
+export const minus = '-';
+export const multiplyBy = '*';
+export const divideBy = '/';
+
+/**
+ * trigonometric functions
+ */
+export const trigFunctions = [
+  'sin',
+  'cos',
+  'tan',
+  'cot',
+  'sec',
+  'csc'
+];
+
+/**
+ * combinatorics values
+ */
+export const combinatorics = {
+  combination: 'C',
+  permutation: 'P'
+};
+
+/**
+ * log functions
+ */
+export const logFunctions = {
+  log: 'log',
+  ln: 'ln'
+};
+
+/**
+ * parentheses
+ */
+export const paren = {
+  open: '(',
+  close: ')'
+};
+
+/**
+ * constants
+ */
+export const constantsValue = {
+  ten: '10',
+  E: Math.E,
+  pi: Math.PI,
+};
 
 // -------------------------------
 // Operator Precedence & Associativity
