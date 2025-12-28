@@ -1,4 +1,4 @@
-import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial} from './constants.js';
+import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose} from './constants.js';
 
 // const operators = '+*/-';
 // const root = '√';
@@ -12,7 +12,9 @@ export function isOperator(char){
 //this function is about validate and allow for display or not
 export function validateForDisplay(currentInput, newValue, caretPosition){
   const lastChar = currentInput[caretPosition - 1];
-  const nextChar = currentInput[caretPosition + 1];
+  const nextChar = currentInput[caretPosition];
+  console.log(lastChar);
+  console.log(nextChar);
   const regex = new RegExp(`[${operators}]`);
 
   //Do not display operator first when input is empty (except - and .)
@@ -61,6 +63,14 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     }
   }
 
+  //Do not allow division by zero
+  if (lastChar === divideBy && (newValue === 0 || newValue === '0')) {
+    return { allowed: false, message: 'Division by zero is not allowed.' };
+  }
+
+  // if (lastChar === parenOpen && nextChar === parenClose && newValue === 'left-arrow') {
+  //   return { allowed: false, message: 'Math error - Invalid calculation.' };
+  // }
 
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
   // if(isOperator(lastChar) && newValue === decimal){

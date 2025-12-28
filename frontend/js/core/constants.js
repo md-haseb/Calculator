@@ -15,6 +15,8 @@ export const multiplySymbol = '×';
 export const divideBy = '/';
 export const expBox = '□';
 export const expBase = 'x';
+export const parenOpen = '(';
+export const parenClose = ')';
 
 
 // -------------------------------
