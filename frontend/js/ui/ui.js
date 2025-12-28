@@ -11,7 +11,7 @@ import { appendHistory, handleRemoveHistory } from './history.js';
 */
 export const input = document.querySelector(".input_display");
 const buttons = document.querySelectorAll(".btn");
-const messageDiv = document.querySelector(".message_display");
+const messageDiv = document.querySelector(".error_message");
 
 export const angleToggleContainer = document.querySelector(".radDegToggle");
 export const themeToggleContainer = document.querySelector(".theme_toggle");
@@ -50,7 +50,7 @@ export const state = {
  * Display a message to the user
  * @param {string} msg - Message text
 */
-function showMessage(msg = "Message: All is well") {
+function showMessage(msg = "All is well") {
   messageDiv.textContent = msg;
 }
 

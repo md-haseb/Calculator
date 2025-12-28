@@ -1,4 +1,4 @@
-import {operators, root, decimal} from './constants.js';
+import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial} from './constants.js';
 
 // const operators = '+*/-';
 // const root = '√';
@@ -10,31 +10,57 @@ export function isOperator(char){
 }
 
 //this function is about validate and allow for display or not
-export function validateForDisplay(currentInput, newValue){
-  const lastChar = currentInput[currentInput.length - 1];
+export function validateForDisplay(currentInput, newValue, caretPosition){
+  const lastChar = currentInput[caretPosition - 1];
+  const nextChar = currentInput[caretPosition + 1];
   const regex = new RegExp(`[${operators}]`);
 
   //Do not display operator first when input is empty (except - and .)
-  if(currentInput == '' && isOperator(newValue) && !['+','-', root, decimal].includes(newValue)){
-    return {allowed: false, message: 'Message: Operators like (*, /,) are not allowed when input is empty'};
-  }
+  const isEmptyInput = !currentInput?.length;
+
+    if (isEmptyInput) {
+      if ([multiplySymbol, divideBy].includes(newValue)) {
+        return { allowed: false, message: 'Please enter a number before using (× or /).'};
+      }
+      if (newValue.startsWith(expBase)) {
+        return { allowed: false, message: 'Please enter a number before using exponent operators.'};
+      }
+      if (newValue.includes(factorial)) {
+        return { allowed: false, message: 'Please enter a number before using factorial.'};
+      }
+    }
+
+  // if (isEmptyInput && isLeadingOperator) {
+  //   return {
+  //     allowed: false,
+  //     message: 'Please enter a number before using ×, /, factorial or exponent operators.',
+  //   };
+  // }
 
   //"Logic: Do not display same operator twice in a row"
   // if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar) || root === lastChar))){
   //   return {allowed: false, message: 'Message: Same operator twice in a row is not allowed'};
   // }
 
-  if(newValue === lastChar){
-    if(isOperator(lastChar)){
-      return {allowed: false, message: 'Message: Same operator twice in a row is not allowed'};
+  const isSameChar = newValue === lastChar;
+
+  if (isSameChar) {
+    if (isOperator(lastChar)) {
+      return { allowed: false, message: 'Same operator cannot be used twice in a row.' };
     }
-    if(decimal.includes(lastChar)){
-      return {allowed: false, message: 'Message: Two decimal in a row is not allowed'};
+
+    if (lastChar === decimal) {
+      return { allowed: false, message: 'Decimal point cannot be used twice in a row.' };
     }
-    if(root === lastChar){
-      return {allowed: false, message: 'Message: Two root symbol in a row is not allowed'};
+
+    if (lastChar === root) {
+      return { allowed: false, message: 'Root symbol cannot be used twice in a row.' };
+    }
+    if (lastChar === percent) {
+      return { allowed: false, message: 'Percent symbol cannot be used twice in a row.' };
     }
   }
+
 
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
   // if(isOperator(lastChar) && newValue === decimal){
@@ -52,12 +78,24 @@ export function validateForDisplay(currentInput, newValue){
   //     return null;
   //   }
   // }
-  if(newValue === decimal && currentInput !== '' && lastChar !== ')'){
-    let filteredNumberArray = currentInput.split(regex);
-    let lastElementOfArray = filteredNumberArray[filteredNumberArray.length - 1];
-    if(lastElementOfArray.includes(decimal)){
-      return {allowed: false, message: 'Message: Multiple decimal in the same number is not allowed'};
+  if (newValue === decimal && currentInput?.length && lastChar !== ')') {
+    const numbers = currentInput.split(regex);
+    const lastNumber = numbers[numbers.length - 1];
+
+    if (lastNumber.includes(decimal)) {
+      return {
+        allowed: false,
+        message: 'Multiple decimals in the same number are not allowed.'
+      };
     }
+  }
+
+  //Do not allow opeators after decimal
+  if(lastChar === decimal && operators.includes(newValue)){
+    return {
+      allowed: false,
+      message: 'Operators are not allowed after decimal.'
+    };
   }
 
   //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
@@ -70,14 +108,31 @@ export function validateForDisplay(currentInput, newValue){
     return {allowed: false, action: 'replace'};
   }
 
+  //Do not display percent when lastChar is not number
+  const isLastCharNotNumber = !/[0-9]/.test(lastChar);
+  if (isLastCharNotNumber && newValue === percent) {
+    return {
+      allowed: false,
+      message: 'Please enter a number before using percent.',
+    };
+  }
+
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
-    return {allowed: false, message: 'Message: Operators are not allowed after root'};
+    return {
+      allowed: false, 
+      message: 'Operators are not allowed after root',
+    };
   }
 
   //when input value is only +/-/. then don't allow root to display
-  if(currentInput.length == 1 && ['+','-', decimal].includes(lastChar) && newValue === root){
-    return {allowed: false, message: 'Message: root is not allowed after single (+, -, decimal)'};
+  const invalidRootStart = [plus, minus, decimal];
+
+  if (currentInput.length === 1 && invalidRootStart.includes(lastChar) && newValue === root) {
+    return {
+      allowed: false,
+      message: 'Root cannot be entered after a single +, -, or decimal.'
+    };
   }
 
   //"Logic: After an operator display further, if the input is a number"
@@ -94,13 +149,17 @@ export function validateForDisplay(currentInput, newValue){
   //   return true;
   // }
 
-  if((operators.includes(lastChar) || root === lastChar || decimal === lastChar) && newValue.includes("□")){
-    return {allowed: false, message: 'Message: taking exponent is not allowed if last character is not number'};
+  //Do not allow exponet operators if lastChar is not number
+  if(isLastCharNotNumber && newValue.includes("x")){
+    return {
+      allowed: false, 
+      message: 'Please enter a number before using exponent.',
+    };
   }
 
-  if((newValue === '<' || newValue === '>') && currentInput == ''){
-    return {allowed: false, message: 'Message: arrow keys are disable when input field is empty'};
-  }
+  // if((newValue === '<' || newValue === '>') && currentInput == ''){
+  //   return {allowed: false, message: 'Message: arrow keys are disable when input field is empty'};
+  // }
 
   //Update input value based on user button click
   return {allowed: true};

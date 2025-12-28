@@ -152,10 +152,17 @@ html, body{
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
-.message_display{
+.msg_display_container{
   width: 97%;
   padding: 9px;
   border: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+}
+.message_title{
+  width: 8.5%;
+}
+.error_message{
+  width: 91.5%;
 }
 .input_display{
   width: 96%;

@@ -1,17 +1,3 @@
-// -------------------------------
-// Operators
-// -------------------------------
-
-/**
- * List of arithmetic operators supported by the expression parser.
- * Used primarily during tokenization and Shunting-Yard processing.
- */
-export const operators = ['+', '-', '*', '/'];
-
-/**
- * Set version of the operators array.
- */
-export const operatorsSet = new Set(operators);
 
 /**
  * operator symbols.
@@ -25,7 +11,27 @@ export const E = 'e';
 export const plus = '+';
 export const minus = '-';
 export const multiplyBy = '*';
+export const multiplySymbol = '×';
 export const divideBy = '/';
+export const expBox = '□';
+export const expBase = 'x';
+
+
+// -------------------------------
+// Operators
+// -------------------------------
+
+/**
+ * List of arithmetic operators supported by the expression parser.
+ * Used primarily during tokenization and Shunting-Yard processing.
+ */
+export const operators = [plus, minus, multiplyBy, multiplySymbol, divideBy];
+
+/**
+ * Set version of the operators array.
+ */
+export const operatorsSet = new Set(operators);
+
 
 /**
  * trigonometric functions

@@ -53,7 +53,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
 */
 export function handleDefaultButton(input, inputText, caretPosition, btnValue) {
     // Validate the input for display purposes
-    const validated = validateForDisplay(inputText, btnValue);
+    const validated = validateForDisplay(inputText, btnValue, caretPosition);
 
     if (validated.allowed) {
       // Insert the value into the input

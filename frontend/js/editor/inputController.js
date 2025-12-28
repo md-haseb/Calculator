@@ -76,7 +76,7 @@ export function handleLeftArrow(inputText, caretPosition){
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const prevToken = getPrevToken(tokens, currentToken);
 
-  const currentTokenLen = currentToken.value.length;
+  const currentTokenLen = currentToken?.value.length;
   const prevTokenLength = prevToken?.value.length;
   const charsToRemove = prevTokenLength + currentTokenLen;
 
