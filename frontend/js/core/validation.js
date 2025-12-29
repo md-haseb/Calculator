@@ -13,8 +13,6 @@ export function isOperator(char){
 export function validateForDisplay(currentInput, newValue, caretPosition){
   const lastChar = currentInput[caretPosition - 1];
   const nextChar = currentInput[caretPosition];
-  console.log(lastChar);
-  console.log(nextChar);
   const regex = new RegExp(`[${operators}]`);
 
   //Do not display operator first when input is empty (except - and .)
@@ -68,9 +66,9 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Division by zero is not allowed.' };
   }
 
-  // if (lastChar === parenOpen && nextChar === parenClose && newValue === 'left-arrow') {
-  //   return { allowed: false, message: 'Math error - Invalid calculation.' };
-  // }
+  if (lastChar === parenOpen && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
+    return { allowed: false, message: 'Arrow keys not allowed in empty parentheses.' };
+  }
 
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
   // if(isOperator(lastChar) && newValue === decimal){

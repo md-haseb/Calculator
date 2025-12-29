@@ -3,6 +3,20 @@ import { handleEqual } from '../editor/inputController.js';
 import { insertValue, replaceOperator } from '../editor/insertion.js';
 import { changeMultiplySign } from './uiUtils.js';
 import { updateInput, handleInvalidInput } from './ui.js';
+import {handleAC, handleDelete, handleFunctions, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
+
+
+/**
+ * Map of simple button types to their handlers
+ * @type {Object<string, Function>}
+*/
+export const simpleHandlers = {
+  ac: handleAC,
+  delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
+  leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
+  rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
+  function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
+};
 
 
 /**
@@ -51,12 +65,19 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
  * @param {number} caretPosition - Current caret position
  * @param {string} btnValue - Value of the clicked button
 */
-export function handleDefaultButton(input, inputText, caretPosition, btnValue) {
+export function handleDefaultButton(input, inputText, caretPosition, clickedBtnType, btnValue) {
     // Validate the input for display purposes
     const validated = validateForDisplay(inputText, btnValue, caretPosition);
 
     if (validated.allowed) {
-      // Insert the value into the input
+      //execute simpleHandler function values
+      if (simpleHandlers[clickedBtnType]) {
+        const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtnType](inputText, caretPosition, btnValue);
+        updateInput(input, newInput, newCaret, showMsg);
+        return;
+      }
+
+      // Insert the other values into the input
       const { newInput, newCaret } = insertValue(
         inputText,
         caretPosition,

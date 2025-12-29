@@ -98,16 +98,23 @@ export function reduceRadian(angle){
  * @param {number} degreeToRadian - Angle in radians.
  * @returns {number}
  */
-function calculateSin(degreeToRadian){
-    const sinResult = degreeToRadian 
-                      - (calculateExponent(degreeToRadian, 3)/calculateFactorial(3)) 
-                      + (calculateExponent(degreeToRadian, 5)/calculateFactorial(5)) 
-                      - (calculateExponent(degreeToRadian, 7)/calculateFactorial(7)) 
-                      + (calculateExponent(degreeToRadian, 9)/calculateFactorial(9)) 
-                      - (calculateExponent(degreeToRadian, 11)/calculateFactorial(11)) 
-                      + (calculateExponent(degreeToRadian, 13)/calculateFactorial(13));
-    const tenDigitResult = Number(sinResult.toFixed(10));
-    return tenDigitResult;
+
+export function calculateSin(degreeToRadian) {
+  // Convert degrees to radians
+  // let x = (degrees % 360) * Math.PI / 180; // reduce large angles
+  let sin = 0;
+  const terms = 20; // number of Taylor series terms
+
+  for (let n = 0; n < terms; n++) {
+    const term = ((-1) ** n) * calculateExponent(degreeToRadian, 2 * n + 1) / calculateFactorial(2 * n + 1);
+    sin += term;
+  }
+
+  // Treat tiny floating-point errors as 0
+  if (Math.abs(sin) < 1e-10) return 0;
+
+  // Round to 10 decimal digits for display
+  return Number(sin.toFixed(10));
 }
 
 /**
@@ -115,16 +122,21 @@ function calculateSin(degreeToRadian){
  * @param {number} degreeToRadian - Angle in radians.
  * @returns {number}
  */
-function calculateCos(degreeToRadian){
-    const cosResult = 1 
-                      - (calculateExponent(degreeToRadian, 2)/calculateFactorial(2)) 
-                      + (calculateExponent(degreeToRadian, 4)/calculateFactorial(4)) 
-                      - (calculateExponent(degreeToRadian, 6)/calculateFactorial(6)) 
-                      + (calculateExponent(degreeToRadian, 8)/calculateFactorial(8)) 
-                      - (calculateExponent(degreeToRadian, 10)/calculateFactorial(10)) 
-                      + (calculateExponent(degreeToRadian, 12)/calculateFactorial(12));
-    const tenDigitResult = Number(cosResult.toFixed(10));
-    return tenDigitResult;
+
+function calculateCos(degreeToRadian) {
+  // const x = deg * Math.PI / 180; // convert to radians
+  let cos = 0;
+  const terms = 20; // number of Taylor series terms
+
+  for (let n = 0; n < terms; n++) {
+    const term = ((-1) ** n) * (degreeToRadian ** (2 * n)) / calculateFactorial(2 * n);
+    cos += term;
+  }
+
+  // treat very small numbers as 0
+  if (Math.abs(cos) < 1e-10) return 0;
+
+  return Number(cos.toFixed(10)); // round for display
 }
 
 /**

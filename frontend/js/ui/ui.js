@@ -20,18 +20,6 @@ const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
 export const historyContainer = document.querySelector('.history_list_container');
 export const historyRemoveBtn = document.querySelector('.history_remove_btn');
 
-/**
- * Map of simple button types to their handlers
- * @type {Object<string, Function>}
-*/
-const simpleHandlers = {
-  ac: handleAC,
-  delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
-  leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
-  rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
-  function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
-};
-
 
 /**
  * Global UI state
@@ -102,13 +90,7 @@ export function init() {
           return;
 
         default:
-          if (simpleHandlers[clickedBtn.type]) {
-            const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtn.type](input.textContent, caretPosition, clickedBtn.value);
-            updateInput(input, newInput, newCaret, showMsg);
-            return;
-          }
-
-          handleDefaultButton(input, input.textContent, caretPosition, clickedBtn.value);
+          handleDefaultButton(input, input.textContent, caretPosition, clickedBtn.type, clickedBtn.value);
           return;
       }
     });
