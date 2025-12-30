@@ -1,4 +1,4 @@
-import {plus, minus, multiplyBy, divideBy, operatorsSet, precedence, associativity, root, percent, factorial, pi, E, trigFunctions, logFunctions, paren, constantsValue, combinatorics} from './constants.js';
+import {plus, minus, unaryMinus, multiplyBy, divideBy, operatorsSet, precedence, associativity, root, percent, factorial, pi, E, trigFunctions, logFunctions, paren, constantsValue, combinatorics} from './constants.js';
 
 import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumber, calculateExponent, calculateFactorial, calculateTrig, calculateLogarithm, parseNumWithSuperscript, parseSuperscripted, parseSubscripted, rootOfValue, customRootLogic, evaluateComb, evaluatePerm, calculateNumWithPi, calculateNumWithE } from './mathHelpers.js';
 
@@ -31,7 +31,7 @@ export function toPostfix(tokens) {
       output.push(parseSubscripted(tokens[i]));
     } 
     //singleRoot, ends with root(nth root), (sin, cos, tan) > push to the stack
-    else if (tokens[i] === root || tokens[i].endsWith(root) || trigFunctions.includes(tokens[i]) || tokens[i] === combinatorics.combination || tokens[i] === combinatorics.permutation) { 
+    else if (tokens[i] === root || tokens[i].endsWith(root) || trigFunctions.includes(tokens[i]) || tokens[i] === combinatorics.combination || tokens[i] === combinatorics.permutation || tokens[i] === unaryMinus) { 
       stack.push(tokens[i]);
     } 
     //log and the next token is not parenOpen > push to the stack
@@ -54,7 +54,7 @@ export function toPostfix(tokens) {
           const top = stack[stack.length - 1];
 
           // 1. ROOT OPERATORS POP IMMEDIATELY
-          if (top.endsWith(root) || top === combinatorics.combination || top === combinatorics.permutation) {
+          if (top.endsWith(root) || top === combinatorics.combination || top === combinatorics.permutation || top === unaryMinus) {
             output.push(stack.pop());
             continue;
           }
@@ -112,6 +112,11 @@ export function evaluatePostfix(postfix) {
     if (!isNaN(postfix[i])) {
       stack.push(Number(postfix[i]));
     } 
+    else if (postfix[i] === 'NEG') {
+      const value = stack.pop();
+      stack.push(-value);
+      console.log(stack);
+    }
     // PI > push to the stack
     else if (postfix[i] === pi) {
       stack.push(constantsValue.pi);

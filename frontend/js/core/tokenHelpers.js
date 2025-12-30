@@ -1,4 +1,5 @@
 import { tokenize } from './tokenize.js';
+import { isOperator } from './validation.js';
 
 /**
  * Tokenizes the current input string.
@@ -62,4 +63,24 @@ export function tokenValues(expr){
   return null; // fallback (should not happen)
   });
   return initialFilter.filter(v => v !== null);
+}
+
+
+export function normalizeUnaryMinus(tokens) {
+  const result = [];
+  let prev = null;
+
+  for (const token of tokens) {
+    if (
+      token === '-' &&
+      (prev === null || prev === '(' || isOperator(prev))
+    ) {
+      result.push('NEG');
+    } else {
+      result.push(token);
+    }
+    prev = token;
+  }
+
+  return result;
 }

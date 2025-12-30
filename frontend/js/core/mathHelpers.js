@@ -102,11 +102,13 @@ export function reduceRadian(angle){
 export function calculateSin(degreeToRadian) {
   // Convert degrees to radians
   // let x = (degrees % 360) * Math.PI / 180; // reduce large angles
+  // Reduce angle to improve numerical stability
+  const reduceAngle = degreeToRadian % (2 * Math.PI);
   let sin = 0;
   const terms = 20; // number of Taylor series terms
 
   for (let n = 0; n < terms; n++) {
-    const term = ((-1) ** n) * calculateExponent(degreeToRadian, 2 * n + 1) / calculateFactorial(2 * n + 1);
+    const term = ((-1) ** n) * calculateExponent(reduceAngle, 2 * n + 1) / calculateFactorial(2 * n + 1);
     sin += term;
   }
 
@@ -125,11 +127,12 @@ export function calculateSin(degreeToRadian) {
 
 function calculateCos(degreeToRadian) {
   // const x = deg * Math.PI / 180; // convert to radians
+  const reduceAngle = degreeToRadian % (2 * Math.PI);
   let cos = 0;
   const terms = 20; // number of Taylor series terms
 
   for (let n = 0; n < terms; n++) {
-    const term = ((-1) ** n) * (degreeToRadian ** (2 * n)) / calculateFactorial(2 * n);
+    const term = ((-1) ** n) * (reduceAngle ** (2 * n)) / calculateFactorial(2 * n);
     cos += term;
   }
 

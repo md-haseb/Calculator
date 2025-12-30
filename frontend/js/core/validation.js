@@ -1,5 +1,6 @@
 import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose} from './constants.js';
 
+
 // const operators = '+*/-';
 // const root = '√';
 // const decimal = '.';

@@ -10,6 +10,7 @@ export const pi = 'π';
 export const E = 'e';
 export const plus = '+';
 export const minus = '-';
+export const unaryMinus = 'NEG';
 export const multiplyBy = '*';
 export const multiplySymbol = '×';
 export const divideBy = '/';
@@ -95,6 +96,7 @@ export const precedence = {
   '*': 2,
   '/': 2,
   '^': 3,
+  'NEG': 3,
   '√': 4, // highest, unary
   'log': 4,
   'ln': 4,
@@ -111,6 +113,7 @@ export const associativity = {
   '-': 'L',
   '*': 'L',
   '/': 'L',
+  'NEG': 'R', 
   '^': 'R',
   '√': 'R', // unary, right-associative
   'sin': 'R',

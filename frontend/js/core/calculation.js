@@ -1,4 +1,4 @@
-import {tokenValues} from "./tokenHelpers.js";
+import {tokenValues, normalizeUnaryMinus} from "./tokenHelpers.js";
 import { toPostfix, evaluatePostfix } from "./postfix.js";
 import { toScientific, shouldUseScientific } from "./mathHelpers.js";
 
@@ -9,7 +9,8 @@ import { toScientific, shouldUseScientific } from "./mathHelpers.js";
  */
 export function calculate(expr) {
   const tokens = tokenValues(expr);
-  const postfix = toPostfix(tokens);
+  const unaryMinusTokens = normalizeUnaryMinus(tokens);
+  const postfix = toPostfix(unaryMinusTokens);
   const result = evaluatePostfix(postfix);
   console.log(result, typeof(result));
   return showResult(result);
