@@ -13,6 +13,7 @@ export function isOperator(char){
 //this function is about validate and allow for display or not
 export function validateForDisplay(currentInput, newValue, caretPosition){
   const lastChar = currentInput[caretPosition - 1];
+  const greaterLastChar = currentInput[caretPosition - 2];
   const nextChar = currentInput[caretPosition];
   const regex = new RegExp(`[${operators}]`);
 
@@ -68,7 +69,11 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   }
 
   if (lastChar === parenOpen && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
-    return { allowed: false, message: 'Arrow keys not allowed in empty parentheses.' };
+    return { allowed: false, message: 'Arrow keys not allowed in empty brackets.' };
+  }
+
+  if (greaterLastChar === parenOpen && operators.includes(lastChar) && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
+    return { allowed: false, message: 'Please enter valid numbers inside brackets.' };
   }
 
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
