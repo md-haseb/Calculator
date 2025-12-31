@@ -19,10 +19,12 @@ export function insertValue(currentInput, caretPosition, newValue) {
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const prevToken = getPrevToken(tokens, currentToken);
   const nextToken = getNextToken(tokens, currentToken);
+  const greaterNextToken = getNextToken(tokens, nextToken);
   console.log(tokens);
   console.log(currentToken);
   console.log(prevToken);
   console.log(nextToken);
+  console.log(greaterNextToken);
 
   function applyExponentBox(value){
     return {
@@ -33,14 +35,14 @@ export function insertValue(currentInput, caretPosition, newValue) {
 
   function applyExponent(value) {
     return {
-      newInput: showExponent(currentInput, caretPosition, value, currentToken, nextToken),
+      newInput: showExponent(currentInput, caretPosition, value, currentToken, nextToken, greaterNextToken),
       newCaret: getCaretAfterInsertion(value, caretPosition),
     };
   }
 
   function applyIndices(value) {
     return {
-      newInput: showIndices(currentInput, caretPosition, value, currentToken, nextToken),
+      newInput: showIndices(currentInput, caretPosition, value, nextToken, greaterNextToken),
       newCaret: getCaretAfterInsertion(value, caretPosition),
     };
   }
@@ -67,6 +69,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
   function isExponentCase(currentToken, nextToken, caretPosition) {
     return (
       exponentTokenTypes.includes(currentToken.type) ||
+      (nextToken?.type === 'box' && (greaterNextToken?.type === 'singleRoot' || greaterNextToken?.type === 'combAndPerm')) ||
       (currentToken.type === nthRootToken && caretPosition < currentToken.end) ||
       ((currentToken.type === 'number' || currentToken.type === 'numberWithDecimal') && nextToken?.type === 'box') ||
       (currentToken.type === 'box' && boxNextTypes.includes(nextToken?.type))

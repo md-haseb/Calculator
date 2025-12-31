@@ -87,17 +87,17 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
   }
 
-  if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
-    return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
-  }
+  // if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
+  //   return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
+  // }
 
   if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && isOperator(newValue)) {
     return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
   }
 
-  if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
-    return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
-  }
+  // if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
+  //   return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
+  // }
   
   if (lastChar === parenOpen && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
     return { allowed: false, message: 'Arrow keys not allowed in empty brackets.' };
@@ -107,6 +107,13 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Please enter valid numbers inside brackets.' };
   }
 
+  if (nextChar === expBox && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
+    return { allowed: false, message: 'Arrow keys not allowed before filling exponent box.' };
+  }
+
+  if ((nextChar === combinatorics.combination || nextChar === combinatorics.permutation) && isOperator(newValue)){
+    return { allowed: false, message: 'Operators not allowed inside Combination & Permutation.' };
+  }
   //Logic: After an operator, . is permitted once because it can precede a number (Group A: Order 1)
   // if(isOperator(lastChar) && newValue === decimal){
   //   return currentInput + newValue;

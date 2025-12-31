@@ -3,7 +3,8 @@ import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { validateForDisplay, validateForEvaluation } from "../core/validation.js";
 import { calculate } from "../core/calculation.js";
-import { insertAt } from "../editor/insertionHelpers.js";
+import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
+import { combinatorics, expBox } from "../core/constants.js";
 
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
@@ -100,7 +101,10 @@ export function handleRightArrow(inputText, caretPosition){
   const tokens = tokenize(inputText);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const nextToken = getNextToken(tokens, currentToken);
+  const greaterNextToken = getNextToken(tokens, nextToken);
   const nextTokenLength = nextToken?.value.length;
+
+  const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
 
   const parenOpenLen = 1;
   const moveRight = 1;
@@ -113,6 +117,15 @@ export function handleRightArrow(inputText, caretPosition){
       showMsg: true,
     }
   }
+
+  if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
+    return {
+      newInput: showIndices(inputText, caretPosition, combOrPermTemp, nextToken, greaterNextToken),
+      newCaret: caretPosition + moveRight,
+      showMsg: true,
+    }
+  }
+  
   return{
       newInput: inputText,
       newCaret: caretPosition + moveRight,
