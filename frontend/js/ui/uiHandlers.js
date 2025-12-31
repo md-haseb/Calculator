@@ -66,13 +66,22 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
  * @param {string} btnValue - Value of the clicked button
 */
 export function handleDefaultButton(input, inputText, caretPosition, clickedBtnType, btnValue) {
+    const handler = simpleHandlers[clickedBtnType];
+
+    if (clickedBtnType === 'ac' && handler) {
+      //execute simpleHandler function for AC button
+      const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
+      updateInput(input, newInput, newCaret, showMsg);
+      return;
+    }
+
     // Validate the input for display purposes
     const validated = validateForDisplay(inputText, btnValue, caretPosition);
 
     if (validated.allowed) {
       //execute simpleHandler function values
-      if (simpleHandlers[clickedBtnType]) {
-        const { newInput, newCaret, showMsg } = simpleHandlers[clickedBtnType](inputText, caretPosition, btnValue);
+      if (handler) {
+        const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
         updateInput(input, newInput, newCaret, showMsg);
         return;
       }

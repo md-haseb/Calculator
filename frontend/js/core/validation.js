@@ -1,4 +1,6 @@
-import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose} from './constants.js';
+import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics} from './constants.js';
+import { tokenize } from "../core/tokenize.js";
+import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 
 
 // const operators = '+*/-';
@@ -15,7 +17,20 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   const lastChar = currentInput[caretPosition - 1];
   const greaterLastChar = currentInput[caretPosition - 2];
   const nextChar = currentInput[caretPosition];
+
+  const tokens = tokenize(currentInput);
+  const currentToken = getTokenAtCaret(tokens, caretPosition);
+  const prevToken = getPrevToken(tokens, currentToken);
+  const greaterPrevToken = getPrevToken(tokens, prevToken);
+  console.log(greaterPrevToken);
+  const nextToken = getNextToken(tokens, currentToken);
   const regex = new RegExp(`[${operators}]`);
+  console.log(prevToken);
+  console.log(prevToken?.value);
+  console.log(currentToken);
+  console.log(currentToken?.type);
+  console.log(nextToken);
+  console.log(nextToken?.type);
 
   //Do not display operator first when input is empty (except - and .)
   const isEmptyInput = !currentInput?.length;
@@ -67,7 +82,23 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   if (lastChar === divideBy && (newValue === 0 || newValue === '0')) {
     return { allowed: false, message: 'Division by zero is not allowed.' };
   }
+  
+  if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && isOperator(newValue)) {
+    return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
+  }
 
+  if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
+    return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
+  }
+
+  if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && isOperator(newValue)) {
+    return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
+  }
+
+  if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
+    return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
+  }
+  
   if (lastChar === parenOpen && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
     return { allowed: false, message: 'Arrow keys not allowed in empty brackets.' };
   }
