@@ -99,26 +99,33 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
   const valueWithoutX = filterOut_baseX(supers);
 
   const boxLength = expBox.length;
+
   const nextCombOrPerm = nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation;
   const greaterNextCombOrPerm = greaterNextToken?.value === combinatorics.combination || greaterNextToken?.value === combinatorics.permutation;
-  const replaceBoxTemplate =  makeCombPermTemplate(greaterNextToken?.value);
-  const appendSupersTemplate = makeCombPermTemplate(nextToken?.value);
-  const replaceBoxTempLen = getVisibleLength(replaceBoxTemplate);
-  const appendSupersTempLen = getVisibleLength(appendSupersTemplate);
-  console.log(currentToken?.type);
-  console.log(nextCombOrPerm);
 
-  if (nextToken?.value === expBox && greaterNextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, replaceBoxTempLen + boxLength, supers + replaceBoxTemplate);
+  const greaterCombinatoricsTemp =  makeCombPermTemplate(greaterNextToken?.value);
+  const nextCombinatoricsTemp = makeCombPermTemplate(nextToken?.value);
+
+  const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
+  const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
+  
+  if (currentToken?.value === expBox && nextCombOrPerm) {
+    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen + boxLength, supers + nextCombinatoricsTemp);
   }
-  if (nextToken?.value === expBox && greaterNextToken?.raw === 'singleRoot'){
+  if (nextToken?.value === expBox && greaterNextCombOrPerm) {
+    return replaceAt(currentInput, caretPos, greaterCombinatoricsTempLen + boxLength, supers + greaterCombinatoricsTemp);
+  }
+  if (currentToken?.value === expBox && nextToken?.type === 'singleRoot') {
+    return replaceAt(currentInput, caretPos, boxLength, supers);
+  }
+  if (nextToken?.value === expBox && greaterNextToken?.type === 'singleRoot'){
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === expBox) {
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.type === 'superscriptValue' && nextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, appendSupersTempLen, supers + appendSupersTemplate)
+    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen, supers + nextCombinatoricsTemp)
   }
   if (currentToken?.type === 'superscriptValue') {
     return replaceAt(currentInput, caretPos, 0, supers)

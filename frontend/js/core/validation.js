@@ -1,4 +1,4 @@
-import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics} from './constants.js';
+import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics, pi, E, superscriptChars, subscriptChars} from './constants.js';
 import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 
@@ -78,6 +78,15 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     }
   }
 
+  if (isSameChar) {
+    if (lastChar === pi) {
+      return { allowed: false, message: 'PI symbol cannot be used twice in a row.' };
+    }
+    if (lastChar === E) {
+      return { allowed: false, message: 'e symbol cannot be used twice in a row.' };
+    }
+  }
+
   //Do not allow division by zero
   if (lastChar === divideBy && (newValue === 0 || newValue === '0')) {
     return { allowed: false, message: 'Division by zero is not allowed.' };
@@ -109,6 +118,10 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
 
   if (nextChar === expBox && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
     return { allowed: false, message: 'Arrow keys not allowed before filling exponent box.' };
+  }
+ 
+  if (nextChar === expBox && (/[^0-9]/.test(newValue))) {
+    return { allowed: false, message: 'Only numbers are allowed to fill exponent box.' };
   }
 
   if ((nextChar === combinatorics.combination || nextChar === combinatorics.permutation) && isOperator(newValue)){
@@ -168,6 +181,12 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
       message: 'Please enter a number before using percent.',
     };
   }
+  if (isLastCharNotNumber && newValue === factorial) {
+    return {
+      allowed: false,
+      message: 'Please enter a number before using factorial.',
+    };
+  }
 
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
@@ -212,6 +231,15 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   // if((newValue === '<' || newValue === '>') && currentInput == ''){
   //   return {allowed: false, message: 'Message: arrow keys are disable when input field is empty'};
   // }
+  const afterOperatorAllowed = [parenClose, factorial, pi, E];
+  const superscriptRegex = new RegExp(`^[${superscriptChars}]$`);
+  const subscriptRegex = new RegExp(`^[${subscriptChars}]$`);
+  if ((afterOperatorAllowed.includes(lastChar) || superscriptRegex.test(lastChar) || subscriptRegex.test(lastChar)) && !isOperator(newValue)) {
+    return {
+      allowed: false, 
+      message: 'Please enter an operator to continue the calculation.',
+    };
+  }
 
   //Update input value based on user button click
   return {allowed: true};
