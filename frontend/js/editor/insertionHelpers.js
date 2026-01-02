@@ -108,6 +108,10 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
 
   const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
   const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
+  // console.log(currentToken?.type);
+  // console.log(currentToken?.value);
+  // console.log(nextCombOrPerm);
+
   
   if (currentToken?.value === expBox && nextCombOrPerm) {
     return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen + boxLength, supers + nextCombinatoricsTemp);
@@ -125,6 +129,7 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.type === 'superscriptValue' && nextCombOrPerm) {
+    console.log('hello');
     return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen, supers + nextCombinatoricsTemp)
   }
   if (currentToken?.type === 'superscriptValue') {

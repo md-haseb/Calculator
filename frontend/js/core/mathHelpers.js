@@ -427,5 +427,5 @@ export function toScientific(num, precision = 8) {
 //check if the number is too big or not
 export function shouldUseScientific(num) {
   const absNum = Math.abs(num);
-  return absNum !== 0 && (absNum >= 1e7 || absNum < 1e-3);
+  return absNum !== 0 && (absNum >= 1e10 || absNum < 1e-3);
 }

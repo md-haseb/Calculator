@@ -86,7 +86,7 @@ export function normalizeUnaryMinus(tokens) {
 }
 
 
-export function needsImplicitMultiply(prev, curr) {
+export function needsImplicitMultiply(greaterPrev, prev, curr, next) {
   const prevCanEndValue =
     prev.type === 'number' ||
     prev.type === 'parenClose' ||
@@ -94,13 +94,18 @@ export function needsImplicitMultiply(prev, curr) {
     prev.type === 'constant' ||
     // prev.type === 'function' ||
     prev.type === 'supAndSub' ||
-    prev.type === 'subscriptValue';
+    prev.type === 'subscriptValue' && greaterPrev.type === 'combAndPerm';
 
   const currCanStartValue =
     curr.type === 'number' ||
     curr.type === 'parenOpen' ||
+    curr.type === 'constant' ||
     curr.type === 'function' ||
-    curr.type === 'constant';
+    curr.type === 'singleRoot' || 
+    curr.type === 'nthRoot' || 
+    curr.type === 'supAndSub' || 
+    curr.type === 'superscriptValue' || 
+    curr.type === 'superscriptValue' && next.type === 'combAndPerm';
 
   return prevCanEndValue && currCanStartValue;
 }
@@ -111,8 +116,10 @@ export function insertImplicitMultiplication(tokens) {
   for (let i = 0; i < tokens.length; i++) {
     const curr = tokens[i];
     const prev = result[result.length - 1];
+    const greaterPrev = result[result.length - 2];
+    const next = tokens[i + 1];
 
-    if (prev && needsImplicitMultiply(prev, curr)) {
+    if (prev && needsImplicitMultiply(greaterPrev, prev, curr, next)) {
       // Place '*' right after prev token ends
       const start = prev.end;
       const end = prev.end + 1; // just add 1 as a placeholder

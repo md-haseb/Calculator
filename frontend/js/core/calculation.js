@@ -24,7 +24,9 @@ export function calculate(expr) {
   const tokens = tokenValues(ImplicitMultiplicationTokens);
   const unaryMinusTokens = normalizeUnaryMinus(tokens);
   const postfix = toPostfix(unaryMinusTokens);
+  console.log(postfix);
   const result = evaluatePostfix(postfix);
+  console.log(result);
   return showResult(result);
 }
 
