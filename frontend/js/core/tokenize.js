@@ -20,7 +20,8 @@ export function tokenize(expr){
   `|(?:\\d+(?:\\.\\d+)?π)` + //numbers with pi
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
   `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
-  `|[${superscriptChars}${subscriptChars}]+` + // consecutive standalone super/subscripts
+  `|[${superscriptChars}]+` + // consecutive standalone super/subscripts
+  `|[${subscriptChars}]+` +
   `|[+\\-*/√%!()]`,                           // operators
   'g');
   // console.log(expr.match(tokenRegEx));
