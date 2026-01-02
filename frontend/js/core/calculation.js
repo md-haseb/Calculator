@@ -1,4 +1,4 @@
-import {tokenValues, normalizeUnaryMinus} from "./tokenHelpers.js";
+import {getTokens, tokenValues, normalizeUnaryMinus, insertImplicitMultiplication } from "./tokenHelpers.js";
 import { toPostfix, evaluatePostfix } from "./postfix.js";
 import { toScientific, shouldUseScientific } from "./mathHelpers.js";
 
@@ -7,12 +7,24 @@ import { toScientific, shouldUseScientific } from "./mathHelpers.js";
  * @param {string} expr - The expression to calculate.
  * @returns {string} Computed result as a string.
  */
+// export function calculate(expr) {
+//   const tokens = tokenValues(expr);
+//   const unaryMinusTokens = normalizeUnaryMinus(tokens);
+//   const ImplicitMultiplicationTokens = insertImplicitMultiplication(unaryMinusTokens);
+//   console.log(ImplicitMultiplicationTokens);
+//   const postfix = toPostfix(ImplicitMultiplicationTokens);
+//   const result = evaluatePostfix(postfix);
+//   console.log(result, typeof(result));
+//   return showResult(result);
+// }
+
 export function calculate(expr) {
-  const tokens = tokenValues(expr);
+  const tokensObj = getTokens(expr);
+  const ImplicitMultiplicationTokens = insertImplicitMultiplication(tokensObj);
+  const tokens = tokenValues(ImplicitMultiplicationTokens);
   const unaryMinusTokens = normalizeUnaryMinus(tokens);
   const postfix = toPostfix(unaryMinusTokens);
   const result = evaluatePostfix(postfix);
-  console.log(result, typeof(result));
   return showResult(result);
 }
 

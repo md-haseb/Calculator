@@ -54,7 +54,7 @@ export function toPostfix(tokens) {
           const top = stack[stack.length - 1];
 
           // 1. ROOT OPERATORS POP IMMEDIATELY
-          if (top.endsWith(root) || top === combinatorics.combination || top === combinatorics.permutation || top === unaryMinus) {
+          if (top.endsWith(root) || top === combinatorics.combination || top === combinatorics.permutation || top === unaryMinus || top === logFunctions.log || top === logFunctions.ln || trigFunctions.includes(top)) {
             output.push(stack.pop());
             continue;
           }

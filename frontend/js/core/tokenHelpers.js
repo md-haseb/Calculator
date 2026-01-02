@@ -54,8 +54,8 @@ export function getNextToken(tokens, token) {
  * @param {string} expr 
  * @returns {Array<string>}
  */
-export function tokenValues(expr){
-  const tokenObjects = tokenize(expr);
+export function tokenValues(tokenObjects){
+  // const tokenObjects = tokenize(expr);
   const initialFilter = tokenObjects.map(t => {
   // some tokens have .value, some have .raw
   if ("value" in t) return t.value;
@@ -84,3 +84,44 @@ export function normalizeUnaryMinus(tokens) {
 
   return result;
 }
+
+
+export function needsImplicitMultiply(prev, curr) {
+  const prevCanEndValue =
+    prev.type === 'number' ||
+    prev.type === 'parenClose' ||
+    prev.type === 'factorial' ||
+    prev.type === 'constant' ||
+    // prev.type === 'function' ||
+    prev.type === 'supAndSub' ||
+    prev.type === 'subscriptValue';
+
+  const currCanStartValue =
+    curr.type === 'number' ||
+    curr.type === 'parenOpen' ||
+    curr.type === 'function' ||
+    curr.type === 'constant';
+
+  return prevCanEndValue && currCanStartValue;
+}
+
+export function insertImplicitMultiplication(tokens) {
+  const result = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const curr = tokens[i];
+    const prev = result[result.length - 1];
+
+    if (prev && needsImplicitMultiply(prev, curr)) {
+      // Place '*' right after prev token ends
+      const start = prev.end;
+      const end = prev.end + 1; // just add 1 as a placeholder
+      result.push({ type: 'operator', value: '*', start, end });
+    }
+
+    result.push(curr);
+  }
+
+  return result;
+}
+

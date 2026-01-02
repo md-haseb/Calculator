@@ -231,15 +231,15 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   // if((newValue === '<' || newValue === '>') && currentInput == ''){
   //   return {allowed: false, message: 'Message: arrow keys are disable when input field is empty'};
   // }
-  const afterOperatorAllowed = [parenClose, factorial, pi, E];
-  const superscriptRegex = new RegExp(`^[${superscriptChars}]$`);
-  const subscriptRegex = new RegExp(`^[${subscriptChars}]$`);
-  if ((afterOperatorAllowed.includes(lastChar) || superscriptRegex.test(lastChar) || subscriptRegex.test(lastChar)) && !isOperator(newValue)) {
-    return {
-      allowed: false, 
-      message: 'Please enter an operator to continue the calculation.',
-    };
-  }
+  // const afterOperatorAllowed = [parenClose, factorial, pi, E];
+  // const superscriptRegex = new RegExp(`^[${superscriptChars}]$`);
+  // const subscriptRegex = new RegExp(`^[${subscriptChars}]$`);
+  // if ((afterOperatorAllowed.includes(lastChar) || superscriptRegex.test(lastChar) || subscriptRegex.test(lastChar)) && !isOperator(newValue)) {
+  //   return {
+  //     allowed: false, 
+  //     message: 'Please enter an operator to continue the calculation.',
+  //   };
+  // }
 
   //Update input value based on user button click
   return {allowed: true};
