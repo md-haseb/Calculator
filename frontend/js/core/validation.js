@@ -104,6 +104,14 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
   }
 
+  if ((currentToken?.type === 'supAndSub') && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
+    return { allowed: false, message: 'Please enter an operator before using combinatorics.' };
+  }
+
+  if (currentToken?.type === 'supAndSub' && newValue.includes(root)) {
+    return { allowed: false, message: 'Please enter an operator before using root operator.' };
+  }
+
   // if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
   //   return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
   // }
