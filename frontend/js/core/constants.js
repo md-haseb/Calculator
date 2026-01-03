@@ -37,6 +37,17 @@ export const operatorsSet = new Set(operators);
 
 
 /**
+ * Operators Map.
+ */
+export const operatorsMap = {
+  plus: '+',
+  minus: '-',
+  multiply: '×',
+  divide: '/',
+}
+
+
+/**
  * trigonometric functions
  */
 export const trigFunctions = [
@@ -56,6 +67,12 @@ export const combinatorics = {
   permutation: 'P'
 };
 
+
+/**
+ * combinatorics values inside array
+ */
+export const combinatoricsArr = ['C', 'P'];
+
 /**
  * log functions
  */
@@ -63,6 +80,12 @@ export const logFunctions = {
   log: 'log',
   ln: 'ln'
 };
+
+
+/**
+ * log functions inside array
+ */
+export const logFunctionsArr = ['log', 'ln'];
 
 /**
  * parentheses

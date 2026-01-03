@@ -3,7 +3,16 @@ import { handleEqual } from '../editor/inputController.js';
 import { insertValue, replaceOperator } from '../editor/insertion.js';
 import { changeMultiplySign } from './uiUtils.js';
 import { updateInput, handleInvalidInput } from './ui.js';
-import {handleAC, handleDelete, handleFunctions, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
+import {handleAC, handleDelete, handleFunctions, handleOperators, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
+import { operatorsMap } from '../core/constants.js';
+
+
+
+const operatorHandlers = Object.entries(operatorsMap).reduce((acc, [btnName, symbol]) => {
+  console.log('hello');
+  acc[btnName] = (inputText, caretPosition) => handleOperators(symbol, inputText, caretPosition);
+  return acc;
+}, {});
 
 
 /**
@@ -16,6 +25,7 @@ export const simpleHandlers = {
   leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
   rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
   function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
+  ...operatorHandlers, // dynamically add operator keys here
 };
 
 
@@ -67,6 +77,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
 */
 export function handleDefaultButton(input, inputText, caretPosition, clickedBtnType, btnValue) {
     const handler = simpleHandlers[clickedBtnType];
+    console.log(simpleHandlers[clickedBtnType]);
 
     if (clickedBtnType === 'ac' && handler) {
       //execute simpleHandler function for AC button
@@ -81,8 +92,10 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
     if (validated.allowed) {
       //execute simpleHandler function values
       if (handler) {
+        console.log(btnValue);
         const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
         updateInput(input, newInput, newCaret, showMsg);
+        console.log(inputText, newInput);
         return;
       }
 

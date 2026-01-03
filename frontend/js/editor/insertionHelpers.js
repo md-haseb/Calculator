@@ -1,6 +1,7 @@
-import { normalToSuperscript, normalToSubscript, combinatorics, expBox } from "../core/constants.js";
+import { normalToSuperscript, normalToSubscript, combinatorics, combinatoricsArr, logFunctionsArr, expBox, trigFunctions } from "../core/constants.js";
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
+import { isOperator } from '../core/validation.js';
 
 /**
  * Computes new caret position after inserting a special value.
@@ -168,6 +169,12 @@ export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
  * @returns {string} Updated input string.
  */
 export function insertAt(currentInput, caretPos, newValue) {
+  // const span = `<span style="padding:0 2px">${newValue}</span>`;
+
+  // if (isOperator(newValue) || trigFunctions.includes(newValue) || logFunctionsArr.includes(newValue) || combinatoricsArr.includes(newValue)) {
+  //   return currentInput.slice(0, caretPos) + span + currentInput.slice(caretPos);
+  // }
+  console.log(newValue);
   return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
 }
 

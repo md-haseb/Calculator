@@ -52,12 +52,27 @@ export function handleDelete(inputText, caretPosition){
 
 export function handleFunctions(value, inputText, caretPosition){
   const funcLength = value.length;
-  const insertValue = `${value}()`;
+  const insertValue = ` ${value}()`;
   console.log(insertValue);
   const parenOpenLen = 1;
+  const spaceLen = 1;
   return{
     newInput: insertAt(inputText, caretPosition, insertValue),
-    newCaret: caretPosition + funcLength + parenOpenLen,
+    newCaret: caretPosition + funcLength + parenOpenLen + spaceLen,
+    showMsg: true,
+  }
+}
+
+export function handleOperators(value, inputText, caretPosition){
+  console.log(value);
+  const operatorLength = value.length;
+  const insertValue = ` ${value} `;
+  console.log(insertValue);
+  const beforeSpaceLen = 1;
+  const afterSpaceLen = 1;
+  return{
+    newInput: insertAt(inputText, caretPosition, insertValue),
+    newCaret: caretPosition + operatorLength + beforeSpaceLen + afterSpaceLen,
     showMsg: true,
   }
 }
