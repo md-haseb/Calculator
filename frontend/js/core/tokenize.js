@@ -19,11 +19,14 @@ export function tokenize(expr){
   `|(?:\\d+(?:\\.\\d+)?e)` + //numbers with e
   `|(?:\\d+(?:\\.\\d+)?π)` + //numbers with pi
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
+  `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)(?=[${superscriptChars}${subscriptChars}]+[CP])` + //NUMBER before C / P
   `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)[${superscriptChars}${subscriptChars}]*` + // numbers with optional super/subscripts
+  // `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)` + //normal number
   `|[${superscriptChars}]+` + // consecutive standalone super/subscripts
   `|[${subscriptChars}]+` +
   `|[+\\-*/√%!()]`,                           // operators
   'g');
+
   // console.log(expr.match(tokenRegEx));
   // return expr.match(tokenRegEx);
   // const rawTokens = expr.match(tokenRegEx) || [];
