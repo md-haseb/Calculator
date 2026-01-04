@@ -1,4 +1,4 @@
-import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
+import {getTokens, tokenValues, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {getCaretAfterInsertion, showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
 
@@ -16,6 +16,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
   const typesWithBox = ['logWithBox', 'baseWithBox', 'boxWithRoot', 'combOrPerm'];
 
   const tokens = getTokens(currentInput);
+  const tokensValue = tokenValues(tokens);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
   const prevToken = getPrevToken(tokens, currentToken);
   const nextToken = getNextToken(tokens, currentToken);
@@ -29,28 +30,32 @@ export function insertValue(currentInput, caretPosition, newValue) {
   function applyExponentBox(value){
     return {
       newInput: showExponentBox(currentInput, caretPosition, value),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      // newCaret: getCaretAfterInsertion(value, caretPosition),
+      newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
     };
   }
 
   function applyExponent(value) {
     return {
       newInput: showExponent(currentInput, caretPosition, value, currentToken, nextToken, greaterNextToken),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      // newCaret: getCaretAfterInsertion(value, caretPosition),
+      newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
     };
   }
 
   function applyIndices(value) {
     return {
       newInput: showIndices(currentInput, caretPosition, value, nextToken, greaterNextToken),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      // newCaret: getCaretAfterInsertion(value, caretPosition),
+      newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
     };
   }
 
   function insertWithCaret(value) {
     return {
       newInput: insertAt(currentInput, caretPosition, value),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      // newCaret: getCaretAfterInsertion(value, caretPosition),
+      newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
     };
   }
   
@@ -208,6 +213,7 @@ export function replaceOperator(currentInput, caretPosition, rawValue) {
   const replacement = classifyButtonValue(rawValue);
 
   const tokens = getTokens(currentInput);
+  const tokensValue = tokenValues(tokens);
   const currentToken = getTokenAtCaret(tokens, caretPosition);
 
   const start = caretPosition - currentToken.value.length;
@@ -215,6 +221,7 @@ export function replaceOperator(currentInput, caretPosition, rawValue) {
   
   return {
     newInput: replaceAt(currentInput, start, length, replacement.value),
-    newCaret: getCaretAfterInsertion(replacement.value, caretPosition),
+    // newCaret: getCaretAfterInsertion(replacement.value, caretPosition),
+    newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
   };
 }

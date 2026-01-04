@@ -2,6 +2,7 @@ import { normalToSuperscript, normalToSubscript, combinatorics, combinatoricsArr
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
 import { isOperator } from '../core/validation.js';
+import { formatTokensForDisplay, getTokenIndexFromCaret, getCaretForToken } from '../ui/formatDisplay.js';
 
 /**
  * Computes new caret position after inserting a special value.
@@ -9,40 +10,79 @@ import { isOperator } from '../core/validation.js';
  * @param {number} caretPos - Current caret position.
  * @returns {number} Updated caret position.
  */
-export function getCaretAfterInsertion(newValue, caretPos) {
-  const {type, value} = classifyButtonValue(newValue);
-  let caretMovement;
-  let cleaned;
-  const stepForward = value.length;
-  const caretInsideParens = 1;
+// export function getCaretAfterInsertion(newValue, caretPos) {
+//   const {type, value} = classifyButtonValue(newValue);
+//   let caretMovement;
+//   let cleaned;
+//   const stepForward = value.length;
+//   const caretInsideParens = 1;
+
+//   switch (type) {
+//     case 'logWithBox':
+//       cleaned = filterOut_expBox(value);
+//       caretMovement = cleaned.length;
+//       break;
+
+//     case 'baseWithSupers':
+//       cleaned = filterOut_baseX(value);
+//       caretMovement = cleaned.length;
+//       break;
+
+//     case 'parentheses':
+//       caretMovement = caretInsideParens;
+//       break;
+
+//     case 'baseWithBox':
+//     case 'combOrPerm':
+//     case 'boxWithRoot':
+//       caretMovement = 0;
+//       break;
+
+//     default:
+//       caretMovement = stepForward; // default for single insert
+//   }
+
+//   return caretPos + caretMovement; 
+// }
+
+
+export function getCaretAfterInsertion({ newValue, caretPos, tokens }) {
+  const { type, value } = classifyButtonValue(newValue);
+
+  const { map } = formatTokensForDisplay(tokens);
+
+  const currentTokenIndex = getTokenIndexFromCaret(map, caretPos);
+
+  let targetTokenIndex = currentTokenIndex;
 
   switch (type) {
     case 'logWithBox':
-      cleaned = filterOut_expBox(value);
-      caretMovement = cleaned.length;
+    case 'baseWithSupers': {
+      // caret goes after the inserted token
+      targetTokenIndex = currentTokenIndex + 1;
       break;
-
-    case 'baseWithSupers':
-      cleaned = filterOut_baseX(value);
-      caretMovement = cleaned.length;
-      break;
+    }
 
     case 'parentheses':
-      caretMovement = caretInsideParens;
-      break;
+      // move inside parentheses token
+      targetTokenIndex = currentTokenIndex + 1;
+      return getCaretForToken(map, targetTokenIndex, 'before');
 
     case 'baseWithBox':
     case 'combOrPerm':
     case 'boxWithRoot':
-      caretMovement = 0;
-      break;
+      // caret stays
+      return caretPos;
 
     default:
-      caretMovement = stepForward; // default for single insert
+      // normal token insertion
+      targetTokenIndex = currentTokenIndex + 1;
   }
 
-  return caretPos + caretMovement; 
+  return getCaretForToken(map, targetTokenIndex, 'after');
 }
+
+
 
 /**
  * Inserts an exponent box (□) or special notation at the caret position.

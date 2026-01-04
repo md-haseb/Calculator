@@ -4,6 +4,7 @@ import {handleAC, handleDelete, handleFunctions, handleInputClick, handleLeftArr
 import {setState, render} from "./uiState.js";
 import {executeEqual, handleDefaultButton} from "./uiHandlers.js";
 import { appendHistory, handleRemoveHistory } from './history.js';
+import { formatTokensForDisplay } from './formatDisplay.js';
 
 
 /**
@@ -167,7 +168,8 @@ export function restoreCaret(input) {
 */
 export function updateInput (inputElm, newInput, newCaret, showMsg = false) {
   if (showMsg) showMessage();
-  inputElm.innerHTML = newInput;
+  // inputElm.innerHTML = newInput;
+  inputElm.innerHTML = formatTokensForDisplay(newInput).text;
   caretShowWithFocus(inputElm, newCaret);
 }
 
