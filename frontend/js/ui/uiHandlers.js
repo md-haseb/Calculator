@@ -92,6 +92,7 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
         caretPosition,
         btnValue
       );
+      console.log(newCaret);
       updateInput(input, newInput, newCaret);
       return;
     }

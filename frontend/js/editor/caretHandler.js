@@ -64,7 +64,8 @@ export function caretShow(inputElm, caretPos){
       remaining -= node.textContent.length;
     }
     // fallback: place caret at end if index too large
-    range.selectNodeContents(container);
+    // range.selectNodeContents(container);
+    range.selectNodeContents(inputElm);
     range.collapse(false);
     sel.removeAllRanges();
     sel.addRange(range);
