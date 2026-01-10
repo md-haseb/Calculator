@@ -5,6 +5,7 @@ import { validateForDisplay, validateForEvaluation } from "../core/validation.js
 import { calculate } from "../core/calculation.js";
 import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
 import { combinatorics, expBox } from "../core/constants.js";
+import { formatTokensForDisplay, getCaretAfterInsertion } from "../ui/formatDisplay.js";
 
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
@@ -51,13 +52,13 @@ export function handleDelete(inputText, caretPosition){
 }
 
 export function handleFunctions(value, inputText, caretPosition){
-  const funcLength = value.length;
   const insertValue = `${value}()`;
-  console.log(insertValue);
-  const parenOpenLen = 1;
+
+  const newInput = insertAt(inputText, caretPosition, insertValue);
+  const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
   return{
-    newInput: insertAt(inputText, caretPosition, insertValue),
-    newCaret: caretPosition + funcLength + parenOpenLen,
+    newInput,
+    newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
     showMsg: true,
   }
 }

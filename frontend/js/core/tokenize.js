@@ -24,7 +24,8 @@ export function tokenize(expr){
   // `|(?:\\d+\\.\\d+|\\d+|\\.\\d*)` + //normal number
   `|[${superscriptChars}]+` + // consecutive standalone super/subscripts
   `|[${subscriptChars}]+` +
-  `|[+\\-*/√%!()]`,                           // operators
+  // `|[+\\-*/√%!()]`,                           // operators
+  `|[+\\-*%√!()]|(?<!<[^>]*)/(?![^<]*>)`,
   'g');
 
   // console.log(expr.match(tokenRegEx));

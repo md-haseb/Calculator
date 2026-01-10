@@ -1,6 +1,7 @@
 import { normalToSuperscript, normalToSubscript, combinatorics, expBox } from "../core/constants.js";
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
+import {formatTokensForDisplay} from '../ui/formatDisplay.js';
 
 /**
  * Computes new caret position after inserting a special value.
@@ -8,40 +9,40 @@ import {classifyButtonValue} from '../core/classifyBtn.js';
  * @param {number} caretPos - Current caret position.
  * @returns {number} Updated caret position.
  */
-export function getCaretAfterInsertion(newValue, caretPos) {
-  const {type, value} = classifyButtonValue(newValue);
-  let caretMovement;
-  let cleaned;
-  const stepForward = value.length;
-  const caretInsideParens = 1;
+// export function getCaretAfterInsertion(newValue, caretPos) {
+//   const {type, value} = classifyButtonValue(newValue);
+//   let caretMovement;
+//   let cleaned;
+//   const stepForward = value.length;
+//   const caretInsideParens = 1;
 
-  switch (type) {
-    case 'logWithBox':
-      cleaned = filterOut_expBox(value);
-      caretMovement = cleaned.length;
-      break;
+//   switch (type) {
+//     case 'logWithBox':
+//       cleaned = filterOut_expBox(value);
+//       caretMovement = cleaned.length;
+//       break;
 
-    case 'baseWithSupers':
-      cleaned = filterOut_baseX(value);
-      caretMovement = cleaned.length;
-      break;
+//     case 'baseWithSupers':
+//       cleaned = filterOut_baseX(value);
+//       caretMovement = cleaned.length;
+//       break;
 
-    case 'parentheses':
-      caretMovement = caretInsideParens;
-      break;
+//     case 'parentheses':
+//       caretMovement = caretInsideParens;
+//       break;
 
-    case 'baseWithBox':
-    case 'combOrPerm':
-    case 'boxWithRoot':
-      caretMovement = 0;
-      break;
+//     case 'baseWithBox':
+//     case 'combOrPerm':
+//     case 'boxWithRoot':
+//       caretMovement = 0;
+//       break;
 
-    default:
-      caretMovement = stepForward; // default for single insert
-  }
+//     default:
+//       caretMovement = stepForward; // default for single insert
+//   }
 
-  return caretPos + caretMovement; 
-}
+//   return caretPos + caretMovement; 
+// }
 
 /**
  * Inserts an exponent box (□) or special notation at the caret position.
@@ -54,6 +55,7 @@ export function showExponentBox(currentInput, caretPos, newValue) {
   const {type, value} = classifyButtonValue(newValue);
   let valueToInsert;
 
+  console.log(type);
   switch (type) {
     case 'logWithBox':
       valueToInsert = `log<sub>□</sub>()`;
@@ -69,6 +71,7 @@ export function showExponentBox(currentInput, caretPos, newValue) {
       valueToInsert = `<sup>□</sup>`;
   }
 
+  console.log(currentInput, caretPos, valueToInsert);
   return insertAt(currentInput, caretPos, valueToInsert);
 }
 
@@ -155,7 +158,8 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
  * @returns {string} Updated input string.
  */
 export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
-  return currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
+  const replaceInput = currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
+  return formatTokensForDisplay(replaceInput).text;
 }
 
 
@@ -168,7 +172,11 @@ export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
  * @returns {string} Updated input string.
  */
 export function insertAt(currentInput, caretPos, newValue) {
-  return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
+  const insertInput = currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
+  console.log(insertInput);
+  console.log(formatTokensForDisplay(insertInput).text);
+  return formatTokensForDisplay(insertInput).text;
+  // return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
 }
 
 

@@ -1,6 +1,7 @@
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
-import {getCaretAfterInsertion, showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
+import {showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
+import {formatTokensForDisplay, getCaretAfterInsertion} from '../ui/formatDisplay.js';
 
 
 /**
@@ -26,17 +27,32 @@ export function insertValue(currentInput, caretPosition, newValue) {
   console.log(nextToken);
   console.log(greaterNextToken);
 
+  // function applyExponentBox(value){
+  //   console.log(value);
+  //   const newInput = showExponentBox(currentInput, caretPosition, value);
+  //   const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
+  //   console.log(newInput);
+  //   return {
+  //     newInput,
+  //     newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+  //   };
+  // }
+
   function applyExponentBox(value){
+    const newInput = showExponentBox(currentInput, caretPosition, value);
+    const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
-      newInput: showExponentBox(currentInput, caretPosition, value),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      newInput,
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
     };
   }
 
   function applyExponent(value) {
+    const newInput = showExponent(currentInput, caretPosition, value, currentToken, nextToken, greaterNextToken);
+    const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
-      newInput: showExponent(currentInput, caretPosition, value, currentToken, nextToken, greaterNextToken),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      newInput,
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
     };
   }
 
@@ -48,9 +64,11 @@ export function insertValue(currentInput, caretPosition, newValue) {
   }
 
   function insertWithCaret(value) {
+    const newInput = insertAt(currentInput, caretPosition, value);
+    const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
-      newInput: insertAt(currentInput, caretPosition, value),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      newInput,
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
     };
   }
   
