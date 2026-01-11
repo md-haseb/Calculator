@@ -24,7 +24,12 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   const greaterPrevToken = getPrevToken(tokens, prevToken);
   console.log(greaterPrevToken);
   const nextToken = getNextToken(tokens, currentToken);
-  const regex = new RegExp(`[${operators}]`);
+  // const regex = new RegExp(`[${operators}]`);
+  const operatorChars = operators.join('');
+  const regex = new RegExp(
+    `[${operatorChars.replace(/[-\\^]/g, '\\$&')}()\\s]`
+  );
+
   console.log(prevToken);
   console.log(prevToken?.value);
   console.log(currentToken);
@@ -96,6 +101,10 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
   }
 
+  if (currentToken?.type === 'number' && (newValue.includes(expBox) && newValue.includes(root))) {
+    return { allowed: false, message: 'Please enter an operator first before using nth root.' };
+  }
+
   // if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
   //   return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
   // }
@@ -152,6 +161,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   //   }
   // }
   if (newValue === decimal && currentInput?.length && lastChar !== ')') {
+    // const numbers = currentInput.split(regex);
     const numbers = currentInput.split(regex);
     const lastNumber = numbers[numbers.length - 1];
 

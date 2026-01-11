@@ -6,6 +6,7 @@ export function classifyButtonValue(newValue) {
   const exactMap = {
     '!': 'factorial',
     'π': 'pi',
+    'e': 'E',
     '+': 'plus',
     '-': 'minus',
     '×': 'multiply',

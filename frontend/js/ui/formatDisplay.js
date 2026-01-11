@@ -15,7 +15,7 @@ export function formatTokensForDisplay(inputText) {
   const map = []; // displayIndex → tokenIndex
 
   let displayIndex = 0;
-  console.log(tokens);
+  console.log(normalized);
   for (let i = 0; i < normalized.length; i++) {
     console.log(normalized[i]);
     console.log(displayIndex);
@@ -32,6 +32,11 @@ export function formatTokensForDisplay(inputText) {
       text += '&nbsp;';
       map[displayIndex++] = i;
     }
+
+    // if (curr === expBox && (/^\d+(\.\d+)?$/).test(prev)) {
+    //   text += '&nbsp;';
+    //   map[displayIndex++] = i;
+    // }
 
     let htmlText = '';
     if (curr === expBox && (prev === logFunctions.log || combinatoricsArr.includes(prev))) {
@@ -124,6 +129,20 @@ function getTokenIndexFromCaret(map, caretPos) {
   return map[displayIndex];
 }
 
+function getNextTokenIndexFromCaret(map, caretPos) {
+  if (caretPos <= 0) return -1;
+
+  const displayIndex = Math.min(caretPos, map.length);
+  return map[displayIndex];
+}
+
+function getGreaterNextTokenIndexFromCaret(map, caretPos) {
+  if (caretPos <= 0) return -1;
+
+  const displayIndex = Math.min(caretPos + 1, map.length + 1);
+  return map[displayIndex];
+}
+
 // function getCurrentTokenFromCaret(map, caretPos) {
 //   const displayIndex = Math.min(caretPos - 1, map.length - 1);
 
@@ -151,15 +170,19 @@ function getTokenIndexFromCaret(map, caretPos) {
 // }
 function shouldMoveToNextToken(inputText, map, newValue, caretPos) {
   const tokensObj = getTokens(inputText);
+  const normalizedToken = normalizeTokens(tokensObj);
   // const currentToken = getTokenAtCaret(tokensObj, caretPos);
   console.log(tokensObj);
-  const currentToken = tokensObj[getTokenIndexFromCaret(map, caretPos)];
+  console.log(normalizedToken);
+  const currentToken = normalizedToken[getTokenIndexFromCaret(map, caretPos)];
+  const nextToken = normalizedToken[getNextTokenIndexFromCaret(map, caretPos)];
+  const greaterNextToken = normalizedToken[getGreaterNextTokenIndexFromCaret(map, caretPos)];
 
   console.log(newValue);
   const { type } = classifyButtonValue(newValue);
-  console.log(type, currentToken?.type);
+  console.log(type, currentToken?.type, nextToken?.type, greaterNextToken?.type);
 
-  if ((type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
+  if ((type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
     console.log(type, currentToken?.type);
     return { move: 'current' };
   }
@@ -250,5 +273,41 @@ function splitSuperscriptRootTokens(tokens, superscriptChars) {
     }
   }
   console.log(result);
+  return result;
+}
+
+
+function normalizeTokens(tokens) {
+  const result = [];
+
+  for (const token of tokens) {
+    if (token.type !== 'nthRoot') {
+      result.push(token);
+      continue;
+    }
+
+    const { raw, start } = token;
+
+    // 1️⃣ extract superscripts (everything except √)
+    const superscript = raw.replace('√', '');
+
+    if (superscript.length > 0) {
+      result.push({
+        type: 'superscriptValue',
+        value: superscript,
+        start: start,
+        end: start + superscript.length
+      });
+    }
+
+    // 2️⃣ root symbol
+    result.push({
+      type: 'singleRoot',
+      value: '√',
+      start: start + superscript.length,
+      end: start + raw.length
+    });
+  }
+
   return result;
 }

@@ -57,9 +57,11 @@ export function insertValue(currentInput, caretPosition, newValue) {
   }
 
   function applyIndices(value) {
+    const newInput = showIndices(currentInput, caretPosition, value, nextToken, greaterNextToken);
+    const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
-      newInput: showIndices(currentInput, caretPosition, value, nextToken, greaterNextToken),
-      newCaret: getCaretAfterInsertion(value, caretPosition),
+      newInput,
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
     };
   }
 
