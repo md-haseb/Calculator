@@ -122,26 +122,62 @@ export function formatTokensForDisplay(inputText) {
 // }
 
 
-function getTokenIndexFromCaret(map, caretPos) {
-  if (caretPos <= 0) return -1;
+// function getCurrTokenIndexFromCaret(map, caretPos) {
+//   if (caretPos <= 0) return -1;
 
-  const displayIndex = Math.min(caretPos - 1, map.length - 1);
-  return map[displayIndex];
+//   const displayIndex = Math.min(caretPos - 1, map.length - 1);
+//   return map[displayIndex];
+// }
+
+function getCurrTokenIndexFromCaret(map, caretPos) {
+  if (caretPos <= 0) return -1;
+  const i = Math.min(caretPos - 1, map.length - 1);
+  return map[i];
 }
 
 function getNextTokenIndexFromCaret(map, caretPos) {
-  if (caretPos <= 0) return -1;
+  const current = getCurrTokenIndexFromCaret(map, caretPos);
+  if (current === -1) return -1;
 
-  const displayIndex = Math.min(caretPos, map.length);
-  return map[displayIndex];
+  for (let i = caretPos; i < map.length; i++) {
+    if (map[i] !== current) {
+      return map[i];
+    }
+  }
+  return -1;
 }
 
 function getGreaterNextTokenIndexFromCaret(map, caretPos) {
-  if (caretPos <= 0) return -1;
+  const next = getNextTokenIndexFromCaret(map, caretPos);
+  if (next === -1) return -1;
 
-  const displayIndex = Math.min(caretPos + 1, map.length + 1);
-  return map[displayIndex];
+  for (let i = caretPos; i < map.length; i++) {
+    if (map[i] !== next && map[i] !== getCurrTokenIndexFromCaret(map, caretPos)) {
+      return map[i];
+    }
+  }
+  return -1;
 }
+
+
+
+// function getNextTokenIndexFromCaret(map, caretPos) {
+//   if (caretPos <= 0) return -1;
+//   console.log(map);
+
+//   const displayIndex = Math.min(caretPos, map.length);
+//   console.log(displayIndex);
+//   return map[displayIndex];
+// }
+
+// function getGreaterNextTokenIndexFromCaret(map, caretPos) {
+//   if (caretPos <= 0) return -1;
+//   console.log(map);
+
+//   const displayIndex = Math.min(caretPos + 1, map.length + 1);
+//   console.log(displayIndex);
+//   return map[displayIndex];
+// }
 
 // function getCurrentTokenFromCaret(map, caretPos) {
 //   const displayIndex = Math.min(caretPos - 1, map.length - 1);
@@ -174,9 +210,12 @@ function shouldMoveToNextToken(inputText, map, newValue, caretPos) {
   // const currentToken = getTokenAtCaret(tokensObj, caretPos);
   console.log(tokensObj);
   console.log(normalizedToken);
-  const currentToken = normalizedToken[getTokenIndexFromCaret(map, caretPos)];
+  const currentToken = normalizedToken[getCurrTokenIndexFromCaret(map, caretPos)];
   const nextToken = normalizedToken[getNextTokenIndexFromCaret(map, caretPos)];
   const greaterNextToken = normalizedToken[getGreaterNextTokenIndexFromCaret(map, caretPos)];
+  console.log(getCurrTokenIndexFromCaret(map, caretPos));
+  console.log(getNextTokenIndexFromCaret(map, caretPos));
+  console.log(getGreaterNextTokenIndexFromCaret(map, caretPos));
 
   console.log(newValue);
   const { type } = classifyButtonValue(newValue);
@@ -223,7 +262,7 @@ function getCaretAfterToken(map, targetTokenIndex) {
 
 export function getCaretAfterInsertion (inputText, map, newValue, caretPos) {
   console.log(map);
-  const currentTokenIndex = getTokenIndexFromCaret(map, caretPos);
+  const currentTokenIndex = getCurrTokenIndexFromCaret(map, caretPos);
 
   let targetTokenIndex = currentTokenIndex;
   console.log(targetTokenIndex);
