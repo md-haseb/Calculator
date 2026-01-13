@@ -222,29 +222,21 @@ function shouldMoveToNextToken(inputText, map, btn, caretPos) {
   const { type } = classifyButton(btn);
   console.log(type, currentToken?.type, nextToken?.type, greaterNextToken?.type);
 
-  if ((type === 'rightArrow' && currentToken?.type === 'number' && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
+  if ((type === 'rightArrow' && (currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'rightArrow' && nextToken?.type === 'numberWithDecimal') || (type === 'rightArrow' && currentToken?.type === 'parenOpen' && nextToken?.type === 'number') || (type === 'rightArrow' && (currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE') && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'rightArrow' && (nextToken?.type === 'numWithPi' || nextToken?.type === 'numWithE' || nextToken?.type === 'constant')) || (type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'number') || (type === 'rightArrow' && currentToken?.type === 'singleRoot' && nextToken?.type === 'number') ){
+    return { move: 'char' }; 
+  }
+
+  if ((type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
     console.log(type, currentToken?.type);
     return { move: 'current' };
   }
+
   if ((type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'function') || type === 'function') {
     console.log('hello');
     return { move: 'greaterNext' };
   }
-  return { move: 'next' };
 
-  // return (
-  //   type === 'plus' ||
-  //   type === 'minus' || 
-  //   type === 'multiply' || 
-  //   type === 'divide' || 
-  //   type === 'parentheses' ||
-  //   type === 'function' ||
-  //   type === 'logWithBox' ||
-  //   type === 'baseWithSupers' ||
-  //   type === 'baseWithBox' || 
-  //   type === 'boxWithRoot' || 
-  //   type === 'combOrPerm'
-  // );
+  return { move: 'next' };
 }
 
 function isAtEndOfCurrentToken(map, caretPos) {
@@ -277,11 +269,14 @@ function getCaretAfterToken(map, targetTokenIndex) {
 export function getCaretAfterInsertion (inputText, map, btn, caretPos) {
   console.log(map);
   const currentTokenIndex = getCurrTokenIndexFromCaret(map, caretPos);
+  const moveType = shouldMoveToNextToken(inputText, map, btn, caretPos).move;
 
   let targetTokenIndex = currentTokenIndex;
   console.log(targetTokenIndex);
 
-  const moveType = shouldMoveToNextToken(inputText, map, btn, caretPos).move;
+  if (moveType === 'char') {
+    return Math.min(caretPos + 1, map.length);
+  }
   if (moveType === 'current') {
     console.log('hello');
     targetTokenIndex = currentTokenIndex;
