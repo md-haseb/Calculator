@@ -1,6 +1,6 @@
 import { getTokens, tokenValues, getTokenAtCaret } from '../core/tokenHelpers.js';
 import { expBox, operatorsSet, trigFunctions, logFunctionsArr, logFunctions, combinatorics, combinatoricsArr, superscriptChars } from '../core/constants.js';
-import { classifyButtonValue } from '../core/classifyBtn.js';
+import { classifyButtonValue, classifyButton } from '../core/classifyBtn.js';
 
 export function formatTokensForDisplay(inputText) {
   const tokensObj = getTokens(inputText);
@@ -130,14 +130,14 @@ export function formatTokensForDisplay(inputText) {
 // }
 
 function getCurrTokenIndexFromCaret(map, caretPos) {
-  if (caretPos <= 0) return -1;
+  if (caretPos <= 0) return 0;
   const i = Math.min(caretPos - 1, map.length - 1);
   return map[i];
 }
 
 function getNextTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
-  if (current === -1) return -1;
+  if (current === -1) return 0;
 
   for (let i = caretPos; i < map.length; i++) {
     if (map[i] !== current) {
@@ -149,7 +149,7 @@ function getNextTokenIndexFromCaret(map, caretPos) {
 
 function getGreaterNextTokenIndexFromCaret(map, caretPos) {
   const next = getNextTokenIndexFromCaret(map, caretPos);
-  if (next === -1) return -1;
+  if (next === -1) return 0;
 
   for (let i = caretPos; i < map.length; i++) {
     if (map[i] !== next && map[i] !== getCurrTokenIndexFromCaret(map, caretPos)) {
@@ -204,7 +204,7 @@ function getGreaterNextTokenIndexFromCaret(map, caretPos) {
 //     type === 'combOrPerm'
 //   );
 // }
-function shouldMoveToNextToken(inputText, map, newValue, caretPos) {
+function shouldMoveToNextToken(inputText, map, btn, caretPos) {
   const tokensObj = getTokens(inputText);
   const normalizedToken = normalizeTokens(tokensObj);
   // const currentToken = getTokenAtCaret(tokensObj, caretPos);
@@ -217,15 +217,17 @@ function shouldMoveToNextToken(inputText, map, newValue, caretPos) {
   console.log(getNextTokenIndexFromCaret(map, caretPos));
   console.log(getGreaterNextTokenIndexFromCaret(map, caretPos));
 
-  console.log(newValue);
-  const { type } = classifyButtonValue(newValue);
+  // console.log(newValue);
+  // const { type } = classifyButtonValue(newValue);
+  const { type } = classifyButton(btn);
   console.log(type, currentToken?.type, nextToken?.type, greaterNextToken?.type);
 
-  if ((type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
+  if ((type === 'rightArrow' && currentToken?.type === 'number' && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
     console.log(type, currentToken?.type);
     return { move: 'current' };
   }
-  if (type === 'function') {
+  if ((type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'function') || type === 'function') {
+    console.log('hello');
     return { move: 'greaterNext' };
   }
   return { move: 'next' };
@@ -245,6 +247,18 @@ function shouldMoveToNextToken(inputText, map, newValue, caretPos) {
   // );
 }
 
+function isAtEndOfCurrentToken(map, caretPos) {
+  if (caretPos <= 0) return false;
+
+  const idx = caretPos - 1;
+  const curr = map[idx];
+  const next = map[idx + 1];
+
+  // next display index belongs to a different token
+  return next !== curr;
+}
+
+
 
 function getCaretAfterToken(map, targetTokenIndex) {
   let lastIndex = -1;
@@ -260,14 +274,14 @@ function getCaretAfterToken(map, targetTokenIndex) {
 
 
 
-export function getCaretAfterInsertion (inputText, map, newValue, caretPos) {
+export function getCaretAfterInsertion (inputText, map, btn, caretPos) {
   console.log(map);
   const currentTokenIndex = getCurrTokenIndexFromCaret(map, caretPos);
 
   let targetTokenIndex = currentTokenIndex;
   console.log(targetTokenIndex);
 
-  const moveType = shouldMoveToNextToken(inputText, map, newValue, caretPos).move;
+  const moveType = shouldMoveToNextToken(inputText, map, btn, caretPos).move;
   if (moveType === 'current') {
     console.log('hello');
     targetTokenIndex = currentTokenIndex;

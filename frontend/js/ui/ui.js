@@ -91,7 +91,7 @@ export function init() {
           return;
 
         default:
-          handleDefaultButton(input, input.textContent, caretPosition, clickedBtn.type, clickedBtn.value);
+          handleDefaultButton(input, input.textContent, caretPosition, btn, clickedBtn.type, clickedBtn.value);
           return;
       }
     });

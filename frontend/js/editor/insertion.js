@@ -12,7 +12,7 @@ import {formatTokensForDisplay, getCaretAfterInsertion} from '../ui/formatDispla
  * @param {string} newValue - Value to insert (number, operator, function, or special symbol).
  * @returns {{newInput: string, newCaret: number}} Updated input string and new caret position.
  */
-export function insertValue(currentInput, caretPosition, newValue) {
+export function insertValue(currentInput, caretPosition, btn, newValue) {
   const clickedValue = classifyButtonValue(newValue);
   const typesWithBox = ['logWithBox', 'baseWithBox', 'boxWithRoot', 'combOrPerm'];
 
@@ -43,7 +43,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
       newInput,
-      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
     };
   }
 
@@ -52,7 +52,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
       newInput,
-      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
     };
   }
 
@@ -61,7 +61,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
       newInput,
-      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
     };
   }
 
@@ -70,7 +70,7 @@ export function insertValue(currentInput, caretPosition, newValue) {
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
       newInput,
-      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+      newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
     };
   }
   

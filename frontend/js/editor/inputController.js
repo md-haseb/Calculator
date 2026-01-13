@@ -6,6 +6,7 @@ import { calculate } from "../core/calculation.js";
 import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
 import { combinatorics, expBox } from "../core/constants.js";
 import { formatTokensForDisplay, getCaretAfterInsertion } from "../ui/formatDisplay.js";
+// normalizeTokens, getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret, getGreaterNextTokenIndexFromCaret
 
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
@@ -51,14 +52,14 @@ export function handleDelete(inputText, caretPosition){
   return deleteBeforeCaret(inputText, caretPosition);
 }
 
-export function handleFunctions(value, inputText, caretPosition){
+export function handleFunctions(value, inputText, btn, caretPosition){
   const insertValue = `${value}()`;
 
   const newInput = insertAt(inputText, caretPosition, insertValue);
   const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
   return{
     newInput,
-    newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
+    newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
     showMsg: true,
   }
 }
@@ -98,41 +99,90 @@ export function handleLeftArrow(inputText, caretPosition){
   }
 }
 
-export function handleRightArrow(inputText, caretPosition){
-  const tokens = tokenize(inputText);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
-  const nextToken = getNextToken(tokens, currentToken);
-  const greaterNextToken = getNextToken(tokens, nextToken);
-  const nextTokenLength = nextToken?.value.length;
 
-  const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
+export function handleRightArrow(inputText, caretPosition, btn, btnValue){
+  // const tokens = tokenize(inputText);
+  // const normalizedToken = normalizeTokens(tokens);
+  // const currentToken = normalizedToken[getCurrTokenIndexFromCaret(map, caretPos)];
+  // const nextToken = normalizedToken[getNextTokenIndexFromCaret(map, caretPos)];
+  // const greaterNextToken = normalizedToken[getGreaterNextTokenIndexFromCaret(map, caretPos)];
+  // const currentToken = getTokenAtCaret(tokens, caretPosition);
+  // const nextToken = getNextToken(tokens, currentToken);
+  // const greaterNextToken = getNextToken(tokens, nextToken);
+  // const nextTokenLength = nextToken?.value.length;
 
-  const parenOpenLen = 1;
-  const moveRight = 1;
-  const charsToRemove = nextTokenLength + parenOpenLen;
+  // const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
 
-  if(nextToken?.type === 'function'){
-    return{
-      newInput: inputText,
-      newCaret: caretPosition + charsToRemove,
-      showMsg: true,
-    }
-  }
+  // const parenOpenLen = 1;
+  // const moveRight = 1;
+  // const charsToRemove = nextTokenLength + parenOpenLen;
 
-  if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
-    return {
-      newInput: showIndices(inputText, caretPosition, combOrPermTemp, nextToken, greaterNextToken),
-      newCaret: caretPosition + moveRight,
-      showMsg: true,
-    }
-  }
+  // if(nextToken?.type === 'function'){
+  //   return{
+  //     newInput: inputText,
+  //     newCaret: caretPosition + charsToRemove,
+  //     showMsg: true,
+  //   }
+  // }
+
+  // if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
+  //   return {
+  //     newInput: showIndices(inputText, caretPosition, combOrPermTemp, nextToken, greaterNextToken),
+  //     newCaret: caretPosition + moveRight,
+  //     showMsg: true,
+  //   }
+  // }
   
+  // return{
+  //   newInput: inputText,
+  //   newCaret: caretPosition + moveRight,
+  //   showMsg: true,
+  // }
+  const newInput = formatTokensForDisplay(inputText).text;
+  const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
   return{
-      newInput: inputText,
-      newCaret: caretPosition + moveRight,
-      showMsg: true,
-    }
+    newInput,
+    newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
+    showMsg: true,
+  }
 }
+
+
+// export function handleRightArrow(inputText, caretPosition){
+//   const tokens = tokenize(inputText);
+//   const currentToken = getTokenAtCaret(tokens, caretPosition);
+//   const nextToken = getNextToken(tokens, currentToken);
+//   const greaterNextToken = getNextToken(tokens, nextToken);
+//   const nextTokenLength = nextToken?.value.length;
+
+//   const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
+
+//   const parenOpenLen = 1;
+//   const moveRight = 1;
+//   const charsToRemove = nextTokenLength + parenOpenLen;
+
+//   if(nextToken?.type === 'function'){
+//     return{
+//       newInput: inputText,
+//       newCaret: caretPosition + charsToRemove,
+//       showMsg: true,
+//     }
+//   }
+
+//   if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
+//     return {
+//       newInput: showIndices(inputText, caretPosition, combOrPermTemp, nextToken, greaterNextToken),
+//       newCaret: caretPosition + moveRight,
+//       showMsg: true,
+//     }
+//   }
+  
+//   return{
+//       newInput: inputText,
+//       newCaret: caretPosition + moveRight,
+//       showMsg: true,
+//     }
+// }
 
 //helpers
 export function deleteBeforeCaret(inputText, caretPos) {

@@ -14,8 +14,8 @@ export const simpleHandlers = {
   ac: handleAC,
   delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
   leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
-  rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
-  function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
+  rightArrow: (inputText, caretPosition, btn, btnValue) => handleRightArrow(inputText, caretPosition, btn, btnValue),
+  function: (inputText, caretPosition, btn, btnValue) => handleFunctions(btnValue, inputText, btn, caretPosition),
 };
 
 
@@ -65,12 +65,12 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
  * @param {number} caretPosition - Current caret position
  * @param {string} btnValue - Value of the clicked button
 */
-export function handleDefaultButton(input, inputText, caretPosition, clickedBtnType, btnValue) {
+export function handleDefaultButton(input, inputText, caretPosition, btn, clickedBtnType, btnValue) {
     const handler = simpleHandlers[clickedBtnType];
 
     if (clickedBtnType === 'ac' && handler) {
       //execute simpleHandler function for AC button
-      const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
+      const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btn, btnValue);
       updateInput(input, newInput, newCaret, showMsg);
       return;
     }
@@ -81,7 +81,7 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
     if (validated.allowed) {
       //execute simpleHandler function values
       if (handler) {
-        const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
+        const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btn, btnValue);
         updateInput(input, newInput, newCaret, showMsg);
         return;
       }
@@ -90,6 +90,7 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
       const { newInput, newCaret } = insertValue(
         inputText,
         caretPosition,
+        btn,
         btnValue
       );
       console.log(newCaret);
@@ -102,6 +103,7 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
       const { newInput, newCaret } = replaceOperator(
         inputText,
         caretPosition,
+        btn, 
         btnValue
       );
       updateInput(input, newInput, newCaret);
