@@ -9,8 +9,6 @@ export function formatTokensForDisplay(inputText) {
   const normalized = splitSuperscriptRootTokens(tokens, superscriptChars);
   console.log(normalized);
 
-  // const operators = new Set(['+', '-', '×', '÷', '^']);
-
   let text = '';
   const map = []; // displayIndex → tokenIndex
 
@@ -33,11 +31,6 @@ export function formatTokensForDisplay(inputText) {
       map[displayIndex++] = i;
     }
 
-    // if (curr === expBox && (/^\d+(\.\d+)?$/).test(prev)) {
-    //   text += '&nbsp;';
-    //   map[displayIndex++] = i;
-    // }
-
     let htmlText = '';
     if (curr === expBox && (prev === logFunctions.log || combinatoricsArr.includes(prev))) {
       htmlText = renderSub(curr);
@@ -48,9 +41,6 @@ export function formatTokensForDisplay(inputText) {
       htmlText = curr;
     }
     text += htmlText;
-    // Render token HTML
-    // const htmlToken = renderTokenHTML(curr);
-    // text += curr;
 
     // Map visible characters only
     const visibleLength = htmlText.replace(/<[^>]*>/g, '').length;
@@ -58,18 +48,6 @@ export function formatTokensForDisplay(inputText) {
     for (let j = 0; j < visibleLength; j++) {
       map[displayIndex++] = i;
     }
-
-    // if (curr === expBox) {
-    //   text += `<sup>${curr}</sup>`;
-    // } else {
-    //   text += curr;
-    // }
-
-    // // text += curr;
-    // console.log(curr.length);
-    // for (let j = 0; j < curr.length; j++) {
-    //   map[displayIndex++] = i;
-    // }
 
     if (operatorsSet.has(curr)) {
       text += '&nbsp;';
@@ -81,63 +59,15 @@ export function formatTokensForDisplay(inputText) {
 }
 
 
-// export function formatTokensForDisplay(inputText) {
-//   const tokensObj = getTokens(inputText);
-//   const tokens = tokenValues(tokensObj);
-
-//   let text = '';
-//   const map = [];
-//   let displayIndex = 0;
-//   console.log(tokensObj);
-//   for (let i = 0; i < tokensObj.length; i++) {
-//     const curr = String(tokensObj[i].value);
-//     const prev = i > 0 ? String(tokensObj[i - 1]) : null;
-//     console.log(curr, prev);
-
-//     // Add space before token ONLY if previous token is an operator
-//     if (i !== 0 && (operatorsSet.has(prev.value) || prev.type === 'number')) {
-//       text += '&nbsp;';
-//       map[displayIndex++] = i;
-//       // do NOT map this display-only space
-//     }
-
-//     // Add the token itself
-//     text += curr;
-//     for (let j = 0; j < curr.length; j++) {
-//       map[displayIndex++] = i;
-//     }
-
-//     // Add space after operator if next token is not a function or parentheses
-//     if (operatorsSet.has(curr)) {
-//       const next = i + 1 < tokens.length ? String(tokens[i + 1]) : null;
-//       if (!trigFunctions.includes(next) && next !== '(') {
-//         text += '&nbsp;';
-//         map[displayIndex++] = i;
-//         // do NOT map this display-only space
-//       }
-//     }
-//   }
-
-//   return { text, map };
-// }
-
-
-// function getCurrTokenIndexFromCaret(map, caretPos) {
-//   if (caretPos <= 0) return -1;
-
-//   const displayIndex = Math.min(caretPos - 1, map.length - 1);
-//   return map[displayIndex];
-// }
 
 function getCurrTokenIndexFromCaret(map, caretPos) {
-  if (caretPos <= 0) return 0;
+  if (caretPos <= 0) return -1;
   const i = Math.min(caretPos - 1, map.length - 1);
   return map[i];
 }
 
 function getNextTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
-  if (current === -1) return 0;
 
   for (let i = caretPos; i < map.length; i++) {
     if (map[i] !== current) {
@@ -148,11 +78,11 @@ function getNextTokenIndexFromCaret(map, caretPos) {
 }
 
 function getGreaterNextTokenIndexFromCaret(map, caretPos) {
+  const current = getCurrTokenIndexFromCaret(map, caretPos);
   const next = getNextTokenIndexFromCaret(map, caretPos);
-  if (next === -1) return 0;
 
   for (let i = caretPos; i < map.length; i++) {
-    if (map[i] !== next && map[i] !== getCurrTokenIndexFromCaret(map, caretPos)) {
+    if (map[i] !== current && map[i] !== next) {
       return map[i];
     }
   }
@@ -161,74 +91,62 @@ function getGreaterNextTokenIndexFromCaret(map, caretPos) {
 
 
 
-// function getNextTokenIndexFromCaret(map, caretPos) {
-//   if (caretPos <= 0) return -1;
-//   console.log(map);
-
-//   const displayIndex = Math.min(caretPos, map.length);
-//   console.log(displayIndex);
-//   return map[displayIndex];
-// }
-
-// function getGreaterNextTokenIndexFromCaret(map, caretPos) {
-//   if (caretPos <= 0) return -1;
-//   console.log(map);
-
-//   const displayIndex = Math.min(caretPos + 1, map.length + 1);
-//   console.log(displayIndex);
-//   return map[displayIndex];
-// }
-
-// function getCurrentTokenFromCaret(map, caretPos) {
-//   const displayIndex = Math.min(caretPos - 1, map.length - 1);
-
-// }
-
-
-
-// function shouldMoveToNextToken(newValue) {
-//   const { type } = classifyButtonValue(newValue);
-//   console.log(type);
-
-//   return (
-//     type === 'plus' ||
-//     type === 'minus' || 
-//     type === 'multiply' || 
-//     type === 'divide' || 
-//     type === 'parentheses' ||
-//     type === 'function' ||
-//     type === 'logWithBox' ||
-//     type === 'baseWithSupers' ||
-//     type === 'baseWithBox' || 
-//     type === 'boxWithRoot' || 
-//     type === 'combOrPerm'
-//   );
-// }
+// Caret movement is button-driven.
+// Structural buttons (box/root/etc) intentionally keep caret at current token boundary.
+// Token atomicity is enforced at the button level, not token level.
 function shouldMoveToNextToken(inputText, map, btn, caretPos) {
   const tokensObj = getTokens(inputText);
   const normalizedToken = normalizeTokens(tokensObj);
-  // const currentToken = getTokenAtCaret(tokensObj, caretPos);
   console.log(tokensObj);
   console.log(normalizedToken);
-  const currentToken = normalizedToken[getCurrTokenIndexFromCaret(map, caretPos)];
-  const nextToken = normalizedToken[getNextTokenIndexFromCaret(map, caretPos)];
-  const greaterNextToken = normalizedToken[getGreaterNextTokenIndexFromCaret(map, caretPos)];
+
+  const currTokenIndex = getCurrTokenIndexFromCaret(map, caretPos);
+  const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
+  
+  const nextTokenIndex = getNextTokenIndexFromCaret(map, caretPos);
+  const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+
+  const greaterNextTokenIndex = getGreaterNextTokenIndexFromCaret(map, caretPos);
+  const greaterNextToken = greaterNextTokenIndex === -1 ? null : normalizedToken[greaterNextTokenIndex];
+
   console.log(getCurrTokenIndexFromCaret(map, caretPos));
   console.log(getNextTokenIndexFromCaret(map, caretPos));
   console.log(getGreaterNextTokenIndexFromCaret(map, caretPos));
+  console.log(currentToken, nextToken, greaterNextToken);
 
   // console.log(newValue);
   // const { type } = classifyButtonValue(newValue);
   const { type } = classifyButton(btn);
   console.log(type, currentToken?.type, nextToken?.type, greaterNextToken?.type);
 
-  if ((type === 'rightArrow' && (currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'rightArrow' && nextToken?.type === 'numberWithDecimal') || (type === 'rightArrow' && currentToken?.type === 'parenOpen' && nextToken?.type === 'number') || (type === 'rightArrow' && (currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE') && !isAtEndOfCurrentToken(map, caretPos)) || (type === 'rightArrow' && (nextToken?.type === 'numWithPi' || nextToken?.type === 'numWithE' || nextToken?.type === 'constant')) || (type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'number') || (type === 'rightArrow' && currentToken?.type === 'singleRoot' && nextToken?.type === 'number') ){
-    return { move: 'char' }; 
+  if (
+      (type === 'rightArrow' && (currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && !isAtEndOfCurrentToken(map, caretPos)) || 
+      (type === 'rightArrow' && nextToken?.type === 'numberWithDecimal') || 
+      (type === 'rightArrow' && currentToken?.type === 'parenOpen' && nextToken?.type === 'number') || 
+      (type === 'rightArrow' && (currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE') && !isAtEndOfCurrentToken(map, caretPos)) || 
+      (type === 'rightArrow' && (nextToken?.type === 'numWithPi' || nextToken?.type === 'numWithE' || nextToken?.type === 'constant')) || 
+      (type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'number') || 
+      (type === 'rightArrow' && currentToken?.type === 'singleRoot' && nextToken?.type === 'number') ) {
+        return { move: 'char' }; 
   }
 
-  if ((type === 'number' && currentToken?.type === 'number') || (type === 'number' && currentToken?.type === 'subscriptValue') || (type === 'logWithBox' && currentToken?.type === 'function') || (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'supAndSub') || (type === 'number' && currentToken?.type === 'superscriptValue') || (type === 'number' && currentToken?.type === 'nthRoot') || (type === 'number' && currentToken?.type === 'numberWithDecimal') || (type === 'pi' && currentToken?.type === 'numWithPi') || (type === 'E' && currentToken?.type === 'numWithE') || type === 'baseWithBox' || type === 'boxWithRoot' || type === 'combOrPerm' || type === 'superscriptValue') {
-    console.log(type, currentToken?.type);
-    return { move: 'current' };
+  if (
+      (type === 'number' && currentToken?.type === 'number') || 
+      (type === 'number' && currentToken?.type === 'subscriptValue') || 
+      (type === 'logWithBox' && currentToken?.type === 'function') || 
+      (type === 'baseWithSupers' && currentToken?.type === 'supAndSub') || 
+      (type === 'number' && currentToken?.type === 'supAndSub') || 
+      (type === 'number' && currentToken?.type === 'superscriptValue') || 
+      (type === 'number' && currentToken?.type === 'nthRoot') || 
+      (type === 'number' && currentToken?.type === 'numberWithDecimal') || 
+      (type === 'pi' && currentToken?.type === 'numWithPi') || 
+      (type === 'E' && currentToken?.type === 'numWithE') || 
+      type === 'baseWithBox' || 
+      type === 'boxWithRoot' || 
+      type === 'combOrPerm' || 
+      type === 'superscriptValue') {
+        console.log(type, currentToken?.type);
+        return { move: 'current' };
   }
 
   if ((type === 'rightArrow' && currentToken?.type === 'operator' && nextToken?.type === 'function') || type === 'function') {
@@ -253,6 +171,8 @@ function isAtEndOfCurrentToken(map, caretPos) {
 
 
 function getCaretAfterToken(map, targetTokenIndex) {
+  if (targetTokenIndex < 0) return 0;
+
   let lastIndex = -1;
   
   for (let i = 0; i < map.length; i++) {
