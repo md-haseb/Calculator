@@ -106,21 +106,23 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
   const nextCombOrPerm = nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation;
   const greaterNextCombOrPerm = greaterNextToken?.value === combinatorics.combination || greaterNextToken?.value === combinatorics.permutation;
 
-  const greaterCombinatoricsTemp =  makeCombPermTemplate(greaterNextToken?.value);
-  const nextCombinatoricsTemp = makeCombPermTemplate(nextToken?.value);
+  // const greaterCombinatoricsTemp =  makeCombPermTemplate(greaterNextToken?.value);
+  // const nextCombinatoricsTemp = makeCombPermTemplate(nextToken?.value, greaterNextToken?.value);
 
-  const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
-  const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
+  // const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
+  // const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
   // console.log(currentToken?.type);
   // console.log(currentToken?.value);
   // console.log(nextCombOrPerm);
 
-  
+  console.log(currentToken?.value, nextToken?.value);
   if (currentToken?.value === expBox && nextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen + boxLength, supers + nextCombinatoricsTemp);
+    // console.log('hello', nextCombinatoricsTempLen);
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === expBox && greaterNextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, greaterCombinatoricsTempLen + boxLength, supers + greaterCombinatoricsTemp);
+    console.log('hello');
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.value === expBox && nextToken?.type === 'singleRoot') {
     return replaceAt(currentInput, caretPos, boxLength, supers);
@@ -129,11 +131,12 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === expBox) {
+    console.log('hello');
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.type === 'superscriptValue' && nextCombOrPerm) {
-    console.log('hello');
-    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen, supers + nextCombinatoricsTemp)
+    // console.log('hello', nextCombinatoricsTempLen, supers);
+    return replaceAt(currentInput, caretPos, 0, supers)
   }
   if (currentToken?.type === 'superscriptValue') {
     return replaceAt(currentInput, caretPos, 0, supers)
@@ -241,9 +244,9 @@ function filterOut_nAndr(value){
  * @param {string} [token=''] - Base combinatorics symbol.
  * @returns {string} HTML-formatted combinatorics template.
  */
-export function makeCombPermTemplate(token = ''){
-  return `${token}<sub>${expBox}</sub>`;
-}
+// export function makeCombPermTemplate(token = '', value){
+//   return `${token}<sub>${value}</sub>`;
+// }
 
 
 /**
@@ -282,12 +285,11 @@ export function showIndices(currentInput, caretPos, newValue, nextToken, greater
   const subs = convertToSubs(newValue);
 
   const boxLength = expBox.length;
-  const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
-  const combOrPermTempLen = getVisibleLength(combOrPermTemp);
-
+  // const combOrPermTemp = makeCombPermTemplate(nextToken?.value, subs);
+  // const combOrPermTempLen = getVisibleLength(combOrPermTemp);
+  console.log(nextToken?.type);
   if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
-    console.log('hello');
-    return replaceAt(currentInput, caretPos, combOrPermTempLen, combOrPermTemp);
+    return replaceAt(currentInput, caretPos, 0, subs);
   }
 
   // Replace box with subscript if next token is a box

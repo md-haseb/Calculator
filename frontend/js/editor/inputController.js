@@ -3,7 +3,8 @@ import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { validateForDisplay, validateForEvaluation } from "../core/validation.js";
 import { calculate } from "../core/calculation.js";
-import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
+import { insertAt } from "../editor/insertionHelpers.js";
+// import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
 import { combinatorics, expBox } from "../core/constants.js";
 import { formatTokensForDisplay, getCaretAfterInsertion } from "../ui/formatDisplay.js";
 // normalizeTokens, getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret, getGreaterNextTokenIndexFromCaret
@@ -74,28 +75,35 @@ export function handleEqual(inputText){
     }
 }
 
-export function handleLeftArrow(inputText, caretPosition){
-  const tokens = tokenize(inputText);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
-  const prevToken = getPrevToken(tokens, currentToken);
+export function handleLeftArrow(inputText, caretPosition, btn, btnValue){
+  // const tokens = tokenize(inputText);
+  // const currentToken = getTokenAtCaret(tokens, caretPosition);
+  // const prevToken = getPrevToken(tokens, currentToken);
 
-  const currentTokenLen = currentToken?.value.length;
-  const prevTokenLength = prevToken?.value.length;
-  const charsToRemove = prevTokenLength + currentTokenLen;
+  // const currentTokenLen = currentToken?.value.length;
+  // const prevTokenLength = prevToken?.value.length;
+  // const charsToRemove = prevTokenLength + currentTokenLen;
 
-  const moveLeft = 1;
+  // const moveLeft = 1;
 
-  if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
-    return{
-      newInput: inputText,
-      newCaret: caretPosition - charsToRemove,
-      showMsg: true,
-    }
-  }
+  // if(currentToken?.type === 'parenOpen' && prevToken?.type === 'function'){
+  //   return{
+  //     newInput: inputText,
+  //     newCaret: caretPosition - charsToRemove,
+  //     showMsg: true,
+  //   }
+  // }
+  // return{
+  //     newInput: inputText,
+  //     newCaret: caretPosition - moveLeft,
+  //     showMsg: true,
+  // }
+  const newInput = formatTokensForDisplay(inputText).text;
+  const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
   return{
-      newInput: inputText,
-      newCaret: caretPosition - moveLeft,
-      showMsg: true,
+    newInput,
+    newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),
+    showMsg: true,
   }
 }
 

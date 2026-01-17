@@ -100,7 +100,9 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
     return (
       subscriptTokenTypes.includes(currentToken.type) ||
       (currentToken.type === 'function' && nextToken?.type === 'box') ||
-      (currentToken.type === 'combAndPerm' && nextToken?.type === 'box')
+      (currentToken.type === 'combAndPerm' && nextToken?.type === 'box') || 
+      (currentToken.type === 'combAndPerm' && nextToken?.type === 'subscriptValue') || 
+      (currentToken?.type === 'function' && nextToken?.type === 'subscriptValue')
     );
   }
 
