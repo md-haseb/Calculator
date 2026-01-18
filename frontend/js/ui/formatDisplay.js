@@ -1,12 +1,13 @@
-import { getTokens, tokenValues, getTokenAtCaret } from '../core/tokenHelpers.js';
-import { expBox, operatorsSet, trigFunctions, logFunctionsArr, logFunctions, combinatorics, combinatoricsArr, superscriptChars } from '../core/constants.js';
+import { getTokens, tokenValues, getTokenAtCaret, needsImplicitMultiply } from '../core/tokenHelpers.js';
+import { expBox, operatorsSet, trigFunctions, logFunctionsArr, logFunctions, combinatorics, combinatoricsArr, superscriptChars, multiplicationDot } from '../core/constants.js';
 import { classifyButtonValue, classifyButton } from '../core/classifyBtn.js';
 
 export function formatTokensForDisplay(inputText) {
   const tokensObj = getTokens(inputText);
-  const tokens = tokenValues(tokensObj);
-  console.log(tokens);
-  const normalized = splitSuperscriptRootTokens(tokens, superscriptChars);
+  // const normalizedToken = normalizeTokens(tokensObj);
+  // const tokens = tokenValues(tokensObj);
+  // console.log(tokens);
+  const normalized = normalizeTokens(tokensObj);
   console.log(normalized);
 
   let text = '';
@@ -17,28 +18,41 @@ export function formatTokensForDisplay(inputText) {
   for (let i = 0; i < normalized.length; i++) {
     console.log(normalized[i]);
     console.log(displayIndex);
-    const curr = String(normalized[i]);
-    const prev = i > 0 ? String(normalized[i - 1]) : null;
-    console.log(curr);
+    const curr = normalized[i];
+    const prev = i > 0 ? normalized[i - 1] : null;
+    // const greaterPrev = i > 0 ? normalized[i - 2] : null;
+    // const next = i > 0 ? normalized[i + 1] : null;
+    const currValue = String(curr?.value);
+    const prevValue = String(prev?.value);
+    console.log(typeof(curr?.value));
 
-    if ((operatorsSet.has(curr)) && i !== 0) {
+    // if (prev && needsImplicitMultiply(greaterPrev, prev, curr, next)) {
+    //   // text += '&nbsp;';
+    //   if (greaterPrev.type === 'function') {
+    //     text += `${multiplicationDot}&nbsp;`;
+    //   }
+    //   text += `&nbsp;${multiplicationDot}&nbsp;`;
+    //   map[displayIndex++] = i;
+    // }
+
+    if (((operatorsSet.has(currValue)) && i !== 0)) {
       text += '&nbsp;';
       map[displayIndex++] = i;
     }
 
-    if ((trigFunctions.includes(curr) || logFunctionsArr.includes(curr)) && !(operatorsSet.has(prev)) && i !== 0) {
+    if ((trigFunctions.includes(currValue) || logFunctionsArr.includes(currValue)) && !(operatorsSet.has(prevValue)) && i !== 0) {
       text += '&nbsp;';
       map[displayIndex++] = i;
     }
 
     let htmlText = '';
-    if (curr === expBox && (prev === logFunctions.log || combinatoricsArr.includes(prev))) {
-      htmlText = renderSub(curr);
+    if (currValue === expBox && (prevValue === logFunctions.log || combinatoricsArr.includes(prevValue))) {
+      htmlText = renderSub(currValue);
     }
-    else if (curr === expBox) {
-      htmlText = renderSup(curr);
+    else if (currValue === expBox) {
+      htmlText = renderSup(currValue);
     } else {
-      htmlText = curr;
+      htmlText = currValue;
     }
     text += htmlText;
 
@@ -49,7 +63,7 @@ export function formatTokensForDisplay(inputText) {
       map[displayIndex++] = i;
     }
 
-    if (operatorsSet.has(curr)) {
+    if (operatorsSet.has(currValue)) {
       text += '&nbsp;';
       map[displayIndex++] = i;
     }
