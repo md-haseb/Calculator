@@ -137,9 +137,10 @@ function shouldMoveToPrevToken(inputText, map, btn, caretPos) {
     // type === 'leftArrow' &&
     // caretPos > 0 &&
     // map[caretPos - 1] === map[caretPos - 2];
-    type === 'leftArrow' && 
-    ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal')) || 
-    ((currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE'));
+    // type === 'leftArrow' && 
+    // ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal')) || 
+    // ((currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE'));
+    type === 'leftArrow' && (currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal' || currentToken?.type === 'numWithPi' || currentToken?.type === 'numWithE' || currentToken?.type === 'supAndSub' || currentToken?.type === 'superscriptValue' || currentToken?.type === 'subscriptValue');
 
   // 🔹 Stay on current token
   // const shouldStayOnCurrentToken =
@@ -209,7 +210,9 @@ function shouldMoveToNextToken(inputText, map, btn, caretPos) {
     currentToken?.type === 'subscriptValue' || 
     currentToken?.type === 'numberWithDecimal' || 
     nextToken?.type === 'superscriptValue' || 
-    nextToken?.type === 'subscriptValue') || 
+    nextToken?.type === 'subscriptValue' || 
+    nextToken?.type === 'number' || 
+    nextToken?.type === 'numberWithDecimal') || 
   type === 'rightArrow' && (
     (currentToken === null && nextToken?.type === 'number') || 
     (

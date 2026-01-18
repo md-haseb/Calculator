@@ -10,6 +10,7 @@ export function classifyButtonValue(newValue) {
     '+': 'plus',
     '-': 'minus',
     '×': 'multiply',
+    '⋅': 'multiplicationDot',
     '/': 'divide',
     '.': 'decimal',
     '%': 'percent',

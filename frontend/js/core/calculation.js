@@ -26,7 +26,7 @@ export function calculate(expr) {
   const postfix = toPostfix(unaryMinusTokens);
   console.log(postfix);
   const result = evaluatePostfix(postfix);
-  console.log(result);
+  console.log(showResult(result));
   return showResult(result);
 }
 

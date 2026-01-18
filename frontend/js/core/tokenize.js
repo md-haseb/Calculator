@@ -15,7 +15,7 @@ export function tokenize(expr){
   const tokens = [];
 
   // ---- Precompile regexes (for performance & clarity) ----
-  const tokenRegEx = new RegExp(`(?:sin|cos|tan|cot|sec|csc|log|ln|C|P|□|π|e|×)` +                  // functions
+  const tokenRegEx = new RegExp(`(?:sin|cos|tan|cot|sec|csc|log|ln|C|P|□|π|e|⋅|×)` +                  // functions
   `|(?:\\d+(?:\\.\\d+)?e)` + //numbers with e
   `|(?:\\d+(?:\\.\\d+)?π)` + //numbers with pi
   `|[${superscriptChars}]+√` +  // nth-root operator like 3√, 7√
@@ -39,7 +39,7 @@ export function tokenize(expr){
   const reSuperSubNum  = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]+`);
   const reDecimal      = /^\d*\.\d+$/;
   const reInteger      = /^\d+$/;
-  const reOperator     = /[+\-*/%!]/;
+  const reOperator     = /[+\-*×⋅/%!]/;
   const numWithPi      = /\d+(?:\.\d+)?π/;
   const numWithE       = /\d+(?:\.\d+)?e/;
 

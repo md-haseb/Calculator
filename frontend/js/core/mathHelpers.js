@@ -1,4 +1,4 @@
-import {superscriptToNormal, subscriptToNormal, superscriptChars} from './constants.js';
+import {normalToSuperscript, superscriptToNormal, subscriptToNormal, superscriptChars} from './constants.js';
 
 /**
  * Performs division and rounds to 10 decimal places.
@@ -413,15 +413,28 @@ export function logForCombAndPerm(value){
   return result;
 }
 
+//normal to superscript string
+function toSuperscriptString(num) {
+  return String(num)
+    .split('')
+    .map(ch => normalToSuperscript[ch])
+    .join('');
+}
+
+
 //to show big number with 10^x instead of e
 export function toScientific(num, precision = 8) {
   if (num === 0) return '0';
 
   // Convert to exponential form
-  const [mantissa, exponent] = num.toExponential(precision).split('e');
+  let [mantissa, exponent] = num.toExponential(precision).split('e');
+  mantissa = mantissa.replace(/\.?0+$/, '');
+  console.log(num.toExponential(precision).split('e'));
 
   // Format as mantissa × 10^exponent
-  return `${mantissa}×10<sup>${parseInt(exponent, 10)}</sup>`;
+  // return `${mantissa}×10<sup>${parseInt(exponent, 10)}</sup>`;
+  console.log(toSuperscriptString(exponent));
+  return `${mantissa}×10${toSuperscriptString(exponent)}`;
 }
 
 //check if the number is too big or not

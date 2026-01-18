@@ -44,7 +44,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
     const { newInput, newCaret, showMsg } = handleEqual(
       modifiedInputText
     );
-
+    console.log(newInput);
     // Update the input display
     updateInput(input, newInput, newCaret, showMsg);
     return;
@@ -93,7 +93,7 @@ export function handleDefaultButton(input, inputText, caretPosition, btn, clicke
         btn,
         btnValue
       );
-      console.log(newCaret);
+      console.log(newInput);
       updateInput(input, newInput, newCaret);
       return;
     }

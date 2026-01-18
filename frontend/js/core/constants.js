@@ -13,6 +13,7 @@ export const minus = '-';
 export const unaryMinus = 'NEG';
 export const multiplyBy = '*';
 export const multiplySymbol = '×';
+export const multiplicationDot = '⋅';
 export const divideBy = '/';
 export const expBox = '□';
 export const expBase = 'x';
@@ -28,7 +29,7 @@ export const parenClose = ')';
  * List of arithmetic operators supported by the expression parser.
  * Used primarily during tokenization and Shunting-Yard processing.
  */
-export const operators = [plus, minus, multiplyBy, multiplySymbol, divideBy];
+export const operators = [plus, minus, multiplyBy, multiplicationDot, divideBy];
 
 /**
  * Set version of the operators array.

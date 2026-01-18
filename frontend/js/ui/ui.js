@@ -80,7 +80,9 @@ export function init() {
         case "radian":
         case "degree":
           setState("angle", clickedBtn.value);
-          executeEqual(input, state.lastExpressionHTML, caretPosition, clickedBtn.value);
+          if (input.textContent.length > 0) {
+            executeEqual(input, state.lastExpressionHTML, caretPosition, clickedBtn.value);
+          }
           appendHistory(input, state.lastExpressionHTML, historyContainer, historyRemoveBtn);
           return;
 

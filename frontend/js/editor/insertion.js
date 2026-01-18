@@ -2,6 +2,7 @@ import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/to
 import {showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
 import {formatTokensForDisplay, getCaretAfterInsertion} from '../ui/formatDisplay.js';
+import { multiplicationDot, multiplySymbol } from "../core/constants.js";
 
 
 /**
@@ -66,6 +67,10 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
   }
 
   function insertWithCaret(value) {
+    console.log('hello');
+    if (value === multiplySymbol) {
+      value = multiplicationDot;
+    }
     const newInput = insertAt(currentInput, caretPosition, value);
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
@@ -88,7 +93,7 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
 
   function isExponentCase(currentToken, nextToken, caretPosition) {
     return (
-      exponentTokenTypes.includes(currentToken.type) ||
+      (exponentTokenTypes.includes(currentToken.type) && prevToken?.value !== multiplySymbol) ||
       (nextToken?.type === 'box' && (greaterNextToken?.type === 'singleRoot' || greaterNextToken?.type === 'combAndPerm')) ||
       (currentToken.type === nthRootToken && caretPosition < currentToken.end) ||
       ((currentToken.type === 'number' || currentToken.type === 'numberWithDecimal') && nextToken?.type === 'box') ||

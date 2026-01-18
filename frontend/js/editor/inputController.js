@@ -12,10 +12,16 @@ import { formatTokensForDisplay, getCaretAfterInsertion } from "../ui/formatDisp
 export function handleInputClick(input, clickedRange){
   const tokens = tokenize(input.textContent);
   const currentToken = getTokenAtCaret(tokens, clickedRange.offset);
-  
-  const finalOffset = currentToken?.type === 'function' 
-  ? currentToken.start 
-  : clickedRange.offset;
+  const nextToken = getNextToken(tokens, currentToken);
+
+  let finalOffset = clickedRange.offset;
+
+  if (currentToken?.type === 'function') {
+    finalOffset = currentToken.start;
+  }
+  if (currentToken?.type === 'operator') {
+    finalOffset = nextToken?.start;
+  }
 
   return finalOffset;
 }
