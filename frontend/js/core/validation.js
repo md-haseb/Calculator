@@ -1,6 +1,7 @@
 import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics, pi, E, superscriptChars, subscriptChars} from './constants.js';
 import { tokenize } from "../core/tokenize.js";
 import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
+import { classifyButtonValue } from './classifyBtn.js';
 
 
 // const operators = '+*/-';
@@ -14,6 +15,7 @@ export function isOperator(char){
 
 //this function is about validate and allow for display or not
 export function validateForDisplay(currentInput, newValue, caretPosition){
+  console.log(currentInput, newValue, caretPosition);
   const lastChar = currentInput[caretPosition - 1];
   const greaterLastChar = currentInput[caretPosition - 2];
   const nextChar = currentInput[caretPosition];
@@ -258,7 +260,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   //     message: 'Please enter an operator to continue the calculation.',
   //   };
   // }
-
+  console.log('hello');
   //Update input value based on user button click
   return {allowed: true};
 }

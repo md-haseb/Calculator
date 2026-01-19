@@ -71,6 +71,7 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
     if (value === multiplySymbol) {
       value = multiplicationDot;
     }
+    console.log(currentInput, caretPosition, value);
     const newInput = insertAt(currentInput, caretPosition, value);
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {

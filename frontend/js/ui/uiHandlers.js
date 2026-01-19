@@ -67,6 +67,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
 */
 export function handleDefaultButton(input, inputText, caretPosition, btn, clickedBtnType, btnValue) {
     const handler = simpleHandlers[clickedBtnType];
+    console.log(btnValue);
 
     if (clickedBtnType === 'ac' && handler) {
       //execute simpleHandler function for AC button
@@ -74,9 +75,10 @@ export function handleDefaultButton(input, inputText, caretPosition, btn, clicke
       updateInput(input, newInput, newCaret, showMsg);
       return;
     }
-
+    console.log(inputText, btnValue, caretPosition);
     // Validate the input for display purposes
     const validated = validateForDisplay(inputText, btnValue, caretPosition);
+    console.log('hello');
 
     if (validated.allowed) {
       //execute simpleHandler function values
@@ -85,7 +87,7 @@ export function handleDefaultButton(input, inputText, caretPosition, btn, clicke
         updateInput(input, newInput, newCaret, showMsg);
         return;
       }
-
+      console.log(inputText, caretPosition, btn, btnValue);
       // Insert the other values into the input
       const { newInput, newCaret } = insertValue(
         inputText,

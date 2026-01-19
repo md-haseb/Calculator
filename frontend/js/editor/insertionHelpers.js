@@ -178,9 +178,10 @@ export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
  * @returns {string} Updated input string.
  */
 export function insertAt(currentInput, caretPos, newValue) {
-  console.log(currentInput);
+  console.log(currentInput, caretPos, newValue);
   const insertInput = currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
   console.log(insertInput);
+  console.log(formatTokensForDisplay(insertInput));
   console.log(formatTokensForDisplay(insertInput).text);
   return formatTokensForDisplay(insertInput).text;
   // return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);

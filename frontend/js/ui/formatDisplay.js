@@ -3,10 +3,11 @@ import { expBox, operatorsSet, trigFunctions, logFunctionsArr, logFunctions, com
 import { classifyButtonValue, classifyButton } from '../core/classifyBtn.js';
 
 export function formatTokensForDisplay(inputText) {
+  console.log(inputText);
   const tokensObj = getTokens(inputText);
   // const normalizedToken = normalizeTokens(tokensObj);
   // const tokens = tokenValues(tokensObj);
-  // console.log(tokens);
+  console.log(tokensObj);
   const normalized = normalizeTokens(tokensObj);
   console.log(normalized);
 
@@ -22,9 +23,17 @@ export function formatTokensForDisplay(inputText) {
     const prev = i > 0 ? normalized[i - 1] : null;
     // const greaterPrev = i > 0 ? normalized[i - 2] : null;
     // const next = i > 0 ? normalized[i + 1] : null;
-    const currValue = String(curr?.value);
-    const prevValue = String(prev?.value);
-    console.log(typeof(curr?.value));
+    console.log(curr);
+    const currValue = curr?.value != null
+        ? String(curr.value)
+        : String(curr?.raw);
+
+    const prevValue = prev?.value != null 
+      ? String(prev.value)
+      : String(prev?.raw);
+      
+    console.log(currValue);
+    console.log(prevValue);
 
     // if (prev && needsImplicitMultiply(greaterPrev, prev, curr, next)) {
     //   // text += '&nbsp;';
@@ -439,6 +448,7 @@ function splitSuperscriptRootTokens(tokens, superscriptChars) {
 
 
 function normalizeTokens(tokens) {
+  console.log(tokens);
   const result = [];
 
   for (const token of tokens) {
@@ -469,6 +479,6 @@ function normalizeTokens(tokens) {
       end: start + raw.length
     });
   }
-
+  console.log(result);
   return result;
 }
