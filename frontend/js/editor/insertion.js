@@ -91,10 +91,10 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
   const nthRootToken = 'nthRoot';
   const boxNextTypes = ['singleRoot', 'combAndPerm'];
   const subscriptTokenTypes = ['subscriptValue'];
-
+  console.log(clickedValue.type);
   function isExponentCase(currentToken, nextToken, caretPosition) {
     return (
-      (exponentTokenTypes.includes(currentToken.type) && prevToken?.value !== multiplySymbol) ||
+      (exponentTokenTypes.includes(currentToken?.type) && clickedValue.type === 'number') ||
       (nextToken?.type === 'box' && (greaterNextToken?.type === 'singleRoot' || greaterNextToken?.type === 'combAndPerm')) ||
       (currentToken.type === nthRootToken && caretPosition < currentToken.end) ||
       ((currentToken.type === 'number' || currentToken.type === 'numberWithDecimal') && nextToken?.type === 'box') ||
@@ -104,7 +104,7 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
 
   function isIndicesCase(currentToken, nextToken){
     return (
-      subscriptTokenTypes.includes(currentToken.type) ||
+      (subscriptTokenTypes.includes(currentToken.type) && clickedValue.type === 'number') ||
       (currentToken.type === 'function' && nextToken?.type === 'box') ||
       (currentToken.type === 'combAndPerm' && nextToken?.type === 'box') || 
       (currentToken.type === 'combAndPerm' && nextToken?.type === 'subscriptValue') || 
