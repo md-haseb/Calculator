@@ -1,7 +1,8 @@
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
-import {formatTokensForDisplay, getCaretAfterInsertion} from '../ui/formatDisplay.js';
+import {formatTokensForDisplay} from '../ui/formatDisplay.js';
+import {getCaretAfterInsertion} from './caretBehavior.js';
 import { multiplicationDot, multiplySymbol } from "../core/constants.js";
 
 
@@ -71,8 +72,10 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
     if (value === multiplySymbol) {
       value = multiplicationDot;
     }
+    console.log(value);
     console.log(currentInput, caretPosition, value);
     const newInput = insertAt(currentInput, caretPosition, value);
+    console.log(newInput);
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
     return {
       newInput,

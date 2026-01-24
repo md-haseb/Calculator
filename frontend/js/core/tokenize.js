@@ -101,7 +101,7 @@ export function tokenize(expr){
     }
     //number with decimal number
     if (reDecimal.test(t)){
-      tokens.push({ type: "numberWithDecimal", value: parseFloat(t), start, end });
+      tokens.push({ type: "numberWithDecimal", value: t, start, end }); //parseFloat(t)
       continue;
     }
     //number

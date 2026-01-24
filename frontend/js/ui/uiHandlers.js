@@ -12,7 +12,7 @@ import {handleAC, handleDelete, handleFunctions, handleLeftArrow, handleRightArr
 */
 export const simpleHandlers = {
   ac: handleAC,
-  delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
+  delete: (inputText, caretPosition, btn) => handleDelete(inputText, caretPosition, btn),
   leftArrow: (inputText, caretPosition, btn, btnValue) => handleLeftArrow(inputText, caretPosition, btn, btnValue),
   rightArrow: (inputText, caretPosition, btn, btnValue) => handleRightArrow(inputText, caretPosition, btn, btnValue),
   function: (inputText, caretPosition, btn, btnValue) => handleFunctions(btnValue, inputText, btn, caretPosition),

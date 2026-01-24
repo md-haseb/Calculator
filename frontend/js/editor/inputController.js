@@ -1,12 +1,15 @@
 import { insertValue, replaceOperator } from "./insertion.js";
 import { tokenize } from "../core/tokenize.js";
-import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
+import { getTokens, getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { validateForDisplay, validateForEvaluation } from "../core/validation.js";
 import { calculate } from "../core/calculation.js";
 import { insertAt } from "../editor/insertionHelpers.js";
 // import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
-import { combinatorics, expBox } from "../core/constants.js";
-import { formatTokensForDisplay, getCaretAfterInsertion } from "../ui/formatDisplay.js";
+import { combinatorics, expBox, decimal, minus } from "../core/constants.js";
+import { formatTokensForDisplay } from "../ui/formatDisplay.js";
+import { normalizeTokens } from '../core/normalizeTokens.js';
+import { getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret } from './caretMap.js';
+import { getCaretAfterDelete, getCaretAfterInsertion, findDeleteTargetToken } from './caretBehavior.js';
 // normalizeTokens, getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret, getGreaterNextTokenIndexFromCaret
 
 export function handleInputClick(input, clickedRange){
@@ -34,30 +37,330 @@ export function handleAC(){
   }
 }
 
-export function handleDelete(inputText, caretPosition){
-  const tokens = tokenize(inputText);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
-  const prevToken = getPrevToken(tokens, currentToken);
-  const nextToken = getNextToken(tokens, currentToken);
+// export function handleDelete(inputText, caretPosition, btn){
+//   const tokensObj = getTokens(inputText);
+//   const normalizedToken = normalizeTokens(tokensObj);
+//   // console.log(tokensObj);
+//   // console.log(normalizedToken);
+//   // const currInputText = formatTokensForDisplay(inputText).text;
+//   // const inputMapForCaretMove = formatTokensForDisplay(inputText).map;
+//   const { text: currInputText, map: inputMapForCaretMove } = formatTokensForDisplay(inputText);
+//   console.log(inputMapForCaretMove);
+  
+//   const currTokenIndex = getCurrTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
+//   const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
 
-  if(caretPosition === 0){
-    return{
-      newInput: inputText,
-      newCaret: 0,
-      showMsg: true,
+//   const nextTokenIndex = getNextTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
+//   const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+
+//   // const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+  
+//   function getRawIndexFromToken(normalizedTokens, currToken, targetTokenIndex, side = 'start') {
+//     if (targetTokenIndex < 0) return 0;
+//     // tokenIndex = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+//     const token = normalizedTokens[targetTokenIndex];
+
+//     if (((token?.type === 'number' || token?.type === 'numberWithDecimal' || token?.type === 'superscriptValue' || token?.type === 'subscriptValue' || token?.type === 'supAndSub' || token?.type === 'numWithPi' || token?.type === 'numWithE' || token?.type === 'constant') && currToken?.type === 'parenClose') || ((token?.type === 'number' || token?.type === 'numberWithDecimal' || token?.type === 'numWithPi' || token?.type === 'numWithE' || token?.type === 'constant' || token?.type === 'supAndSub' || token?.type === 'superscriptValue' || token?.type === 'subscriptValue' || token?.type === 'combAndPerm' || token?.value === decimal || token?.value === minus) && targetTokenIndex === currTokenIndex)) {
+//       return token.end - 1;
+//     }
+
+//     return side === 'start' ? token.start : token.end;
+//   }
+
+
+//   if(currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose') {
+//     const afterSlice = nextToken.end;
+//     const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+
+//     const rawIndex = getRawIndexFromToken(
+//       normalizedToken,
+//       currentToken,
+//       tokenInd,
+//       'end'
+//     );
+
+//     const newInput = inputText.slice(0, rawIndex) + inputText.slice(afterSlice);
+//     const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+//     // const newInput = inputText.slice(0, newCaret) + inputText.slice(afterSlice);
+//     // console.log(normalizedToken);
+//     // console.log(newCaret);
+//     return{
+//       newInput,
+//       newCaret,
+//       showMsg: true,
+//     }
+//   }
+
+//   if(currentToken?.type === 'parenClose') {
+//     const afterSliceForParenClose = currentToken.start;
+//     const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+//     console.log(tokenInd);
+
+//     const rawIndex = getRawIndexFromToken(
+//       normalizedToken,
+//       currentToken,
+//       tokenInd,
+//       'end'
+//     );
+
+//     const newInput = inputText.slice(0, rawIndex) + inputText.slice(afterSliceForParenClose);
+//     const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+//     // const newInput = inputText.slice(0, newCaret) + inputText.slice(afterSliceForParenClose);
+//     // console.log(normalizedToken);
+//     // console.log(newCaret);
+//     return{
+//       newInput,
+//       newCaret,
+//       showMsg: true,
+//     }
+//   }
+
+//   //default
+//   // const newInput = inputText.slice(0, newCaret) + inputText.slice(caretPosition);
+//     const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+//     console.log(tokenInd);
+
+//     const rawIndex = getRawIndexFromToken(
+//       normalizedToken,
+//       currentToken,
+//       tokenInd,
+//       'end'
+//     );
+
+//     const newInput = inputText.slice(0, rawIndex) + inputText.slice(caretPosition);
+//     const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+//     console.log(normalizedToken);
+//     console.log(newCaret);
+//     return{
+//       newInput,
+//       newCaret,
+//       showMsg: true,
+//     }
+// }
+
+export function handleDelete(inputText, caretPosition, btn){
+  const tokensObj = getTokens(inputText);
+  const normalizedToken = normalizeTokens(tokensObj);
+  // console.log(tokensObj);
+  // console.log(normalizedToken);
+  // const currInputText = formatTokensForDisplay(inputText).text;
+  // const inputMapForCaretMove = formatTokensForDisplay(inputText).map;
+  const { map: inputMapForCaretMove } = formatTokensForDisplay(inputText);
+  console.log(inputMapForCaretMove);
+  
+  const currTokenIndex = getCurrTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
+  const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
+
+  // const nextTokenIndex = getNextTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
+  // const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+
+  // const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+  
+  // function getRawIndexFromToken(normalizedTokens, currToken, targetTokenIndex, side = 'start') {
+  //   if (targetTokenIndex < 0) return 0;
+  //   // tokenIndex = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+  //   const token = normalizedTokens[targetTokenIndex];
+
+  //   if (((token?.type === 'number' || token?.type === 'numberWithDecimal' || token?.type === 'superscriptValue' || token?.type === 'subscriptValue' || token?.type === 'supAndSub' || token?.type === 'numWithPi' || token?.type === 'numWithE' || token?.type === 'constant') && currToken?.type === 'parenClose') || ((token?.type === 'number' || token?.type === 'numberWithDecimal' || token?.type === 'numWithPi' || token?.type === 'numWithE' || token?.type === 'constant' || token?.type === 'supAndSub' || token?.type === 'superscriptValue' || token?.type === 'subscriptValue' || token?.type === 'combAndPerm' || token?.value === decimal || token?.value === minus) && targetTokenIndex === currTokenIndex)) {
+  //     return token.end - 1;
+  //   }
+
+  //   return side === 'start' ? token.start : token.end;
+  // }
+  const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+
+  const { start, end } = getDeleteRange(
+    normalizedToken,
+    tokenInd,
+    currentToken,
+    caretPosition
+  );
+
+  const newInput =
+    inputText.slice(0, start) +
+    inputText.slice(end);
+
+  const newCaret = start;
+
+  return {
+    newInput,
+    newCaret,
+    showMsg: true,
+  };
+
+  // if(currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose') {
+  //   const afterSlice = nextToken.end;
+  //   // const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+
+  //   const rawIndex = getRawIndexFromToken(
+  //     normalizedToken,
+  //     currentToken,
+  //     tokenInd,
+  //     'end'
+  //   );
+
+  //   const newInput = inputText.slice(0, rawIndex) + inputText.slice(afterSlice);
+  //   const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+  //   // const newInput = inputText.slice(0, newCaret) + inputText.slice(afterSlice);
+  //   // console.log(normalizedToken);
+  //   // console.log(newCaret);
+  //   return{
+  //     newInput,
+  //     newCaret,
+  //     showMsg: true,
+  //   }
+  // }
+
+  // if(currentToken?.type === 'parenClose') {
+  //   const afterSliceForParenClose = currentToken.start;
+  //   // const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+  //   console.log(tokenInd);
+
+  //   const rawIndex = getRawIndexFromToken(
+  //     normalizedToken,
+  //     currentToken,
+  //     tokenInd,
+  //     'end'
+  //   );
+
+  //   const newInput = inputText.slice(0, rawIndex) + inputText.slice(afterSliceForParenClose);
+  //   const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+  //   // const newInput = inputText.slice(0, newCaret) + inputText.slice(afterSliceForParenClose);
+  //   // console.log(normalizedToken);
+  //   // console.log(newCaret);
+  //   return{
+  //     newInput,
+  //     newCaret,
+  //     showMsg: true,
+  //   }
+  // }
+
+  //default
+  // const newInput = inputText.slice(0, newCaret) + inputText.slice(caretPosition);
+    // const tokenInd = findDeleteTargetToken(normalizedToken, inputMapForCaretMove, caretPosition);
+    // console.log(tokenInd);
+
+    // const rawIndex = getRawIndexFromToken(
+    //   normalizedToken,
+    //   currentToken,
+    //   tokenInd,
+    //   'end'
+    // );
+
+    // const newInput = inputText.slice(0, rawIndex) + inputText.slice(caretPosition);
+    // const newCaret = getCaretAfterDelete(inputText, inputMapForCaretMove, btn, caretPosition);
+    // console.log(normalizedToken);
+    // console.log(newCaret);
+    // return{
+    //   newInput,
+    //   newCaret,
+    //   showMsg: true,
+    // }
+}
+
+function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
+  const token = tokens[targetTokenIndex];
+
+  if (!token) {
+    return {
+      start: Math.max(caretPos - 1, 0),
+      end: caretPos,
+    };
+  }
+
+  if (token.type === 'number' && currToken?.type === 'parenOpen') {
+    return {
+      start: token.end,
+      end: currToken.end + 1
     }
   }
 
-  if(currentToken.type === 'parenClose'){
-    return deleteForParens(inputText, caretPosition, currentToken);
+  if (token.type === 'number' && currToken?.type === 'parenClose') {
+    return {
+      start: token.end - 1,
+      // end: currToken.start
+      end: token.end
+    }
   }
 
-  if(currentToken.type === 'parenOpen' && prevToken.type === 'function'){
-    return deleteForFunction(inputText, caretPosition, prevToken, nextToken);
+  // normal backspace inside numbers
+  // if (
+  //   ((token.type === 'number' || token.type === 'numberWithDecimal' || token.type === 'superscriptValue' || token.type === 'subscriptValue' || token.type === 'supAndSub' || token.type === 'numWithPi' || token.type === 'numWithE' || token.type === 'constant') && currToken.type === 'parenClose') || ((token.type === 'number' || token.type === 'numberWithDecimal' || token.type === 'numWithPi' || token.type === 'numWithE' || token.type === 'constant' || token.type === 'supAndSub' || token.type === 'superscriptValue' || token.type === 'subscriptValue' || token.type === 'combAndPerm' || token.value === decimal || token.value === minus) && targetTokenIndex === currTokenIndex)
+  // ) {
+  //   return {
+  //     // start: caretPos - 1,
+  //     // end: caretPos,
+  //     start: token.end - 1,
+  //     end: token.end,
+  //   };
+  // }
+
+  const valueTokenTypes = new Set([
+    'number',
+    'numberWithDecimal',
+    'numWithPi',
+    'numWithE',
+    'constant',
+    'superscriptValue',
+    'subscriptValue',
+    'supAndSub',
+  ]);
+
+  const isValueToken = valueTokenTypes.has(token.type);
+  const isSpecialInlineValue =
+    token.type === 'combAndPerm' ||
+    token.value === decimal ||
+    token.value === minus;
+
+  const case1 =
+    isValueToken && currToken.type === 'parenClose';
+
+  const case2 =
+    (isValueToken || isSpecialInlineValue) &&
+    caretPos > token.start &&
+    caretPos <= token.end;
+
+  if (case1 || case2) {
+    return {
+      start: token.end - 1,
+      end: token.end,
+    }
   }
 
-  return deleteBeforeCaret(inputText, caretPosition);
+
+  // default: whole token
+  return {
+    start: token.end,
+    end: currToken.end,
+  };
 }
+
+
+
+// export function handleDelete(inputText, caretPosition){
+//   const tokens = tokenize(inputText);
+//   const currentToken = getTokenAtCaret(tokens, caretPosition);
+//   const prevToken = getPrevToken(tokens, currentToken);
+//   const nextToken = getNextToken(tokens, currentToken);
+
+//   if(caretPosition === 0){
+//     return{
+//       newInput: inputText,
+//       newCaret: 0,
+//       showMsg: true,
+//     }
+//   }
+
+//   if(currentToken.type === 'parenClose'){
+//     return deleteForParens(inputText, caretPosition, currentToken);
+//   }
+
+//   if(currentToken.type === 'parenOpen' && prevToken.type === 'function'){
+//     return deleteForFunction(inputText, caretPosition, prevToken, nextToken);
+//   }
+
+//   return deleteBeforeCaret(inputText, caretPosition);
+// }
 
 export function handleFunctions(value, inputText, btn, caretPosition){
   const insertValue = `${value}()`;
@@ -230,8 +533,8 @@ export function deleteForFunction(inputText, caretPos, funcToken, nextToken) {
   const end = nextToken.end;
 
   return{
-      newInput: inputText.slice(0, start) + inputText.slice(end),
-      newCaret: caretPos - charsToRemove,
-      showMsg: true,
-    }
+    newInput: inputText.slice(0, start) + inputText.slice(end),
+    newCaret: caretPos - charsToRemove,
+    showMsg: true,
+  }
 }
