@@ -260,6 +260,7 @@ export function handleDelete(inputText, caretPosition, btn){
 
 function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
   const token = tokens[targetTokenIndex];
+  console.log(token.type, currToken.type);
 
   if (!token) {
     return {
@@ -268,7 +269,7 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
     };
   }
 
-  if (token.type === 'number' && currToken?.type === 'parenOpen') {
+  if ((token.type === 'number' || token.type === 'parenClose' || token.type === 'supAndSub' || token.type === 'subscriptValue') && currToken?.type === 'parenOpen') {
     return {
       start: token.end,
       end: currToken.end + 1

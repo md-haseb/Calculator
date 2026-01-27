@@ -48,7 +48,8 @@ export function findDeleteTargetToken(normalizedToken, map, caretPos) {
 
   let targetTokenIndex = currTokenIndex;
 
-  if(deleteStartTokens.has(currentToken?.type) || (currentToken?.type === 'number' && String(currentToken?.value).length == 1 && prevToken?.type === 'operator')) {
+  if(deleteStartTokens.has(currentToken?.type) || 
+  ((currentToken?.type === 'number' || currentToken?.type === 'superscriptValue') && String(currentToken?.value).length == 1 && prevToken?.type === 'operator')) {
     for(let i = currTokenIndex - 1; i >= 0; i--) {
       if((currentToken?.type === 'parenClose') && (normalizedToken[i]?.type === 'parenClose')) {
         continue;
