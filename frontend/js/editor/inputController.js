@@ -5,7 +5,7 @@ import { validateForDisplay, validateForEvaluation } from "../core/validation.js
 import { calculate } from "../core/calculation.js";
 import { insertAt } from "../editor/insertionHelpers.js";
 // import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
-import { combinatorics, expBox, decimal, minus } from "../core/constants.js";
+import { combinatorics, expBox, decimal, minus, operators } from "../core/constants.js";
 import { formatTokensForDisplay } from "../ui/formatDisplay.js";
 import { normalizeTokens } from '../core/normalizeTokens.js';
 import { getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret } from './caretMap.js';
@@ -264,7 +264,7 @@ export function handleDelete(inputText, caretPosition, btn){
 
 function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos) {
   const token = tokens[targetTokenIndex];
-  console.log(token.type, currToken.type);
+  console.log(nextToken);
 
   if (!token) {
     return {
@@ -273,21 +273,27 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
     };
   }
 
+  if (nextToken?.type === 'operator') {
+    const spaceLen = 1;
+    nextToken.start -= spaceLen;
+    nextToken.end += spaceLen;
+  }
+
   if ((token.type === 'number' || token.type === 'parenClose' || token.type === 'supAndSub' || token.type === 'subscriptValue') && currToken?.type === 'parenOpen') {
     return {
       start: token.end,
       // end: currToken.end + 1
-      end: nextToken.end
+      end: nextToken?.end ?? caretPos
     }
   }
 
-  if (token.type === 'number' && currToken?.type === 'parenClose') {
-    return {
-      start: token.end - 1,
-      // end: currToken.start
-      end: token.end
-    }
-  }
+  // if (token.type === 'number' && currToken?.type === 'parenClose') {
+  //   return {
+  //     start: token.end - 1,
+  //     // end: currToken.start
+  //     end: token.end
+  //   }
+  // }
 
   // normal backspace inside numbers
   // if (
@@ -307,6 +313,7 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
     'numWithPi',
     'numWithE',
     'constant',
+    'operator',
     'superscriptValue',
     'subscriptValue',
     'supAndSub',
@@ -333,12 +340,12 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
     }
   }
 
-
+  console.log('hello', currToken.type, token.type);
   // default: whole token
   return {
     start: token.end,
     // end: currToken.end,
-    end: nextToken.start
+    end: nextToken?.start ?? caretPos
   };
 }
 

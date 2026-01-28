@@ -33,7 +33,8 @@ const deleteTargetTypes = new Set([
   'constant',
   'parenOpen',
   'parenClose',
-  'supAndSub'
+  'supAndSub',
+  'superscriptValue'
 ]);
 
 export function findDeleteTargetToken(normalizedToken, map, caretPos) {
