@@ -1,4 +1,4 @@
-import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
+import {getTokens, tokenValues, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {showExponentBox, showExponent, showIndices, insertAt, replaceAt} from "./insertionHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
 import {formatTokensForDisplay} from '../ui/formatDisplay.js';

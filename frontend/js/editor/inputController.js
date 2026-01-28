@@ -151,6 +151,9 @@ export function handleDelete(inputText, caretPosition, btn){
   const currTokenIndex = getCurrTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
   const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
 
+  const nextTokenIndex = getNextTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
+  const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+
   // const nextTokenIndex = getNextTokenIndexFromCaret(inputMapForCaretMove, caretPosition);
   // const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
 
@@ -173,6 +176,7 @@ export function handleDelete(inputText, caretPosition, btn){
     normalizedToken,
     tokenInd,
     currentToken,
+    nextToken,
     caretPosition
   );
 
@@ -258,7 +262,7 @@ export function handleDelete(inputText, caretPosition, btn){
     // }
 }
 
-function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
+function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos) {
   const token = tokens[targetTokenIndex];
   console.log(token.type, currToken.type);
 
@@ -272,7 +276,8 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
   if ((token.type === 'number' || token.type === 'parenClose' || token.type === 'supAndSub' || token.type === 'subscriptValue') && currToken?.type === 'parenOpen') {
     return {
       start: token.end,
-      end: currToken.end + 1
+      // end: currToken.end + 1
+      end: nextToken.end
     }
   }
 
@@ -332,7 +337,8 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, caretPos) {
   // default: whole token
   return {
     start: token.end,
-    end: currToken.end,
+    // end: currToken.end,
+    end: nextToken.start
   };
 }
 

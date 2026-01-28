@@ -87,7 +87,7 @@ export const combinatorics = {
 /**
  * combinatorics values inside array
  */
-export const combinatoricsArr = ['C', 'P'];
+// export const combinatoricsArr = ['C', 'P'];
 
 /**
  * log functions
@@ -101,7 +101,7 @@ export const logFunctions = {
 /**
  * log functions inside array
  */
-export const logFunctionsArr = ['log', 'ln'];
+// export const logFunctionsArr = ['log', 'ln'];
 
 /**
  * parentheses

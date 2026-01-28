@@ -3,7 +3,7 @@ import { handleEqual } from '../editor/inputController.js';
 import { insertValue, replaceOperator } from '../editor/insertion.js';
 import { changeMultiplySign } from './uiUtils.js';
 import { updateInput, handleInvalidInput } from './ui.js';
-import {handleAC, handleDelete, handleFunctions, handleOperators, handleLeftArrow, handleRightArrow} from "../editor/inputController.js";
+import {handleAC, handleDelete, handleFunctions, handleLeftArrow, handleRightArrow} from "../editor/inputController.js"; // handleOperators,
 import { operatorsMap } from '../core/constants.js';
 
 
