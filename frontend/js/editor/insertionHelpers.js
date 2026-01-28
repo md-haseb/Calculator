@@ -1,8 +1,7 @@
 import { normalToSuperscript, normalToSubscript, combinatorics, combinatoricsArr, logFunctionsArr, expBox, trigFunctions } from "../core/constants.js";
 import {getTokens, getTokenAtCaret, getPrevToken, getNextToken} from "../core/tokenHelpers.js";
 import {classifyButtonValue} from '../core/classifyBtn.js';
-import { isOperator } from '../core/validation.js';
-import { formatTokensForDisplay, getTokenIndexFromCaret, getCaretForToken } from '../ui/formatDisplay.js';
+import {formatTokensForDisplay} from '../ui/formatDisplay.js';
 
 /**
  * Computes new caret position after inserting a special value.
@@ -46,43 +45,6 @@ import { formatTokensForDisplay, getTokenIndexFromCaret, getCaretForToken } from
 // }
 
 
-export function getCaretAfterInsertion({ newValue, caretPos, tokens }) {
-  const { type, value } = classifyButtonValue(newValue);
-
-  const { map } = formatTokensForDisplay(tokens);
-
-  const currentTokenIndex = getTokenIndexFromCaret(map, caretPos);
-
-  let targetTokenIndex = currentTokenIndex;
-
-  switch (type) {
-    case 'logWithBox':
-    case 'baseWithSupers': {
-      // caret goes after the inserted token
-      targetTokenIndex = currentTokenIndex + 1;
-      break;
-    }
-
-    case 'parentheses':
-      // move inside parentheses token
-      targetTokenIndex = currentTokenIndex + 1;
-      return getCaretForToken(map, targetTokenIndex, 'before');
-
-    case 'baseWithBox':
-    case 'combOrPerm':
-    case 'boxWithRoot':
-      // caret stays
-      return caretPos;
-
-    default:
-      // normal token insertion
-      targetTokenIndex = currentTokenIndex + 1;
-  }
-
-  return getCaretForToken(map, targetTokenIndex, 'after');
-}
-
-
 
 /**
  * Inserts an exponent box (□) or special notation at the caret position.
@@ -95,6 +57,7 @@ export function showExponentBox(currentInput, caretPos, newValue) {
   const {type, value} = classifyButtonValue(newValue);
   let valueToInsert;
 
+  console.log(type);
   switch (type) {
     case 'logWithBox':
       valueToInsert = `log<sub>□</sub>()`;
@@ -110,6 +73,7 @@ export function showExponentBox(currentInput, caretPos, newValue) {
       valueToInsert = `<sup>□</sup>`;
   }
 
+  console.log(currentInput, caretPos, valueToInsert);
   return insertAt(currentInput, caretPos, valueToInsert);
 }
 
@@ -144,21 +108,23 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
   const nextCombOrPerm = nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation;
   const greaterNextCombOrPerm = greaterNextToken?.value === combinatorics.combination || greaterNextToken?.value === combinatorics.permutation;
 
-  const greaterCombinatoricsTemp =  makeCombPermTemplate(greaterNextToken?.value);
-  const nextCombinatoricsTemp = makeCombPermTemplate(nextToken?.value);
+  // const greaterCombinatoricsTemp =  makeCombPermTemplate(greaterNextToken?.value);
+  // const nextCombinatoricsTemp = makeCombPermTemplate(nextToken?.value, greaterNextToken?.value);
 
-  const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
-  const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
+  // const greaterCombinatoricsTempLen = getVisibleLength(greaterCombinatoricsTemp);
+  // const nextCombinatoricsTempLen = getVisibleLength(nextCombinatoricsTemp);
   // console.log(currentToken?.type);
   // console.log(currentToken?.value);
   // console.log(nextCombOrPerm);
 
-  
+  console.log(currentToken?.value, nextToken?.value);
   if (currentToken?.value === expBox && nextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen + boxLength, supers + nextCombinatoricsTemp);
+    // console.log('hello', nextCombinatoricsTempLen);
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === expBox && greaterNextCombOrPerm) {
-    return replaceAt(currentInput, caretPos, greaterCombinatoricsTempLen + boxLength, supers + greaterCombinatoricsTemp);
+    console.log('hello');
+    return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.value === expBox && nextToken?.type === 'singleRoot') {
     return replaceAt(currentInput, caretPos, boxLength, supers);
@@ -167,18 +133,22 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (nextToken?.value === expBox) {
+    console.log('hello');
     return replaceAt(currentInput, caretPos, boxLength, supers);
   }
   if (currentToken?.type === 'superscriptValue' && nextCombOrPerm) {
-    console.log('hello');
-    return replaceAt(currentInput, caretPos, nextCombinatoricsTempLen, supers + nextCombinatoricsTemp)
+    // console.log('hello', nextCombinatoricsTempLen, supers);
+    return replaceAt(currentInput, caretPos, 0, supers)
   }
   if (currentToken?.type === 'superscriptValue') {
+    console.log('hello');
     return replaceAt(currentInput, caretPos, 0, supers)
   }
   if (type === 'baseWithSupers'){
+    console.log('hello');
     return replaceAt(currentInput, caretPos, 0, valueWithoutX)
   }
+  console.log('hello');
   return replaceAt(currentInput, caretPos, 0, supers);
 }
 
@@ -196,7 +166,8 @@ export function showExponent(currentInput, caretPos, newValue, currentToken, nex
  * @returns {string} Updated input string.
  */
 export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
-  return currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
+  const replaceInput = currentInput.slice(0, caretPos) + insert + currentInput.slice(caretPos + charsToRemove);
+  return formatTokensForDisplay(replaceInput).text;
 }
 
 
@@ -209,13 +180,13 @@ export function replaceAt(currentInput, caretPos, charsToRemove, insert) {
  * @returns {string} Updated input string.
  */
 export function insertAt(currentInput, caretPos, newValue) {
-  // const span = `<span style="padding:0 2px">${newValue}</span>`;
-
-  // if (isOperator(newValue) || trigFunctions.includes(newValue) || logFunctionsArr.includes(newValue) || combinatoricsArr.includes(newValue)) {
-  //   return currentInput.slice(0, caretPos) + span + currentInput.slice(caretPos);
-  // }
-  console.log(newValue);
-  return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
+  console.log(currentInput, caretPos, newValue);
+  const insertInput = currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
+  console.log(insertInput);
+  console.log(formatTokensForDisplay(insertInput));
+  console.log(formatTokensForDisplay(insertInput).text);
+  return formatTokensForDisplay(insertInput).text;
+  // return currentInput.slice(0, caretPos) + newValue + currentInput.slice(caretPos);
 }
 
 
@@ -280,9 +251,9 @@ function filterOut_nAndr(value){
  * @param {string} [token=''] - Base combinatorics symbol.
  * @returns {string} HTML-formatted combinatorics template.
  */
-export function makeCombPermTemplate(token = ''){
-  return `${token}<sub>${expBox}</sub>`;
-}
+// export function makeCombPermTemplate(token = '', value){
+//   return `${token}<sub>${value}</sub>`;
+// }
 
 
 /**
@@ -321,12 +292,11 @@ export function showIndices(currentInput, caretPos, newValue, nextToken, greater
   const subs = convertToSubs(newValue);
 
   const boxLength = expBox.length;
-  const combOrPermTemp = makeCombPermTemplate(nextToken?.value);
-  const combOrPermTempLen = getVisibleLength(combOrPermTemp);
-
+  // const combOrPermTemp = makeCombPermTemplate(nextToken?.value, subs);
+  // const combOrPermTempLen = getVisibleLength(combOrPermTemp);
+  console.log(nextToken?.type);
   if ((nextToken?.value === combinatorics.combination || nextToken?.value === combinatorics.permutation) && greaterNextToken?.value === expBox) {
-    console.log('hello');
-    return replaceAt(currentInput, caretPos, combOrPermTempLen, combOrPermTemp);
+    return replaceAt(currentInput, caretPos, 0, subs);
   }
 
   // Replace box with subscript if next token is a box

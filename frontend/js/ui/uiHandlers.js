@@ -21,11 +21,10 @@ const operatorHandlers = Object.entries(operatorsMap).reduce((acc, [btnName, sym
 */
 export const simpleHandlers = {
   ac: handleAC,
-  delete: (inputText, caretPosition) => handleDelete(inputText, caretPosition),
-  leftArrow: (inputText, caretPosition) => handleLeftArrow(inputText, caretPosition),
-  rightArrow: (inputText, caretPosition) => handleRightArrow(inputText, caretPosition),
-  function: (inputText, caretPosition, btnValue) => handleFunctions(btnValue, inputText, caretPosition),
-  ...operatorHandlers, // dynamically add operator keys here
+  delete: (inputText, caretPosition, btn) => handleDelete(inputText, caretPosition, btn),
+  leftArrow: (inputText, caretPosition, btn, btnValue) => handleLeftArrow(inputText, caretPosition, btn, btnValue),
+  rightArrow: (inputText, caretPosition, btn, btnValue) => handleRightArrow(inputText, caretPosition, btn, btnValue),
+  function: (inputText, caretPosition, btn, btnValue) => handleFunctions(btnValue, inputText, btn, caretPosition),
 };
 
 
@@ -54,7 +53,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
     const { newInput, newCaret, showMsg } = handleEqual(
       modifiedInputText
     );
-
+    console.log(newInput);
     // Update the input display
     updateInput(input, newInput, newCaret, showMsg);
     return;
@@ -75,36 +74,38 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
  * @param {number} caretPosition - Current caret position
  * @param {string} btnValue - Value of the clicked button
 */
-export function handleDefaultButton(input, inputText, caretPosition, clickedBtnType, btnValue) {
+export function handleDefaultButton(input, inputText, caretPosition, btn, clickedBtnType, btnValue) {
     const handler = simpleHandlers[clickedBtnType];
-    console.log(simpleHandlers[clickedBtnType]);
+    console.log(btnValue);
 
     if (clickedBtnType === 'ac' && handler) {
       //execute simpleHandler function for AC button
-      const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
+      const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btn, btnValue);
       updateInput(input, newInput, newCaret, showMsg);
       return;
     }
-
+    console.log(inputText, btnValue, caretPosition);
     // Validate the input for display purposes
     const validated = validateForDisplay(inputText, btnValue, caretPosition);
+    console.log('hello');
 
     if (validated.allowed) {
       //execute simpleHandler function values
       if (handler) {
-        console.log(btnValue);
-        const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btnValue);
+        const { newInput, newCaret, showMsg } = handler(inputText, caretPosition, btn, btnValue);
         updateInput(input, newInput, newCaret, showMsg);
         console.log(inputText, newInput);
         return;
       }
-
+      console.log(inputText, caretPosition, btn, btnValue);
       // Insert the other values into the input
       const { newInput, newCaret } = insertValue(
         inputText,
         caretPosition,
+        btn,
         btnValue
       );
+      console.log(newInput);
       updateInput(input, newInput, newCaret);
       return;
     }
@@ -114,6 +115,7 @@ export function handleDefaultButton(input, inputText, caretPosition, clickedBtnT
       const { newInput, newCaret } = replaceOperator(
         inputText,
         caretPosition,
+        btn, 
         btnValue
       );
       updateInput(input, newInput, newCaret);

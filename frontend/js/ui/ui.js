@@ -4,7 +4,7 @@ import {handleAC, handleDelete, handleFunctions, handleInputClick, handleLeftArr
 import {setState, render} from "./uiState.js";
 import {executeEqual, handleDefaultButton} from "./uiHandlers.js";
 import { appendHistory, handleRemoveHistory } from './history.js';
-import { formatTokensForDisplay } from './formatDisplay.js';
+import {formatTokensForDisplay} from './formatDisplay.js';
 
 
 /**
@@ -80,7 +80,9 @@ export function init() {
         case "radian":
         case "degree":
           setState("angle", clickedBtn.value);
-          executeEqual(input, state.lastExpressionHTML, caretPosition, clickedBtn.value);
+          if (input.textContent.length > 0) {
+            executeEqual(input, state.lastExpressionHTML, caretPosition, clickedBtn.value);
+          }
           appendHistory(input, state.lastExpressionHTML, historyContainer, historyRemoveBtn);
           return;
 
@@ -91,7 +93,8 @@ export function init() {
           return;
 
         default:
-          handleDefaultButton(input, input.textContent, caretPosition, clickedBtn.type, clickedBtn.value);
+          console.log(clickedBtn.value);
+          handleDefaultButton(input, input.textContent, caretPosition, btn, clickedBtn.type, clickedBtn.value);
           return;
       }
     });
@@ -168,8 +171,11 @@ export function restoreCaret(input) {
 */
 export function updateInput (inputElm, newInput, newCaret, showMsg = false) {
   if (showMsg) showMessage();
-  // inputElm.innerHTML = newInput;
-  inputElm.innerHTML = formatTokensForDisplay(newInput).text;
+  // newInput = formatTokensForDisplay(newInput).text;
+  inputElm.innerHTML = newInput;
+  console.log(JSON.stringify(inputElm.textContent));
+  console.log(inputElm.textContent.length);
+  console.log(newCaret);
   caretShowWithFocus(inputElm, newCaret);
 }
 
