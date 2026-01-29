@@ -48,7 +48,7 @@ export function findDeleteTargetToken(normalizedToken, map, caretPos) {
   const prevToken = prevTokenIndex === -1 ? null : normalizedToken[prevTokenIndex];
 
   let targetTokenIndex = currTokenIndex;
-
+  // console.log(currentToken, String(currentToken?.value).length, prevToken);
   if(deleteStartTokens.has(currentToken?.type) || 
   ((currentToken?.type === 'number' || currentToken?.type === 'superscriptValue') && String(currentToken?.value).length == 1 && prevToken?.type === 'operator')) {
     for(let i = currTokenIndex - 1; i >= 0; i--) {

@@ -5,7 +5,7 @@ import { validateForDisplay, validateForEvaluation } from "../core/validation.js
 import { calculate } from "../core/calculation.js";
 import { insertAt } from "../editor/insertionHelpers.js";
 // import { showIndices, insertAt, makeCombPermTemplate } from "../editor/insertionHelpers.js";
-import { combinatorics, expBox, decimal, minus, operators } from "../core/constants.js";
+import { combinatorics, expBox, decimal, minus, operators, pi, E } from "../core/constants.js";
 import { formatTokensForDisplay } from "../ui/formatDisplay.js";
 import { normalizeTokens } from '../core/normalizeTokens.js';
 import { getCurrTokenIndexFromCaret, getNextTokenIndexFromCaret } from './caretMap.js';
@@ -274,6 +274,7 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
   }
 
   if (nextToken?.type === 'operator') {
+    console.log('hello');
     const spaceLen = 1;
     nextToken.start -= spaceLen;
     nextToken.end += spaceLen;
@@ -310,14 +311,16 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
   const valueTokenTypes = new Set([
     'number',
     'numberWithDecimal',
-    'numWithPi',
-    'numWithE',
     'constant',
     'operator',
+    'numWithPi',
+    'numWithE',
     'superscriptValue',
     'subscriptValue',
     'supAndSub',
   ]);
+  // 'numWithPi',
+  // 'numWithE',
 
   const isValueToken = valueTokenTypes.has(token.type);
   const isSpecialInlineValue =
@@ -333,10 +336,24 @@ function getDeleteRange(tokens, targetTokenIndex, currToken, nextToken, caretPos
     caretPos > token.start &&
     caretPos <= token.end;
 
-  if (case1 || case2) {
+  const case3 = (token.type === 'numWithPi' || token.type === 'numWithE') && 
+    caretPos >= token.end;
+
+  if (case1) {
+    console.log('hello');
     return {
       start: token.end - 1,
       end: token.end,
+    }
+  }
+
+  if (case2 || case3) {
+    console.log('hello');
+    return {
+      start: caretPos - 1,
+      end: caretPos,
+      // start: token.end - 1,
+      // end: token.end,
     }
   }
 
