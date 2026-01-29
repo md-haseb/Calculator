@@ -78,6 +78,7 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
     const newInput = insertAt(currentInput, caretPosition, value);
     console.log(newInput);
     const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
+    console.log(inputMapForCaretMove);
     return {
       newInput,
       newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, btn, caretPosition),

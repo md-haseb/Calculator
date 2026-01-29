@@ -179,7 +179,7 @@ function shouldMoveToNextToken(inputText, map, btn, caretPos) {
 
 
   const shouldMoveCharRight =
-  type === 'number' && 
+  (type === 'number' || type === 'decimal') && 
     (currentToken?.type === 'number' || 
     currentToken?.type === 'superscriptValue' || 
     currentToken?.type === 'supAndSub' || 
@@ -283,6 +283,7 @@ function shouldMoveToNextToken(inputText, map, btn, caretPos) {
 
 export function getCaretAfterInsertion (inputText, map, btn, caretPos) {
   const { type } = classifyButton(btn);
+  console.log(type);
 
   if (type === 'leftArrow') {
     const moveType = shouldMoveToPrevToken(inputText, map, btn, caretPos).move;
@@ -305,6 +306,7 @@ export function getCaretAfterInsertion (inputText, map, btn, caretPos) {
   // console.log(map);
   const currentTokenIndex = getCurrTokenIndexFromCaret(map, caretPos);
   const moveType = shouldMoveToNextToken(inputText, map, btn, caretPos).move;
+  console.log(currentTokenIndex, moveType);
 
   let targetTokenIndex = currentTokenIndex;
   // console.log(targetTokenIndex);
