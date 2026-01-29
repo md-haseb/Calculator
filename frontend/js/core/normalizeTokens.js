@@ -13,13 +13,11 @@ function splitSuperscriptRootTokens(tokens, superscriptChars) {
       result.push(token);
     }
   }
-  // console.log(result);
   return result;
 }
 
 
 export function normalizeTokens(tokens) {
-  console.log(tokens);
   const result = [];
 
   for (const token of tokens) {
@@ -50,6 +48,5 @@ export function normalizeTokens(tokens) {
       end: start + raw.length
     });
   }
-  console.log(result);
   return result;
 }

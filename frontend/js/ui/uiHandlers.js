@@ -22,8 +22,8 @@ const operatorHandlers = Object.entries(operatorsMap).reduce((acc, [btnName, sym
 export const simpleHandlers = {
   ac: handleAC,
   delete: (inputText, caretPosition, btn) => handleDelete(inputText, caretPosition, btn),
-  leftArrow: (inputText, caretPosition, btn, btnValue) => handleLeftArrow(inputText, caretPosition, btn, btnValue),
-  rightArrow: (inputText, caretPosition, btn, btnValue) => handleRightArrow(inputText, caretPosition, btn, btnValue),
+  leftArrow: (inputText, caretPosition, btn) => handleLeftArrow(inputText, caretPosition, btn),
+  rightArrow: (inputText, caretPosition, btn) => handleRightArrow(inputText, caretPosition, btn),
   function: (inputText, caretPosition, btn, btnValue) => handleFunctions(btnValue, inputText, btn, caretPosition),
 };
 
