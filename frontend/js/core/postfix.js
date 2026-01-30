@@ -4,11 +4,25 @@ import { divide, isNumWithSuperscript, isSuperscriptedNumber, isSubscriptedNumbe
 
 import {getMode} from '../ui/uiState.js';
 
+
+
+
+
 /**
- * Converts a tokenized expression to postfix notation using Shunting Yard algorithm.
- * @param {Array} tokens - Array of token strings.
- * @returns {Array} Postfix array of tokens.
+ * Converts a tokenized mathematical expression to postfix (Reverse Polish) notation
+ * using the Shunting Yard algorithm.
+ *
+ * Supports numbers, superscripted/subscripted numbers, constants (π, e),
+ * factorials, percentages, roots, trigonometric functions, logarithms, unary minus,
+ * combinatorics (nCr, nPr), parentheses, and standard arithmetic operators.
+ *
+ * The algorithm respects operator precedence and associativity, and correctly
+ * handles functions, parentheses, and special cases like log/ln with implicit arguments.
+ *
+ * @param {Array<string>} tokens - An array of token strings representing the expression.
+ * @returns {Array<string>} An array of tokens in postfix order, suitable for evaluation.
  */
+
 export function toPostfix(tokens) {
   const output = [];
   const stack = [];
@@ -30,7 +44,7 @@ export function toPostfix(tokens) {
     else if (isSubscriptedNumber(tokens[i])) {
       output.push(parseSubscripted(tokens[i]));
     } 
-    //singleRoot, ends with root(nth root), (sin, cos, tan) > push to the stack
+    //singleRoot, ends with root(nth root), (sin, cos, tan, cot, sec, csc) > push to the stack
     else if (tokens[i] === root || tokens[i].endsWith(root) || trigFunctions.includes(tokens[i]) || tokens[i] === combinatorics.combination || tokens[i] === combinatorics.permutation || tokens[i] === unaryMinus) { 
       stack.push(tokens[i]);
     } 
@@ -53,7 +67,7 @@ export function toPostfix(tokens) {
         while (stack.length) {
           const top = stack[stack.length - 1];
 
-          // 1. ROOT OPERATORS POP IMMEDIATELY
+          // 1. ROOT, functions, combinatorics, unary minus, log/ln pop immediately
           if (top.endsWith(root) || top === combinatorics.combination || top === combinatorics.permutation || top === unaryMinus || top === logFunctions.log || top === logFunctions.ln || trigFunctions.includes(top)) {
             output.push(stack.pop());
             continue;
@@ -62,7 +76,6 @@ export function toPostfix(tokens) {
           // 2. REGULAR OPERATORS / FUNCTIONS
           const isTopOperator =
           operatorsSet.has(top);
-            // operatorsSet.has(top) || functionsSet.has(top);
 
           if (!isTopOperator) break;
 
@@ -93,17 +106,38 @@ export function toPostfix(tokens) {
     output.push(stack.pop());
   }
   //retun the output stack (which is the actual array of postfix tokens)
-  console.log(output);
   return output;
 }
 
 
 
+
+
+
 /**
- * Evaluates a postfix expression array and returns the computed result.
- * @param {Array} postfix - Postfix array of tokens.
- * @returns {number} Computed value.
+ * Evaluates a mathematical expression represented in postfix (Reverse Polish) notation.
+ *
+ * Supports:
+ * - Numbers (including normal, superscripted, subscripted)
+ * - Constants (π, e) and numbers multiplied by π or e
+ * - Superscripted numbers (e.g., 2², 10³)
+ * - Square roots and nth roots
+ * - Factorials and percentages
+ * - Logarithms (log and ln)
+ * - Trigonometric functions (sin, cos, tan, cot, sec, csc)
+ * - Combinations (nCr) and permutations (nPr)
+ * - Basic arithmetic operators (+, -, ×, ÷)
+ * - Unary minus (NEG)
+ *
+ * The function uses a stack-based evaluation:
+ * - Numbers and constants are pushed to the stack
+ * - Operators and functions pop operands from the stack, compute results, and push back
+ * - Special handling for roots, logs, percentages, factorials, trigonometry, and combinatorics
+ *
+ * @param {Array<string>} postfix - Array of tokens in postfix order.
+ * @returns {number} The computed numeric result of the expression.
  */
+
 export function evaluatePostfix(postfix) {
   const stack = [];
 

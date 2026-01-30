@@ -6,14 +6,32 @@ import {getCaretAfterInsertion} from './caretBehavior.js';
 import { multiplicationDot, multiplySymbol } from "../core/constants.js";
 
 
+
+
 /**
- * Inserts a new value into the current input string at the caret position.
- * Handles exponent box, exponents, indices, brackets, functions, and normal characters.
- * @param {string} currentInput - Current input string from display.
- * @param {number} caretPosition - Current caret position in the input.
- * @param {string} newValue - Value to insert (number, operator, function, or special symbol).
- * @returns {{newInput: string, newCaret: number}} Updated input string and new caret position.
+ * Inserts a new value into the current mathematical input string at the caret position,
+ * while handling special cases like exponents, indices, boxes, functions, brackets, and normal characters.
+ *
+ * The function determines the context of the caret and nearby tokens to decide whether the
+ * inserted value should trigger:
+ *  - Exponent box insertion (e.g., log or power boxes)
+ *  - Superscript/exponent insertion
+ *  - Subscript/indices insertion
+ *  - Normal character insertion
+ *
+ * @param {string} currentInput - The current input string from the display.
+ * @param {number} caretPosition - Current caret (cursor) position in the input string.
+ * @param {string} btn - Button type/value that triggered the insertion (used for caret logic).
+ * @param {string} newValue - The value to insert (number, operator, function, or special symbol).
+ * @returns {{newInput: string, newCaret: number, showMsg?: boolean}} 
+ *          Updated input string, the new caret position, and optional display flags.
+ *
+ * @remarks
+ * The function uses tokenization and normalization to analyze the input, identifies the 
+ * current, previous, and next tokens around the caret, and chooses the appropriate insertion 
+ * method based on the context.
  */
+
 export function insertValue(currentInput, caretPosition, btn, newValue) {
   const clickedValue = classifyButtonValue(newValue);
   const typesWithBox = ['logWithBox', 'baseWithBox', 'boxWithRoot', 'combOrPerm'];
@@ -29,17 +47,6 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
   console.log(prevToken);
   console.log(nextToken);
   console.log(greaterNextToken);
-
-  // function applyExponentBox(value){
-  //   console.log(value);
-  //   const newInput = showExponentBox(currentInput, caretPosition, value);
-  //   const inputMapForCaretMove = formatTokensForDisplay(newInput).map;
-  //   console.log(newInput);
-  //   return {
-  //     newInput,
-  //     newCaret: getCaretAfterInsertion(newInput, inputMapForCaretMove, value, caretPosition),
-  //   };
-  // }
 
   function applyExponentBox(value){
     const newInput = showExponentBox(currentInput, caretPosition, value);
@@ -132,111 +139,32 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
 
   // Default insertion
   return insertWithCaret(clickedValue.value);
-
-
-  // if (typesWithBox.includes(clickedValue.type)) {
-  //     return {
-  //       newInput: showExponentBox(currentInput, caretPosition, clickedValue.value),
-  //       newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition),
-  //     };
-  // }
-
-  // if(clickedValue.type === 'baseWithSupers'){
-  //   return{
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-  
-  // Case 2: filling exponent and indices (subscript)
-  // if(currentToken?.type === 'function' && nextToken?.type === 'box'){
-  //   return {
-  //     newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if ((currentToken?.type === 'number' || currentToken?.type === 'numberWithDecimal') && nextToken?.type === 'box') {
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if(currentToken?.type === 'combAndPerm' && nextToken?.type === 'box'){
-  //   return {
-  //     newInput: showIndices(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if(currentToken?.type === 'box' && nextToken?.type === 'singleRoot'){ 
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if(currentToken?.type === 'box' && nextToken?.type === 'combAndPerm'){ 
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // Case 3: appending to superscript and subscript
-  // if (currentToken?.type === 'nthRoot' && caretPosition < currentToken?.end) {
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if (currentToken?.type === 'supAndSub') {
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if(currentToken?.type === 'superscriptValue'){
-  //   return {
-  //     newInput: showExponent(currentInput, caretPosition, newValue, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(newValue, caretPosition),
-  //   };
-  // }
-
-  // if(currentToken?.type === 'subscriptValue'){
-  //   return {
-  //     newInput: showIndices(currentInput, caretPosition, clickedValue.value, currentToken, nextToken),
-  //     newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition),
-  //   };
-  // }
-
-
-
-  // Case 4: bracket handling → place caret inside
-  // if (clickedValue.type === 'parentheses') {
-  //   return {
-  //     newInput: insertAt(currentInput, caretPosition, clickedValue.value),
-  //     newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition), // caret is inside the brackets
-  //   };
-  // }
-
-  // // Default case: normal insertion
-  // return {
-  //   newInput: insertAt(currentInput, caretPosition, clickedValue.value),
-  //   newCaret: getCaretAfterInsertion(clickedValue.value, caretPosition),
-  // };
 }
 
 
+
+
+
 /**
- * Replaces the last character in the input with a new operator.
- * @param {string} currentInput - Current input string.
- * @param {string} newValue - New operator to replace the last one.
- * @returns {string} Updated input string with operator replaced.
+ * Replaces the operator at or immediately before the caret position with a new operator.
+ *
+ * This function identifies the current token at the caret, computes its start position and length,
+ * and replaces it with the new operator value. It also updates the caret position appropriately
+ * after the replacement to ensure seamless editing.
+ *
+ * @param {string} currentInput - The current input string from the display.
+ * @param {number} caretPosition - Current caret (cursor) position in the input string.
+ * @param {string} rawValue - The new operator value (button input) to replace the existing operator.
+ * @returns {{newInput: string, newCaret: number}} Object containing:
+ *   - newInput: Updated input string with the operator replaced.
+ *   - newCaret: Updated caret position after the replacement.
+ *
+ * @remarks
+ * - The function relies on tokenization (`getTokens`) and token value extraction (`tokenValues`) 
+ *   to accurately locate the operator to replace.
+ * - The caret is updated via `getCaretAfterInsertion` to reflect the new operator's insertion.
  */
+
 export function replaceOperator(currentInput, caretPosition, rawValue) {
   const replacement = classifyButtonValue(rawValue);
 

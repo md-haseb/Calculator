@@ -1,5 +1,20 @@
 
 
+
+
+/**
+ * Classifies a calculator button value into a semantic token type.
+ *
+ * Determines the appropriate token type based on exact matches and
+ * pattern-based rules (functions, operators, roots, powers, digits, etc.).
+ * This classification is used to drive parsing, input handling, and
+ * expression construction logic.
+ *
+ * @param {string} newValue - The raw value of the pressed calculator button.
+ * @returns {{ type: string, value: string }} An object describing the token type and its value.
+ */
+
+
 export function classifyButtonValue(newValue) {
 
   // --- 1. Exact matches ---
@@ -71,6 +86,21 @@ export function classifyButtonValue(newValue) {
   // --- fallback ---
   return { type: 'unknown', value: newValue };
 }
+
+
+
+/**
+ * Classifies a calculator button element into an action or input token.
+ *
+ * Determines the button’s semantic type based on its DOM attributes
+ * (CSS classes and dataset/text value). Special control buttons such as
+ * delete and caret navigation are handled explicitly; all other buttons
+ * are classified using `classifyButtonValue`.
+ *
+ * @param {HTMLElement} btn - The calculator button element.
+ * @returns {{ type: string, value: string }} An object describing the button action or token.
+ */
+
 
 export function classifyButton(btn){
   const btnValue = btn.dataset.value || btn.textContent;

@@ -21,6 +21,7 @@ export const parenOpen = '(';
 export const parenClose = ')';
 
 
+
 // -------------------------------
 // Operators
 // -------------------------------
@@ -31,10 +32,13 @@ export const parenClose = ')';
  */
 export const operators = [plus, minus, multiplyBy, multiplicationDot, divideBy];
 
+
+
 /**
  * Set version of the operators array.
  */
 export const operatorsSet = new Set(operators);
+
 
 
 /**
@@ -101,6 +105,7 @@ export const paren = {
   close: ')'
 };
 
+
 /**
  * constants
  */
@@ -109,6 +114,7 @@ export const constantsValue = {
   E: Math.E,
   pi: Math.PI,
 };
+
 
 // -------------------------------
 // Operator Precedence & Associativity
@@ -132,6 +138,7 @@ export const precedence = {
   'sin': 4,
 };
 
+
 /**
  * Operator associativity rules.
  * L = Left-to-right, R = Right-to-left.
@@ -147,6 +154,8 @@ export const associativity = {
   '√': 'R', // unary, right-associative
   'sin': 'R',
 };
+
+
 
 // -------------------------------
 // Superscript / Subscript Mapping
@@ -169,6 +178,7 @@ export const normalToSuperscript = {
   "9": "\u2079"
 };
 
+
 /**
  * Reverse mapping from superscript digits back to normal digits.
  * Example: "²" → "2".
@@ -185,6 +195,7 @@ export const superscriptToNormal = {
   "\u2078": "8",
   "\u2079": "9"
 };
+
 
 /**
  * Mapping from normal digits (0–9) to their Unicode subscript equivalents.
@@ -203,6 +214,7 @@ export const normalToSubscript = {
   "9": "\u2089"
 };
 
+
 /**
  * Reverse mapping from subscript digits back to normal digits.
  * Example: "₂" → "2".
@@ -220,15 +232,18 @@ export const subscriptToNormal = {
   "\u2089": "9"
 };
 
+
 /**
  * A Set of all superscript characters for quick membership checks.
  */
 export const superscripts = new Set(Object.values(normalToSuperscript));
 
+
 /**
  * A Set of all subscript characters for quick membership checks.
  */
 export const subscripts = new Set(Object.values(normalToSubscript));
+
 
 //string of superscript and subscript numbers
 export const superscriptChars = Array.from(superscripts).join('');

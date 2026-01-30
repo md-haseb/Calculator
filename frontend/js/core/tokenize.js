@@ -1,15 +1,36 @@
 import { superscriptChars, subscriptChars, root } from "./constants.js";
 import { extractDegree } from "./mathHelpers.js";
 
-// //string of superscript and subscript numbers
-// const superscriptChars = Array.from(superscripts).join('');
-// const subscriptChars = Array.from(subscripts).join('');
+
+
 
 /**
- * Tokenizes a mathematical expression into an array of token objects.
- * @param {string} expr - The expression to tokenize.
- * @returns {Array<Object>} Array of token objects with type, value/raw, start, and end.
+ * Tokenizes a mathematical expression string into an array of structured token objects.
+ *
+ * This function parses the input expression and classifies each substring as a specific token type,
+ * including:
+ *   - Numbers (integer, decimal, with superscripts/subscripts)
+ *   - Constants (π, e)
+ *   - Numbers multiplied by constants (e.g., 2π, 3e)
+ *   - Operators (+, -, *, /, %, !, √, etc.)
+ *   - Functions (sin, cos, tan, cot, sec, csc, log, ln)
+ *   - Roots (single √ or nth roots like ³√)
+ *   - Parentheses, boxes (□) for exponents/indices
+ *   - Combinatorics symbols (C, P)
+ * 
+ * Each token object includes:
+ *   - `type`      : The type of token (e.g., "number", "operator", "function", etc.)
+ *   - `value` or `raw` : The literal string or parsed value of the token
+ *   - `start`     : Start index of the token in the original expression
+ *   - `end`       : End index of the token in the original expression
+ *
+ * Regexes are precompiled to improve performance and clarity.
+ * The function handles edge cases like superscripts, subscripts, and numbers with π or e.
+ *
+ * @param {string} expr - The mathematical expression to tokenize.
+ * @returns {Array<Object>} Array of token objects representing the parsed expression.
  */
+
 export function tokenize(expr){
 
   const tokens = [];

@@ -2,21 +2,17 @@ import {getTokens, tokenValues, normalizeUnaryMinus, insertImplicitMultiplicatio
 import { toPostfix, evaluatePostfix } from "./postfix.js";
 import { toScientific, shouldUseScientific } from "./mathHelpers.js";
 
+
+
 /**
- * Main function to calculate a string expression.
- * @param {string} expr - The expression to calculate.
- * @returns {string} Computed result as a string.
+ * Evaluates a mathematical expression string and returns a formatted result.
+ *
+ * The expression is tokenized, normalized (implicit multiplication and unary minus),
+ * converted to postfix notation, evaluated, and finally formatted for display.
+ *
+ * @param {string} expr - The mathematical expression to evaluate.
+ * @returns {string} The computed result as a formatted string, or "Math Error" if invalid.
  */
-// export function calculate(expr) {
-//   const tokens = tokenValues(expr);
-//   const unaryMinusTokens = normalizeUnaryMinus(tokens);
-//   const ImplicitMultiplicationTokens = insertImplicitMultiplication(unaryMinusTokens);
-//   console.log(ImplicitMultiplicationTokens);
-//   const postfix = toPostfix(ImplicitMultiplicationTokens);
-//   const result = evaluatePostfix(postfix);
-//   console.log(result, typeof(result));
-//   return showResult(result);
-// }
 
 export function calculate(expr) {
   const tokensObj = getTokens(expr);
@@ -24,11 +20,21 @@ export function calculate(expr) {
   const tokens = tokenValues(ImplicitMultiplicationTokens);
   const unaryMinusTokens = normalizeUnaryMinus(tokens);
   const postfix = toPostfix(unaryMinusTokens);
-  console.log(postfix);
   const result = evaluatePostfix(postfix);
-  console.log(showResult(result));
   return showResult(result);
 }
+
+
+
+/**
+ * Formats a numeric calculation result for display.
+ *
+ * Handles invalid values, applies scientific notation when needed,
+ * and trims unnecessary trailing zeros.
+ *
+ * @param {number} result - The raw numeric result of evaluation.
+ * @returns {string} A user-friendly formatted result.
+ */
 
 function showResult(result){
   if (!Number.isFinite(result)) {

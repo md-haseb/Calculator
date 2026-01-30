@@ -1,5 +1,7 @@
 import {input} from '../ui/ui.js';
 
+
+
 /**
  * Returns the current caret (cursor) index inside a contenteditable element.
  * It calculates how many characters exist from the start of the element
@@ -21,6 +23,10 @@ export function caretIndex(inputElm){
   preRange.setEnd(range.endContainer, range.endOffset);
   return preRange.toString().length;
 }
+
+
+
+
 
 /**
  * Sets the caret (cursor) at the specified character index inside a contenteditable element.
@@ -71,6 +77,11 @@ export function caretShow(inputElm, caretPos){
     sel.addRange(range);
   }
 }
+
+
+
+
+
 
 /**
  * Focuses the contenteditable element and then places the caret

@@ -1,11 +1,31 @@
 
 
+/**
+ * Returns the index of the token currently under the caret.
+ * The caret is mapped to the character just before its position.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Token index at caret, or -1 if none.
+ */
 
 export function getCurrTokenIndexFromCaret(map, caretPos) {
   if (caretPos <= 0) return -1;
   const i = Math.min(caretPos - 1, map.length - 1);
   return map[i];
 }
+
+
+
+
+
+/**
+ * Returns the index of the token immediately preceding the current token.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Previous token index, or -1 if none exists.
+ */
 
 export function getPrevTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
@@ -17,6 +37,19 @@ export function getPrevTokenIndexFromCaret(map, caretPos) {
   }
   return -1;
 }
+
+
+
+
+
+/**
+ * Returns the index of the token two positions before the current token
+ * (i.e., the token before the previous token).
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Greater-previous token index, or -1 if none exists.
+ */
 
 export function getGreaterPrevTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
@@ -31,6 +64,17 @@ export function getGreaterPrevTokenIndexFromCaret(map, caretPos) {
 }
 
 
+
+
+
+/**
+ * Returns the index of the token immediately following the current token.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Next token index, or -1 if none exists.
+ */
+
 export function getNextTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
 
@@ -41,6 +85,19 @@ export function getNextTokenIndexFromCaret(map, caretPos) {
   }
   return -1;
 }
+
+
+
+
+
+/**
+ * Returns the index of the token two positions after the current token
+ * (i.e., the token after the next token).
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {number} Greater-next token index, or -1 if none exists.
+ */
 
 export function getGreaterNextTokenIndexFromCaret(map, caretPos) {
   const current = getCurrTokenIndexFromCaret(map, caretPos);
@@ -54,6 +111,18 @@ export function getGreaterNextTokenIndexFromCaret(map, caretPos) {
   return -1;
 }
 
+
+
+
+
+/**
+ * Returns the caret position immediately after the given token.
+ * The caret is placed after the last character that belongs to the token.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} targetTokenIndex - Token index to move past.
+ * @returns {number} Caret position after the token, or 0 if not found.
+ */
 
 export function getCaretAfterToken(map, targetTokenIndex) {
   if (targetTokenIndex < 0) return 0;
@@ -70,6 +139,17 @@ export function getCaretAfterToken(map, targetTokenIndex) {
 }
 
 
+
+
+
+/**
+ * Checks whether the caret is positioned at the start of the current token.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {boolean} True if caret is at the token's start boundary.
+ */
+
 export function isAtStartOfCurrentToken(map, caretPos) {
   if (caretPos <= 0) return true; // caret at very beginning is start of token
 
@@ -80,6 +160,18 @@ export function isAtStartOfCurrentToken(map, caretPos) {
   // previous display index belongs to a different token
   return prev !== curr;
 }
+
+
+
+
+
+/**
+ * Checks whether the caret is positioned at the end of the current token.
+ *
+ * @param {number[]} map - Array mapping character positions to token indices.
+ * @param {number} caretPos - Current caret position.
+ * @returns {boolean} True if caret is at the token's end boundary.
+ */
 
 export function isAtEndOfCurrentToken(map, caretPos) {
   if (caretPos <= 0) return false;

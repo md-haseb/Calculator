@@ -1,31 +1,61 @@
 import { tokenize } from './tokenize.js';
 import { isOperator } from './validation.js';
 
+
+
+
+
 /**
- * Tokenizes the current input string.
- * @param {string} currentInput - Input string to tokenize.
- * @returns {Array} Array of token objects.
+ * Tokenizes a mathematical input string into an array of token objects.
+ *
+ * Delegates the actual tokenization to the underlying `tokenize` function.
+ * Tokens may represent numbers, operators, functions, constants, parentheses,
+ * superscripts/subscripts, roots, factorials, percentages, or combinatorics symbols.
+ *
+ * @param {string} currentInput - The mathematical expression to tokenize.
+ * @returns {Array<Object>} Array of token objects representing the parsed input.
  */
+
 export function getTokens(currentInput){
   return tokenize(currentInput);
 }
 
+
+
+
+
+
 /**
- * Finds the token at a given caret position.
- * @param {Array} tokens - Array of token objects.
- * @param {number} caretPos - Caret position.
- * @returns {Object|undefined} Token object at caret, or undefined.
+ * Retrieves the token object at a specific caret (cursor) position.
+ *
+ * Iterates through the array of token objects and returns the token
+ * whose start and end positions enclose the given caret position.
+ *
+ * @param {Array<Object>} tokens - Array of token objects, each with `start` and `end` properties.
+ * @param {number} caretPos - The current caret (cursor) position in the input string.
+ * @returns {Object|undefined} The token object at the caret position, or undefined if none found.
  */
+
 export function getTokenAtCaret(tokens, caretPos) {
   return tokens.find(t => caretPos >= t.start && caretPos <= t.end);
 }
 
+
+
+
+
+
 /**
- * Finds the previous token before a given token.
- * @param {Array} tokens - Array of token objects.
- * @param {Object} token - Current token.
- * @returns {Object|undefined} Previous token, or undefined.
+ * Retrieves the token immediately preceding a given token in an array of tokens.
+ *
+ * Searches for all tokens that end before the current token's start position
+ * and returns the one with the largest end value (i.e., the closest previous token).
+ *
+ * @param {Array<Object>} tokens - Array of token objects, each with `start` and `end` properties.
+ * @param {Object} token - The reference token to find the previous token for.
+ * @returns {Object|undefined} The token object immediately before the given token, or undefined if none exists.
  */
+
 export function getPrevToken(tokens, token) {
   // Find all tokens that end before the current token starts
   console.log(token);
@@ -34,12 +64,22 @@ export function getPrevToken(tokens, token) {
   return previousTokens.sort((a, b) => b.end - a.end)[0];
 }
 
+
+
+
+
+
 /**
- * Finds the next token after a given token.
- * @param {Array} tokens - Array of token objects.
- * @param {Object} token - Current token.
- * @returns {Object|undefined} Next token, or undefined.
+ * Retrieves the token immediately following a given token in an array of tokens.
+ *
+ * Searches for all tokens that start after the current token's end position
+ * and returns the one with the smallest start value (i.e., the closest next token).
+ *
+ * @param {Array<Object>} tokens - Array of token objects, each with `start` and `end` properties.
+ * @param {Object} token - The reference token to find the next token for.
+ * @returns {Object|undefined} The token object immediately after the given token, or undefined if none exists.
  */
+
 export function getNextToken(tokens, token) {
   // Find all tokens that end before the current token starts
   const nextTokens = tokens.filter(t => t.start >= token?.end);
@@ -47,13 +87,21 @@ export function getNextToken(tokens, token) {
   return nextTokens.sort((a, b) => a.start - b.start)[0];
 }
 
+
+
+
+
+
 /**
- * Generates array of token values from token objects.
- * Extracts the string value from token objects for processing.
- * Some tokens use `.value`, others use `.raw`.
- * @param {string} expr 
- * @returns {Array<string>}
+ * Extracts the string values from an array of token objects for further processing.
+ *
+ * Some token objects store their content in the `value` property, while others
+ * use the `raw` property. This function normalizes them into a simple array of strings.
+ *
+ * @param {Array<Object>} tokenObjects - Array of token objects from tokenization.
+ * @returns {Array<string>} Array of token string values, with null or invalid tokens filtered out.
  */
+
 export function tokenValues(tokenObjects){
   // const tokenObjects = tokenize(expr);
   const initialFilter = tokenObjects.map(t => {
@@ -65,6 +113,25 @@ export function tokenValues(tokenObjects){
   return initialFilter.filter(v => v !== null);
 }
 
+
+
+
+
+/**
+ * Normalizes unary minus operators in a token array.
+ *
+ * Converts a minus sign (`-`) that represents a unary negation into a
+ * special token `'NEG'`. A minus is considered unary if it appears:
+ *   - At the beginning of the expression
+ *   - Immediately after an opening parenthesis `(` 
+ *   - Immediately after another operator
+ *
+ * This allows consistent handling of unary negation during postfix conversion
+ * and evaluation.
+ *
+ * @param {Array<string>} tokens - Array of token strings (numbers, operators, parentheses, etc.).
+ * @returns {Array<string>} New array of tokens with unary minus normalized to `'NEG'`.
+ */
 
 export function normalizeUnaryMinus(tokens) {
   const result = [];
@@ -85,6 +152,24 @@ export function normalizeUnaryMinus(tokens) {
   return result;
 }
 
+
+
+
+
+/**
+ * Determines whether an implicit multiplication is required between two tokens.
+ *
+ * In mathematical expressions, multiplication is sometimes implied without an explicit
+ * operator, e.g., `2π`, `(3)(4)`, `5√9`, `nCr5`. This function checks the types of the
+ * previous token (`prev`) and the current token (`curr`), along with optional context
+ * (`greaterPrev` and `next`), to decide if a multiplication operator should be inserted.
+ *
+ * @param {Object} greaterPrev - The token before `prev`, used for certain combinatorics cases.
+ * @param {Object} prev - The token preceding the current token.
+ * @param {Object} curr - The current token being evaluated.
+ * @param {Object} next - The token following the current token, used for superscript/combinatorics context.
+ * @returns {boolean} `true` if an implicit multiplication should be inserted between `prev` and `curr`; otherwise `false`.
+ */
 
 export function needsImplicitMultiply(greaterPrev, prev, curr, next) {
   const prevCanEndValue =
@@ -109,6 +194,27 @@ export function needsImplicitMultiply(greaterPrev, prev, curr, next) {
 
   return prevCanEndValue && currCanStartValue;
 }
+
+
+
+
+
+
+/**
+ * Inserts explicit multiplication operators (`*`) where implicit multiplication is implied.
+ *
+ * In mathematical expressions, multiplication is often implied without an explicit operator,
+ * for example:
+ *   - Between a number and a constant: `2π` → `2 * π`
+ *   - Between parentheses: `(3)(4)` → `(3) * (4)`
+ *   - Before roots, superscripts, or combinatorics functions: `5√9`, `2³nCr`
+ *
+ * This function iterates through the token array and inserts an operator token
+ * whenever `needsImplicitMultiply` returns true for a given pair of tokens.
+ *
+ * @param {Array<Object>} tokens - Array of token objects from tokenization.
+ * @returns {Array<Object>} New array of token objects with explicit multiplication operators inserted.
+ */
 
 export function insertImplicitMultiplication(tokens) {
   const result = [];
