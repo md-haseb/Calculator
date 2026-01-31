@@ -1,4 +1,4 @@
-import { superscriptChars, subscriptChars, root } from "./constants.js";
+import { superscriptChars, subscriptChars, root, percent, factorial } from "./constants.js";
 import { extractDegree } from "./mathHelpers.js";
 
 
@@ -60,7 +60,7 @@ export function tokenize(expr){
   const reSuperSubNum  = new RegExp(`\\d+(?:\\.\\d+)?[${superscriptChars}${subscriptChars}]+`);
   const reDecimal      = /^\d*\.\d+$/;
   const reInteger      = /^\d+$/;
-  const reOperator     = /[+\-*×⋅/%!]/;
+  const reOperator     = /[+\-*×⋅/]/;
   const numWithPi      = /\d+(?:\.\d+)?π/;
   const numWithE       = /\d+(?:\.\d+)?e/;
 
@@ -147,6 +147,14 @@ export function tokenize(expr){
     //operators
     if (reOperator.test(t)) {
       tokens.push({ type: "operator", value: t, start, end });
+      continue;
+    }
+    if (t === percent) {
+      tokens.push({ type: "percent", value: t, start, end });
+      continue;
+    }
+    if (t === factorial) {
+      tokens.push({ type: "factorial", value: t, start, end });
       continue;
     }
     //unknown

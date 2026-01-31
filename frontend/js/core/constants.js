@@ -19,6 +19,7 @@ export const expBox = '□';
 export const expBase = 'x';
 export const parenOpen = '(';
 export const parenClose = ')';
+export const equalSymbol = '=';
 
 
 
@@ -30,7 +31,7 @@ export const parenClose = ')';
  * List of arithmetic operators supported by the expression parser.
  * Used primarily during tokenization and Shunting-Yard processing.
  */
-export const operators = [plus, minus, multiplyBy, multiplicationDot, divideBy];
+export const operators = [plus, minus, multiplyBy, multiplySymbol, multiplicationDot, divideBy];
 
 
 
@@ -231,6 +232,28 @@ export const subscriptToNormal = {
   "\u2088": "8",
   "\u2089": "9"
 };
+
+
+/**
+ * A set of token types that are considered valid endpoints for evaluation.
+ * These tokens indicate that an expression can legally end after them
+ * without causing a syntax error.
+ *
+ * Example usage: validating if the last token in an expression allows
+ * evaluation to proceed.
+ */
+export const validEvalEndToken = new Set([
+  'number',
+  'numberWithDecimal',
+  'percent',
+  'parenClose',
+  'factorial',
+  'pi',
+  'e',
+  'superscriptValue',
+  'subscriptValue',
+  'supAndSub'
+]);
 
 
 /**

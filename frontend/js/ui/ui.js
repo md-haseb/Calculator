@@ -93,7 +93,7 @@ export function init() {
           return;
 
         default:
-          console.log(clickedBtn.value);
+          console.log(input.textContent);
           handleDefaultButton(input, input.textContent, caretPosition, btn, clickedBtn.type, clickedBtn.value);
           return;
       }

@@ -5,6 +5,7 @@ import { changeMultiplySign } from './uiUtils.js';
 import { updateInput, handleInvalidInput } from './ui.js';
 import {handleAC, handleDelete, handleFunctions, handleLeftArrow, handleRightArrow} from "../editor/inputController.js"; // handleOperators,
 import { operatorsMap } from '../core/constants.js';
+import { formatTokensForDisplay } from './formatDisplay.js';
 
 
 
@@ -40,9 +41,12 @@ export const simpleHandlers = {
  * @param {string} btnValue - Value of the clicked button (usually '=')
 */
 export function executeEqual(input, inputText, caretPosition, btnValue){
+  const inputMap = formatTokensForDisplay(inputText).map;
   // Validate the input for evaluation
   const validated = validateForEvaluation(
     inputText,
+    inputMap,
+    caretPosition,
     btnValue
   );
 
@@ -86,7 +90,9 @@ export function handleDefaultButton(input, inputText, caretPosition, btn, clicke
     }
     console.log(inputText, btnValue, caretPosition);
     // Validate the input for display purposes
-    const validated = validateForDisplay(inputText, btnValue, caretPosition);
+    const inputMap = formatTokensForDisplay(inputText).map;
+    console.log(inputMap);
+    const validated = validateForDisplay(inputText, inputMap, btnValue, caretPosition);
     console.log('hello');
 
     if (validated.allowed) {
@@ -111,9 +117,11 @@ export function handleDefaultButton(input, inputText, caretPosition, btn, clicke
     }
 
     if (validated.action === "replace") {
+      console.log('hello');
       // Replace the operator at the current caret position
       const { newInput, newCaret } = replaceOperator(
         inputText,
+        inputMap,
         caretPosition,
         btn, 
         btnValue

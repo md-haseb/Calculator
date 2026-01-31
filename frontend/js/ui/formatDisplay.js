@@ -14,6 +14,7 @@ import { normalizeTokens } from '../core/normalizeTokens.js';
 
 
 export function formatTokensForDisplay(inputText) {
+  console.log(inputText);
   const tokensObj = getTokens(inputText);
   const normalized = normalizeTokens(tokensObj);
 

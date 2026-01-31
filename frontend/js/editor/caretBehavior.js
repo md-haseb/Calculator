@@ -330,6 +330,8 @@ function shouldMoveToNextToken(inputText, map, btn, caretPos) {
 
   (type === 'E' && currentToken?.type === 'numWithE') ||
 
+  ((type === 'plus' || type === 'minus' || type === 'multiply' || type === 'multiplicationDot' || type === 'divide') && currentToken?.type === 'operator') || 
+
   type === 'baseWithBox' ||
   type === 'boxWithRoot' ||
   type === 'combOrPerm';

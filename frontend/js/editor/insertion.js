@@ -4,6 +4,8 @@ import {classifyButtonValue} from '../core/classifyBtn.js';
 import {formatTokensForDisplay} from '../ui/formatDisplay.js';
 import {getCaretAfterInsertion} from './caretBehavior.js';
 import { multiplicationDot, multiplySymbol } from "../core/constants.js";
+import { normalizeTokens } from '../core/normalizeTokens.js';
+import { getCurrTokenIndexFromCaret, getPrevTokenIndexFromCaret } from './caretMap.js';
 
 
 
@@ -146,38 +148,40 @@ export function insertValue(currentInput, caretPosition, btn, newValue) {
 
 
 /**
- * Replaces the operator at or immediately before the caret position with a new operator.
+ * Replaces the operator at the current caret position based on the previous token.
  *
- * This function identifies the current token at the caret, computes its start position and length,
- * and replaces it with the new operator value. It also updates the caret position appropriately
- * after the replacement to ensure seamless editing.
+ * This function is invoked only after input validation. It assumes that a valid
+ * previous token exists at the caret position and uses token boundaries to
+ * determine the replacement range, avoiding manual index calculations.
  *
- * @param {string} currentInput - The current input string from the display.
- * @param {number} caretPosition - Current caret (cursor) position in the input string.
- * @param {string} rawValue - The new operator value (button input) to replace the existing operator.
- * @returns {{newInput: string, newCaret: number}} Object containing:
- *   - newInput: Updated input string with the operator replaced.
- *   - newCaret: Updated caret position after the replacement.
- *
- * @remarks
- * - The function relies on tokenization (`getTokens`) and token value extraction (`tokenValues`) 
- *   to accurately locate the operator to replace.
- * - The caret is updated via `getCaretAfterInsertion` to reflect the new operator's insertion.
+ * @param {string} currentInput - The current input expression.
+ * @param {Object} map - Token-to-input position mapping.
+ * @param {number} caretPosition - Current caret position in the input.
+ * @param {Object} btn - The button that triggered the replacement.
+ * @param {string} newValue - The operator value to insert.
+ * @returns {{ newInput: string, newCaret: number }} Updated input and caret position.
  */
 
-export function replaceOperator(currentInput, caretPosition, rawValue) {
-  const replacement = classifyButtonValue(rawValue);
+export function replaceOperator(currentInput, map, caretPosition, btn, newValue) {
+  if (newValue === multiplySymbol) {
+    newValue = multiplicationDot;
+  }
+  const replacement = classifyButtonValue(newValue);
 
-  const tokens = getTokens(currentInput);
-  const tokensValue = tokenValues(tokens);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
+  const tokensObj = getTokens(currentInput);
+  const normalizedToken = normalizeTokens(tokensObj);
 
-  const start = caretPosition - currentToken.value.length;
-  const length = currentToken.value.length;
-  
+  const prevTokenIndex = getPrevTokenIndexFromCaret(map, caretPosition);
+  const prevToken = prevTokenIndex === -1 ? null : normalizedToken[prevTokenIndex];
+
+  // Called only after input validation; prevToken is guaranteed
+  const replaceStartIndex = prevToken.end;
+  const replaceLength = caretPosition - prevToken.end;
+
+  const newInput = replaceAt(currentInput, replaceStartIndex, replaceLength, replacement.value);
+
   return {
-    newInput: replaceAt(currentInput, start, length, replacement.value),
-    // newCaret: getCaretAfterInsertion(replacement.value, caretPosition),
-    newCaret: getCaretAfterInsertion({ value, caretPosition, tokensValue }),
+    newInput,
+    newCaret: getCaretAfterInsertion(newInput, map, btn, caretPosition)
   };
 }

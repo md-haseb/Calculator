@@ -1,7 +1,10 @@
-import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, divideBy, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics, pi, E, superscriptChars, subscriptChars} from './constants.js';
+import {operators, root, decimal, plus, minus, multiplyBy, multiplySymbol, multiplicationDot, divideBy, equalSymbol, expBox, expBase, percent, factorial, parenOpen, parenClose, logFunctions, combinatorics, pi, E, superscriptChars, subscriptChars, validEvalEndToken} from './constants.js';
 import { tokenize } from "../core/tokenize.js";
-import { getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
+import { getTokens, getTokenAtCaret, getPrevToken, getNextToken } from "../core/tokenHelpers.js";
 import { classifyButtonValue } from './classifyBtn.js';
+// import { getGreaterNextTokenIndexFromCaret, getPrevTokenIndexFromCaret } from '../editor/caretMap.js';
+import { getCurrTokenIndexFromCaret, getPrevTokenIndexFromCaret, getGreaterPrevTokenIndexFromCaret, getNextTokenIndexFromCaret, getGreaterNextTokenIndexFromCaret } from '../editor/caretMap.js';
+import { normalizeTokens } from './normalizeTokens.js';
 
 
 // const operators = '+*/-';
@@ -14,30 +17,61 @@ export function isOperator(char){
 }
 
 //this function is about validate and allow for display or not
-export function validateForDisplay(currentInput, newValue, caretPosition){
+export function validateForDisplay(currentInput, map, newValue, caretPosition){
   console.log(currentInput, newValue, caretPosition);
-  const lastChar = currentInput[caretPosition - 1];
-  const greaterLastChar = currentInput[caretPosition - 2];
-  const nextChar = currentInput[caretPosition];
+  // currentInput = currentInput.replace(/\s+/g, '');
+  // const lastChar = currentInput[caretPosition - 1];
+  // const greaterLastChar = currentInput[caretPosition - 2];
+  // const nextChar = currentInput[caretPosition];
 
-  const tokens = tokenize(currentInput);
-  const currentToken = getTokenAtCaret(tokens, caretPosition);
-  const prevToken = getPrevToken(tokens, currentToken);
-  const greaterPrevToken = getPrevToken(tokens, prevToken);
-  console.log(greaterPrevToken);
-  const nextToken = getNextToken(tokens, currentToken);
+  // const tokens = tokenize(currentInput);
+  // const currentToken = getTokenAtCaret(tokens, caretPosition);
+  // const prevToken = getPrevToken(tokens, currentToken);
+  // const greaterPrevToken = getPrevToken(tokens, prevToken);
+  // console.log(greaterPrevToken);
+  // const nextToken = getNextToken(tokens, currentToken);
   // const regex = new RegExp(`[${operators}]`);
   const operatorChars = operators.join('');
   const regex = new RegExp(
     `[${operatorChars.replace(/[-\\^]/g, '\\$&')}()\\s]`
   );
+  if (newValue === multiplySymbol) {
+    newValue = multiplicationDot;
+  }
 
-  console.log(prevToken);
-  console.log(prevToken?.value);
-  console.log(currentToken);
-  console.log(currentToken?.type);
-  console.log(nextToken);
-  console.log(nextToken?.type);
+  const tokensObj = getTokens(currentInput);
+  const normalizedToken = normalizeTokens(tokensObj);
+  
+  const currTokenIndex = getCurrTokenIndexFromCaret(map, caretPosition);
+  const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
+  
+  const prevTokenIndex = getPrevTokenIndexFromCaret(map, caretPosition);
+  const prevToken = prevTokenIndex === -1 ? null : normalizedToken[prevTokenIndex];
+  
+  const greaterPrevTokenIndex = getGreaterPrevTokenIndexFromCaret(map, caretPosition);
+  const greaterPrevToken = greaterPrevTokenIndex === -1 ? null : normalizedToken[greaterPrevTokenIndex];
+
+  const nextTokenIndex = getNextTokenIndexFromCaret(map, caretPosition);
+  const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+  
+  const greaterNextTokenIndex = getGreaterNextTokenIndexFromCaret(map, caretPosition);
+  const greaterNextToken = greaterNextTokenIndex === -1 ? null : normalizedToken[greaterNextTokenIndex];
+
+  // const lastChar = currentToken?.value;
+  const lastChar = currentToken?.value != null
+        ? String(currentToken.value)
+        : String(currentToken?.raw);
+
+  const greaterLastChar = prevToken?.value;
+  const nextChar = nextToken?.value;
+  console.log(currentToken?.type, prevToken?.type, greaterPrevToken?.type, nextToken, greaterNextToken);
+
+  // console.log(prevToken);
+  // console.log(prevToken?.value);
+  // console.log(currentToken);
+  // console.log(currentToken?.type);
+  // console.log(nextToken);
+  // console.log(nextToken?.type);
 
   //Do not display operator first when input is empty (except - and .)
   const isEmptyInput = !currentInput?.length;
@@ -65,7 +99,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   // if((newValue === lastChar && (isOperator(lastChar) || decimal.includes(lastChar) || root === lastChar))){
   //   return {allowed: false, message: 'Message: Same operator twice in a row is not allowed'};
   // }
-
+  console.log(currentInput, newValue, currentToken?.value);
   const isSameChar = newValue === lastChar;
 
   if (isSameChar) {
@@ -99,6 +133,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
     return { allowed: false, message: 'Division by zero is not allowed.' };
   }
   
+  //for log₁₁()
   if (greaterPrevToken?.value === logFunctions.log && currentToken?.type === 'parenOpen' && nextToken?.type === 'parenClose' && isOperator(newValue)) {
     return { allowed: false, message: 'Operators are not allowed at the start of logarithms.' };
   }
@@ -126,7 +161,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
   // if ((prevToken?.value === logFunctions.log || prevToken?.value === logFunctions.ln) && currentToken.type === 'parenOpen' && nextToken.type === 'parenClose' && (newValue.includes(combinatorics.combination) || newValue.includes(combinatorics.permutation))) {
   //   return { allowed: false, message: 'Combination & Permutation are not allowed inside logarithms.' };
   // }
-  
+  console.log(lastChar, nextToken, newValue);
   if (lastChar === parenOpen && nextChar === parenClose && (newValue === 'left-arrow' || newValue === 'right-arrow')) {
     return { allowed: false, message: 'Arrow keys not allowed in empty brackets.' };
   }
@@ -182,7 +217,7 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
       message: 'Operators are not allowed after decimal.'
     };
   }
-
+  console.log(isOperator(lastChar), isOperator(newValue));
   //"Logic: Do not display operators side by side, replace with the new one" (Group A: Order 2)
   // but, if the operators are *, /, root then don't replace
   if(isOperator(lastChar) && isOperator(newValue)){
@@ -207,7 +242,8 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
       message: 'Please enter a number before using factorial.',
     };
   }
-
+  console.log(normalizedToken);
+  console.log(currentToken?.value, lastChar, newValue);
   //after a root, operators are not allowed
   if(lastChar === root && isOperator(newValue)){
     return {
@@ -266,21 +302,34 @@ export function validateForDisplay(currentInput, newValue, caretPosition){
 }
 
 //this function is about validate and allow for calculation
-export function validateForEvaluation(currentInput, newValue){
-  const lastChar = currentInput[currentInput.length - 1];
+export function validateForEvaluation(currentInput, map, caretPosition, newValue){
+  if (newValue !== equalSymbol) return { allowed: true };
 
-  //Logic: if last character is an operator/decimal then do nothing
-  // if(newValue === '=' && currentInput !== '' && (isOperator(lastChar) || decimal.includes(lastChar))){
-  //   return null;
-  // }
+  if (!currentInput) {
+    return {
+      allowed: false,
+      message: 'Nothing to calculate'
+    };
+  }
 
-  //Logic: when input value is empty, then do nothing
-  // if(newValue === '=' && currentInput == ''){
-  //   return null;
-  // }
+  const tokensObj = getTokens(currentInput);
+  const normalizedToken = normalizeTokens(tokensObj);
+  
+  const currTokenIndex = getCurrTokenIndexFromCaret(map, caretPosition);
+  const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
 
-  if(newValue === '=' && (currentInput === '' || isOperator(lastChar) || lastChar === decimal)){
-    return {allowed: false, message: 'Message: Calculation is not allowed if input is empty or last character is operator or decimal'};
+  const nextTokenIndex = getNextTokenIndexFromCaret(map, caretPosition);
+  const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
+
+  const lastToken = currentToken;
+  const lastTokenType = currentToken?.type ?? null;
+  const nextTokenType = nextToken?.type ?? null;
+
+  if (!lastToken || !validEvalEndToken.has(lastTokenType) || nextTokenType === 'box') {
+    return {
+      allowed: false,
+      message: 'Incomplete expression'
+    };
   }
 
   //proceed for calculation
