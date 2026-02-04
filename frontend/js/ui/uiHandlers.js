@@ -63,6 +63,7 @@ export function executeEqual(input, inputText, caretPosition, btnValue){
     return;
   }
   // (fallback) If input is invalid, show error and restore caret
+  console.log('hello');
   handleInvalidInput(input, caretPosition, validated.message);
   return; 
 } 

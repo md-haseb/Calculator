@@ -314,18 +314,15 @@ export function validateForEvaluation(currentInput, map, caretPosition, newValue
 
   const tokensObj = getTokens(currentInput);
   const normalizedToken = normalizeTokens(tokensObj);
-  
-  const currTokenIndex = getCurrTokenIndexFromCaret(map, caretPosition);
-  const currentToken = currTokenIndex === -1 ? null : normalizedToken[currTokenIndex];
 
   const nextTokenIndex = getNextTokenIndexFromCaret(map, caretPosition);
   const nextToken = nextTokenIndex === -1 ? null : normalizedToken[nextTokenIndex];
 
-  const lastToken = currentToken;
-  const lastTokenType = currentToken?.type ?? null;
+  const lastToken = normalizedToken[normalizedToken.length - 1];
+  const lastTokenType = lastToken?.type ?? null;
   const nextTokenType = nextToken?.type ?? null;
 
-  if (!lastToken || !validEvalEndToken.has(lastTokenType) || nextTokenType === 'box') {
+  if (!validEvalEndToken.has(lastTokenType) || nextTokenType === 'box') {
     return {
       allowed: false,
       message: 'Incomplete expression'
