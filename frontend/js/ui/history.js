@@ -97,15 +97,15 @@ export function appendHistory(input, lastExpHTML, historyContainer, historyRemov
   const result = input.innerHTML;
   const currentHistory = getHistory();
 
-  if (expression != result) {
-    if (expression && result) {
+  if (expression && result) {
+    if (expression != result) {
       currentHistory.push(historyObj(expression, result));
       saveHistory(currentHistory);
     }
+  }
 
-    if(currentHistory.length > 0) {
-      updateRemoveBtn(currentHistory.length, historyRemoveBtn);
-    }
+  if(currentHistory.length > 0) {
+    updateRemoveBtn(currentHistory.length, historyRemoveBtn);
   }
   renderHistory(currentHistory, historyContainer);
 }
