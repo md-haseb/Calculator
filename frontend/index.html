@@ -8,38 +8,6 @@
   <title>Calculator By Md Haseb</title>
 </head>
 <body>
-  <!-- <div class="container">
-    <div class="calculator_container">
-      <div class="messageDiv">Message: All is well</div>
-      <h1 class="calculator_heading">Calculator</h1>
-      <div class="input">
-         <div class="input_field" contenteditable="true"></div>
-      </div>
-      <button class="btn button_AC">AC</button>
-      <button class="btn button_Cen">Cen</button>
-      <button class="btn">%</button>
-      <button class="btn"><</button>
-      <button class="btn">></button>
-      <button class="btn">/</button>
-      <button class="btn">cos</button>
-      <button class="btn">sin</button>
-      <button class="btn">!</button>
-      <button class="btn">×</button>
-      <button class="btn">1</button>
-      <button class="btn">3</button>
-      <button class="btn">6</button>
-      <button class="btn">-</button>
-      <button class="btn">0</button>
-      <button class="btn">tan</button>
-      <button class="btn">rad</button>
-      <button class="btn">+</button>
-      <button class="btn">deg</button>
-      <button class="btn">()</button>
-      <button class="btn">X<sup>□</sup></button>
-      <button class="btn button_equal">=</button>
-    </div>
-  </div> -->
-
 <div class="container">
   <div class="header_container">
     <div class="logo">
@@ -59,22 +27,24 @@
         <div class="error_message">All is well</div>
       </div>
       <div class="input_display" contenteditable="true"></div>
-
+      <div class="voice_input_container">
+        <button class="voice_input_btn">Voice Input</button>
+      </div>
       <div class="button_container">
         <div class="button_block button_block_1">
           <div class="button_row block_1_first_row">
-            <button class="btn block_1_button log_box"><span>log<sub>□</sub></span></button>
+            <button class="btn block_1_button log_box"><span>log<sub class="expBox_icon">□</sub></span></button>
             <button class="btn block_1_button log"><span>log</span></button>
             <button class="btn block_1_button ln"><span>ln</span></button>
           </div>
           <div class="button_row block_1_second_row">
-            <button class="btn block_1_button x_box"><span>x<sup>□</sup></span></button>
+            <button class="btn block_1_button x_box"><span>x<sup class="expBox_icon">□</sup></span></button>
             <button class="btn block_1_button x_square"><span>x<sup>2</sup></span></button>
-            <button class="btn block_1_button factorial"><span>!</span></button>
+            <button class="btn block_1_button factorial"><span class="factorial_icon">!</span></button>
           </div>
           <div class="button_row block_1_third_row">
-            <button class="btn block_1_button root_box"><span><sup>□</sup>√</span></button>
-            <button class="btn block_1_button root"><span>√</span></button>
+            <button class="btn block_1_button root_box"><span class="root_Symbol"><sup class="expBox_icon">□</sup>√</span></button>
+            <button class="btn block_1_button root"><span class="root_Symbol">√</span></button>
             <button class="btn block_1_button pi"><span>π</span></button>
           </div>
           <div class="button_row block_1_fourth_row">
@@ -107,7 +77,7 @@
             <button class="btn block_3_button seven"><span>7</span></button>
             <button class="btn block_3_button eight"><span>8</span></button>
             <button class="btn block_3_button nine"><span>9</span></button>
-            <button class="btn block_3_button divide"><span>/</span></button>
+            <button class="btn block_3_button divide"><span class="divide_symbol">/</span></button>
           </div>
           <div class="button_row block_3_second_row">
             <button class="btn block_3_button four"><span>4</span></button>
@@ -119,7 +89,7 @@
             <button class="btn block_3_button one"><span>1</span></button>
             <button class="btn block_3_button two"><span>2</span></button>
             <button class="btn block_3_button three"><span>3</span></button>
-            <button class="btn block_3_button minus"><span>-</span></button>
+            <button class="btn block_3_button minus"><span class="mimus_symbol">-</span></button>
           </div>
           <div class="button_row block_3_fourth_row">
             <button class="btn block_3_button zero"><span>0</span></button>
@@ -193,10 +163,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="right_part">
-      <span>History Panel</span>
-      <div class="history_underline"></div>
-    </div> -->
     <div class="right_part">
       <div class="history_title_container">
         <div class="history_title">

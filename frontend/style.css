@@ -171,6 +171,22 @@ html, body{
   font-size: 23px;
   outline: none;
 }
+.voice_input_container{
+  width: 97%;
+  display: flex;
+  justify-content: end;
+  padding: 25px 10px 10px 10px;
+  /* padding: 10px; */
+}
+.voice_input_btn{
+  border: none;
+  border-radius: 4px;
+  background-color: #6AA5F8;
+  padding: 10px 30px;
+  color: #ffffff;
+  font-size: medium;
+  font-weight: bold;
+}
 .button_container{
   width: 97%;
   display: flex;
@@ -179,6 +195,14 @@ html, body{
   gap: 20px;
   padding: 10px;
   margin-top: auto;
+}
+/* creating fake border using shadow for these icons/symbols */
+.expBox_icon, .root_Symbol, .factorial_icon, .mimus_symbol, .divide_symbol{
+  text-shadow:
+    0.4px 0 black,
+    -0.4px 0 black,
+    0 0.4px black,
+    0 -0.4px black;
 }
 .button_block{
   width: auto;
