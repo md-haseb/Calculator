@@ -12,7 +12,7 @@ import {formatTokensForDisplay} from './formatDisplay.js';
 */
 export const input = document.querySelector(".input_display");
 const buttons = document.querySelectorAll(".btn");
-const messageDiv = document.querySelector(".error_message");
+const messageDiv = document.querySelector(".js-error-message");
 
 export const angleToggleContainer = document.querySelector(".radDegToggle");
 export const themeToggleContainer = document.querySelector(".header-toggle");

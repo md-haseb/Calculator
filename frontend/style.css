@@ -87,7 +87,11 @@ html, body{
   align-items: center;
   gap: 20px;
 }
-.left_part{
+
+
+
+
+.left-part{
   width: 62%;
   min-height: 84vh;
   background-color: #FEFEFE;
@@ -100,33 +104,46 @@ html, body{
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
-.msg_display_container{
+
+
+
+
+.left-part__message{
   width: 97%;
   padding: 9px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   display: flex;
 }
-.message_title{
+.left-part__message-title{
   width: 8.5%;
 }
-.error_message{
+.left-part__error-message{
   width: 91.5%;
 }
-.input_display{
+
+
+
+
+.left-part__input-display{
   width: 96%;
   padding-top: 35px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.30);
   font-size: 23px;
   outline: none;
 }
-.voice_input_container{
+
+
+
+
+
+.left-part__voice-input{
   width: 97%;
   display: flex;
   justify-content: end;
   padding: 25px 10px 10px 10px;
   /* padding: 10px; */
 }
-.voice_input_btn{
+.left-part__voice-input-btn{
   border: none;
   border-radius: 4px;
   background-color: #6AA5F8;
@@ -135,7 +152,12 @@ html, body{
   font-size: medium;
   font-weight: bold;
 }
-.button_container{
+
+
+
+
+
+.left-part__buttons{
   width: 97%;
   display: flex;
   justify-content: center;
@@ -144,6 +166,11 @@ html, body{
   padding: 10px;
   margin-top: auto;
 }
+
+
+
+
+
 /* creating fake border using shadow for these icons/symbols */
 .expBox_icon, .root_Symbol, .factorial_icon, .mimus_symbol, .divide_symbol{
   text-shadow:
@@ -152,7 +179,12 @@ html, body{
     0 0.4px black,
     0 -0.4px black;
 }
-.button_block{
+
+
+
+
+
+.left-part__buttons-block{
   width: auto;
   display: flex;
   flex-direction: column;
@@ -160,6 +192,11 @@ html, body{
   align-items: center;
   gap: 10px;
 }
+
+
+
+
+
 /* .button_block_1{
   width: auto;
 }
