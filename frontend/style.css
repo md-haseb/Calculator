@@ -18,6 +18,10 @@ html, body{
  /* display: grid;
  grid-template-rows: 0.3fr 2fr 1fr; */
 }
+
+
+
+
 .page__header{
  width: 100%;
  min-height: 10vh;
@@ -33,6 +37,10 @@ html, body{
  padding-left: 35px;
  padding-right: 35px;
 }
+
+
+
+
 .page__header-logo{
   display: flex;
   flex-direction: column;
@@ -46,11 +54,20 @@ html, body{
  font-weight: 400;
  opacity: 75%;
 }
-.theme_toggle{
+
+
+
+
+.header-toggle{
   display: flex;
   justify-content:flex-end;
 }
-.theme_toggle_btn{
+.header-toggle__border{
+  border: 1px solid #1C2A40;
+  border-radius: 4px;
+  padding: 3px;
+}
+.header-toggle__btn{
   width: 42px;
   height: 22px;
   background-color: #FEFEFE;
@@ -58,11 +75,10 @@ html, body{
   border: none;
   font-size: 12px;
 }
-.theme_toggle_border{
-  border: 1px solid #1C2A40;
-  border-radius: 4px;
-  padding: 3px;
-}
+
+
+
+
 .page__evaluation{
   width: 100%;
   min-height: 90vh;
@@ -290,7 +306,7 @@ body.dark_theme .right_part{
   background-color: #1B283B;
 }
 body.dark_theme .btn, 
-body.dark_theme .theme_toggle_btn{
+body.dark_theme .header-toggle__btn{
   background-color: #192536;
   /* color: #f5f5f5; */
   color: #EDEDED;
@@ -304,7 +320,7 @@ body.dark_theme .active_toggle_btn{
   background-color: #2588F4;
   color: #111111;
 }
-body.dark_theme .theme_toggle_border{
+body.dark_theme .header-toggle__border{
   border: 1.5px solid #445069;
 }
 body.dark_theme .radDegToggle{

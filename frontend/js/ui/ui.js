@@ -15,8 +15,8 @@ const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".error_message");
 
 export const angleToggleContainer = document.querySelector(".radDegToggle");
-export const themeToggleContainer = document.querySelector(".theme_toggle");
-const themeToggleButtons = document.querySelectorAll(".theme_toggle_btn");
+export const themeToggleContainer = document.querySelector(".header-toggle");
+const themeToggleButtons = document.querySelectorAll(".js-theme-toggle-btn");
 
 export const historyContainer = document.querySelector('.history_list_container');
 export const historyRemoveBtn = document.querySelector('.history_remove_btn');

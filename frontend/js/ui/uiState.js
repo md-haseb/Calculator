@@ -31,7 +31,7 @@ export function setState(statePropertyKey, statePropertyValue) {
  * @param {string} statePropertyValue - Current value from state to match with buttons
 */
 function renderToggle(toggleContainer, statePropertyValue) {
-  const buttons = toggleContainer.querySelectorAll('.toggleBtn');
+  const buttons = toggleContainer.querySelectorAll('.js-toggle-btn');
 
   buttons.forEach( btn => {
     btn.classList.toggle('active_toggle_btn', statePropertyValue === btn.dataset.value);
