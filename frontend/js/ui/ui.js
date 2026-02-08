@@ -10,7 +10,7 @@ import {formatTokensForDisplay} from './formatDisplay.js';
 /**
  * DOM elements
 */
-export const input = document.querySelector(".input_display");
+export const input = document.querySelector(".js-input-display");
 const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".js-error-message");
 

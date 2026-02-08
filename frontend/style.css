@@ -338,7 +338,7 @@ body.dark_theme .page{
   color: #EDEDED;
 }
 body.dark_theme .page__header,
-body.dark_theme .left_part, 
+body.dark_theme .left-part, 
 body.dark_theme .right_part{
   background-color: #1B283B;
 }
@@ -363,12 +363,12 @@ body.dark_theme .header-toggle__border{
 body.dark_theme .radDegToggle{
   border: 1px solid #445069;
 }
-body.dark_theme .message_display{
+body.dark_theme .left-part__message{
   border: 1px solid #3A465C;
 }
 body.dark_theme .history_underline{
   border: 1px solid #445069;
 }
-body.dark_theme .input_display{
+body.dark_theme .left-part__input-display{
   border-bottom: 1px solid #445069;
 }
