@@ -14,7 +14,7 @@ export const input = document.querySelector(".js-input-display");
 const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".js-error-message");
 
-export const angleToggleContainer = document.querySelector(".radDegToggle");
+export const angleToggleContainer = document.querySelector(".js-rad-deg-toggle-group");
 export const themeToggleContainer = document.querySelector(".header-toggle");
 const themeToggleButtons = document.querySelectorAll(".js-theme-toggle-btn");
 

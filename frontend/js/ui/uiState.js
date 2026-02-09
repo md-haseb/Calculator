@@ -34,7 +34,7 @@ function renderToggle(toggleContainer, statePropertyValue) {
   const buttons = toggleContainer.querySelectorAll('.js-toggle-btn');
 
   buttons.forEach( btn => {
-    btn.classList.toggle('active_toggle_btn', statePropertyValue === btn.dataset.value);
+    btn.classList.toggle('active-toggle-btn', statePropertyValue === btn.dataset.value);
   })
 }
 

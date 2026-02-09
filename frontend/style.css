@@ -172,7 +172,7 @@ html, body{
 
 
 /* creating fake border using shadow for these icons/symbols */
-.expBox_icon, .root_Symbol, .factorial_icon, .mimus_symbol, .divide_symbol{
+.expBox_icon, .root_Symbol, .factorial_icon, .minus-symbol, .divide_symbol{
   text-shadow:
     0.4px 0 black,
     -0.4px 0 black,
@@ -224,7 +224,7 @@ html, body{
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
 }
-.radDegToggle{
+.buttons-block__rad-deg-toggle-group{
   width: 100%;
   display: flex;
   justify-content: center;
@@ -233,38 +233,38 @@ html, body{
   border-radius: 4px;
   padding: 5px;
 }
-.radDegToggle button{
+.buttons-block__rad-deg-toggle-group button{
   /* width: 60px;
   height: 40px; */
   /* padding: 8px 21px; */
   border: none;
 }
-.ac, .equal{
+.btn--ac, .btn--equal{
   /* width: 133px; */
   padding: 8px 46px;
   background-color: #538DE7;
   border: none;
 }
-.left_arrow, .right_arrow{
+.btn--left-arrow, .btn--right-arrow{
   padding: 4px 0;
 }
-.brackets{
+.btn--brackets{
   padding: 8px 0;
 }
-.delete_btn{
+.btn--delete-btn{
   padding: 0;
 }
-.left_arrow span, .right_arrow span, .delete_btn span{
+.btn--left-arrow span, .btn--right-arrow span, .btn--delete-btn span{
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.left_arrow svg, .right_arrow svg{
+.btn--left-arrow svg, .btn--right-arrow svg{
   /* width: 40%; */
   width: 25px;
   height: 25px;
 }
-.delete_btn svg{
+.btn--delete-btn svg{
   width: 22px;
   height: 22px;
 }
@@ -325,7 +325,7 @@ html, body{
   width: 40%;
   text-align: end;
 }
-.active_toggle_btn{
+.active-toggle-btn{
   background-color: #1C2A40;
   border-color: none;
   color: white;
@@ -348,11 +348,11 @@ body.dark_theme .header-toggle__btn{
   /* color: #f5f5f5; */
   color: #EDEDED;
 }
-body.dark_theme .ac, body.dark_theme .equal{
+body.dark_theme .btn--ac, body.dark_theme .btn--equal{
   background-color: #25C6F4;
   color: #000;
 }
-body.dark_theme .active_toggle_btn{
+body.dark_theme .active-toggle-btn{
   /* background-color: #008CFF; */
   background-color: #2588F4;
   color: #111111;
@@ -360,7 +360,7 @@ body.dark_theme .active_toggle_btn{
 body.dark_theme .header-toggle__border{
   border: 1.5px solid #445069;
 }
-body.dark_theme .radDegToggle{
+body.dark_theme .buttons-block__rad-deg-toggle-group{
   border: 1px solid #445069;
 }
 body.dark_theme .left-part__message{

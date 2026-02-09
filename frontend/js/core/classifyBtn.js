@@ -106,9 +106,9 @@ export function classifyButton(btn){
   const btnValue = btn.dataset.value || btn.textContent;
   const value = classifyButtonValue(btnValue);
   
-  if (btn.classList.contains('delete_btn')) return { type: 'delete', value: btnValue };
-  if (btn.classList.contains('left_arrow')) return { type: 'leftArrow', value: btnValue };
-  if (btn.classList.contains('right_arrow')) return { type: 'rightArrow', value: btnValue };
+  if (btn.classList.contains('js-delete-btn')) return { type: 'delete', value: btnValue };
+  if (btn.classList.contains('js-left-arrow')) return { type: 'leftArrow', value: btnValue };
+  if (btn.classList.contains('js-right-arrow')) return { type: 'rightArrow', value: btnValue };
   
   return value; // type like 'ac', 'number', 'operator'
 }
