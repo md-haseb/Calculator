@@ -206,7 +206,7 @@ html, body{
 .button_block_3{
   width: auto;
 } */
-.button_row{
+.buttons-block__row{
   width: 100%;
   display: flex;
   gap: 4px;
