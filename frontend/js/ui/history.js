@@ -80,9 +80,10 @@ function renderHistory(items, historyContainer) {
 
 /**
  * Append a new history entry and update the UI accordingly.
- *
- * - Reads existing history
- * - Adds a new entry if valid
+ * 
+ * - Prevents saving empty expressions or results
+ * - Avoids adding duplicate consecutive history entries
+ * - Reads existing history, Adds a new entry if valid
  * - Persists updated history
  * - Updates remove button visibility
  * - Re-renders history list
@@ -97,16 +98,24 @@ export function appendHistory(input, lastExpHTML, historyContainer, historyRemov
   const result = input.innerHTML;
   const currentHistory = getHistory();
 
-  if (expression && result) {
-    if (expression != result) {
-      currentHistory.push(historyObj(expression, result));
-      saveHistory(currentHistory);
-    }
+  if (!expression || !result) {
+    updateRemoveBtn(currentHistory.length, historyRemoveBtn);
+    renderHistory(currentHistory, historyContainer);
+    return;
   }
 
-  if(currentHistory.length > 0) {
-    updateRemoveBtn(currentHistory.length, historyRemoveBtn);
+  const historyLastItem = currentHistory[currentHistory.length - 1];
+
+  if (historyLastItem && 
+    historyLastItem.expression === expression && 
+    historyLastItem.result === result
+  ) {
+    return;
   }
+  currentHistory.push(historyObj(expression, result));
+  saveHistory(currentHistory);
+
+  updateRemoveBtn(currentHistory.length, historyRemoveBtn);
   renderHistory(currentHistory, historyContainer);
 }
 
