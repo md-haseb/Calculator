@@ -58,7 +58,7 @@ html, body{
 
 
 
-.header-toggle{
+.js-header-toggle{
   display: flex;
   justify-content:flex-end;
 }
@@ -166,24 +166,14 @@ html, body{
   padding: 10px;
   margin-top: auto;
 }
-
-
-
-
-
 /* creating fake border using shadow for these icons/symbols */
-.expBox_icon, .root_Symbol, .factorial_icon, .minus-symbol, .divide_symbol{
+.expBox-icon, .root-Symbol, .factorial-icon, .minus-symbol, .divide-symbol{
   text-shadow:
     0.4px 0 black,
     -0.4px 0 black,
     0 0.4px black,
     0 -0.4px black;
 }
-
-
-
-
-
 .left-part__buttons-block{
   width: auto;
   display: flex;
@@ -192,20 +182,6 @@ html, body{
   align-items: center;
   gap: 10px;
 }
-
-
-
-
-
-/* .button_block_1{
-  width: auto;
-}
-.button_block_2, .button_block_4{
-  width: auto;
-}
-.button_block_3{
-  width: auto;
-} */
 .buttons-block__row{
   width: 100%;
   display: flex;
@@ -224,6 +200,11 @@ html, body{
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
 }
+
+
+
+
+
 .buttons-block__rad-deg-toggle-group{
   width: 100%;
   display: flex;
@@ -239,6 +220,11 @@ html, body{
   /* padding: 8px 21px; */
   border: none;
 }
+
+
+
+
+
 .btn--ac, .btn--equal{
   /* width: 133px; */
   padding: 8px 46px;
@@ -268,7 +254,12 @@ html, body{
   width: 22px;
   height: 22px;
 }
-.right_part{
+
+
+
+
+
+.right-part{
   width: 33%;
   height: 84vh;
   background-color: #FEFEFE;
@@ -280,17 +271,26 @@ html, body{
   display: flex;
   flex-direction: column;
 }
-.right_part .history_title_container{
+
+
+
+
+.right-part__history-title{
   height: 12%;
   display: flex;
   justify-content: space-between;
 }
-.history_underline{
+.right-part__history-underline{
   width: 112px;
   margin-top: 6px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
-.history_remove_btn button{
+
+
+
+
+
+.right-part__history-remove-btn button{
   padding: 3px 6px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
@@ -298,16 +298,21 @@ html, body{
   font-weight: 700;
   cursor: pointer;
 }
-.remove_btn_visibility{
+.js-history-remove-btn{
   visibility: hidden;
 }
-.right_part .history_list_container{
+
+
+
+
+
+.right-part__history-list{
   height: 88%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
-.right_part .history_item{
+.right-part .js-history-item{
   min-width: 0;
   white-space: normal;
   overflow-wrap: break-word;
@@ -315,21 +320,31 @@ html, body{
   display: flex;
   justify-content: space-between;
 }
-.right_part .history_item_exp{
+.right-part .js-history-item-exp{
   width: 60%;
   min-width: 0;
   white-space: normal;
   overflow-wrap: break-word;
 }
-.right_part .history_item_result{
+.right-part .js-history-item-result{
   width: 40%;
   text-align: end;
 }
+
+
+
+
+
 .active-toggle-btn{
   background-color: #1C2A40;
   border-color: none;
   color: white;
 }
+
+
+
+
+
 body.dark_theme{
   background-color: #0C192A;
 }
@@ -339,7 +354,7 @@ body.dark_theme .page{
 }
 body.dark_theme .page__header,
 body.dark_theme .left-part, 
-body.dark_theme .right_part{
+body.dark_theme .right-part{
   background-color: #1B283B;
 }
 body.dark_theme .btn, 
@@ -366,7 +381,7 @@ body.dark_theme .buttons-block__rad-deg-toggle-group{
 body.dark_theme .left-part__message{
   border: 1px solid #3A465C;
 }
-body.dark_theme .history_underline{
+body.dark_theme .right-part__history-underline{
   border: 1px solid #445069;
 }
 body.dark_theme .left-part__input-display{

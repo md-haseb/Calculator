@@ -65,9 +65,9 @@ function renderHistory(items, historyContainer) {
     res.innerHTML = `= ${result}`;
 
     // Apply styling hooks
-    item.classList.add('history_item');
-    exp.classList.add('history_item_exp');
-    res.classList.add('history_item_result');
+    item.classList.add('js-history-item');
+    exp.classList.add('js-history-item-exp');
+    res.classList.add('js-history-item-result');
 
     item.append(exp, res);
     historyContainer.appendChild(item);
@@ -134,8 +134,8 @@ export function handleRemoveHistory(historyContainer, historyRemoveBtn){
  */
 function updateRemoveBtn(historyLength, historyRemoveBtn) {
   if (historyLength > 0) {
-    historyRemoveBtn.classList.remove('remove_btn_visibility');
+    historyRemoveBtn.classList.remove('js-history-remove-btn');
   } else {
-    historyRemoveBtn.classList.add('remove_btn_visibility');
+    historyRemoveBtn.classList.add('js-history-remove-btn');
   }
 }

@@ -15,11 +15,11 @@ const buttons = document.querySelectorAll(".btn");
 const messageDiv = document.querySelector(".js-error-message");
 
 export const angleToggleContainer = document.querySelector(".js-rad-deg-toggle-group");
-export const themeToggleContainer = document.querySelector(".header-toggle");
+export const themeToggleContainer = document.querySelector(".js-header-toggle");
 const themeToggleButtons = document.querySelectorAll(".js-theme-toggle-btn");
 
-export const historyContainer = document.querySelector('.history_list_container');
-export const historyRemoveBtn = document.querySelector('.history_remove_btn');
+export const historyContainer = document.querySelector('.js-history-list');
+export const historyRemoveBtn = document.querySelector('.js-history-remove-btn');
 
 
 /**
