@@ -1,3 +1,6 @@
+/* ==============================
+   RESET / GLOBAL STYLES
+   ============================== */
 *{
   margin: 0;
   padding: 0;
@@ -8,6 +11,14 @@ html, body{
   min-height: 100%;
   background-color: #FAFDFE;
 }
+
+
+
+
+
+/* ==============================
+   PAGE CONTAINER
+   ============================== */
 .page{
  width: 100%;
  max-width: 2000px;
@@ -15,13 +26,14 @@ html, body{
  display: flex;
  flex-direction: column;
  align-items: center;
- /* display: grid;
- grid-template-rows: 0.3fr 2fr 1fr; */
 }
 
 
 
 
+/* ==============================
+   HEADER
+   ============================== */
 .page__header{
  width: 100%;
  min-height: 10vh;
@@ -31,16 +43,13 @@ html, body{
  justify-content: space-between;
  align-items: center;
  flex-wrap: wrap;
- /* display: grid;
- grid-template-columns: 3fr 1fr;
- align-items: center; */
  padding-left: 35px;
  padding-right: 35px;
 }
 
 
 
-
+/* Logo container and text */
 .page__header-logo{
   display: flex;
   flex-direction: column;
@@ -52,12 +61,12 @@ html, body{
 .page__header-logo-subtitle{
  font-size: 13px;
  font-weight: 400;
- opacity: 75%;
+ opacity: 0.75; /* slightly muted for subtitle */
 }
 
 
 
-
+/* Toggle button */
 .js-header-toggle{
   display: flex;
   justify-content:flex-end;
@@ -66,6 +75,7 @@ html, body{
   border: 1px solid #1C2A40;
   border-radius: 4px;
   padding: 3px;
+  display: flex;
 }
 .header-toggle__btn{
   width: 42px;
@@ -79,6 +89,9 @@ html, body{
 
 
 
+/* ==============================
+   MAIN EVALUATION SECTION
+   ============================== */
 .page__evaluation{
   width: 100%;
   min-height: 90vh;
@@ -90,40 +103,43 @@ html, body{
 
 
 
-
+/* ==============================
+   LEFT PANEL (INPUT, MESSAGE & BUTTONS)
+   ============================== */
 .left-part{
   width: 62%;
   min-height: 84vh;
   background-color: #FEFEFE;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   padding: 20px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); /* subtle elevation */
 }
 
 
 
-
+/* error messages */
 .left-part__message{
   width: 97%;
   padding: 9px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   display: flex;
+  gap: 4px;
 }
 .left-part__message-title{
-  width: 8.5%;
+  flex-shrink: 0;
 }
 .left-part__error-message{
-  width: 91.5%;
+  flex: 1;
 }
 
 
 
-
+/* Input display area */
 .left-part__input-display{
   width: 96%;
   padding-top: 35px;
@@ -135,13 +151,12 @@ html, body{
 
 
 
-
+/* Voice input button */
 .left-part__voice-input{
   width: 97%;
   display: flex;
   justify-content: end;
   padding: 25px 10px 10px 10px;
-  /* padding: 10px; */
 }
 .left-part__voice-input-btn{
   border: none;
@@ -151,12 +166,15 @@ html, body{
   color: #ffffff;
   font-size: medium;
   font-weight: bold;
+  cursor: pointer;
 }
 
 
 
 
-
+/* ==============================
+   BUTTONS
+   ============================== */
 .left-part__buttons{
   width: 97%;
   display: flex;
@@ -166,7 +184,8 @@ html, body{
   padding: 10px;
   margin-top: auto;
 }
-/* creating fake border using shadow for these icons/symbols */
+
+/* Icons with "fake borders" using text-shadow for clarity */
 .expBox-icon, .root-Symbol, .factorial-icon, .minus-symbol, .divide-symbol{
   text-shadow:
     0.4px 0 black,
@@ -174,6 +193,11 @@ html, body{
     0 0.4px black,
     0 -0.4px black;
 }
+
+
+
+
+/* Button blocks */
 .left-part__buttons-block{
   width: auto;
   display: flex;
@@ -187,24 +211,28 @@ html, body{
   display: flex;
   gap: 4px;
 }
+
+
+
+
+/* General button styling */
 .btn{
   flex: 1;
   min-width: 0;
   padding: 8px 23px;
-  /* width: 65px;
-  height: 45px; */
   background-color: #FBFCFE;
   color: black;
-  font-size: medium;
+  font-size: 16px;
   font-weight: bold;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
+  cursor: pointer;
 }
 
 
 
 
-
+/* RAD/DEG toggle group */
 .buttons-block__rad-deg-toggle-group{
   width: 100%;
   display: flex;
@@ -215,18 +243,14 @@ html, body{
   padding: 5px;
 }
 .buttons-block__rad-deg-toggle-group button{
-  /* width: 60px;
-  height: 40px; */
-  /* padding: 8px 21px; */
   border: none;
 }
 
 
 
 
-
+/* Specific button variants */
 .btn--ac, .btn--equal{
-  /* width: 133px; */
   padding: 8px 46px;
   background-color: #538DE7;
   border: none;
@@ -240,13 +264,17 @@ html, body{
 .btn--delete-btn{
   padding: 0;
 }
+
+
+
+
+/* Arrow & delete button spans and icons */
 .btn--left-arrow span, .btn--right-arrow span, .btn--delete-btn span{
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .btn--left-arrow svg, .btn--right-arrow svg{
-  /* width: 40%; */
   width: 25px;
   height: 25px;
 }
@@ -257,8 +285,19 @@ html, body{
 
 
 
+/* Active toggle button style */
+.active-toggle-btn{
+  background-color: #1C2A40;
+  border: none;
+  color: white;
+}
 
 
+
+
+/* ==============================
+   RIGHT PANEL (HISTORY)
+   ============================== */
 .right-part{
   width: 33%;
   height: 84vh;
@@ -270,13 +309,14 @@ html, body{
   font-size: 17px;
   display: flex;
   flex-direction: column;
+  gap: 18px;
 }
 
 
 
-
+/* History title and underline */
 .right-part__history-title{
-  height: 12%;
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
 }
@@ -289,7 +329,7 @@ html, body{
 
 
 
-
+/* History remove button */
 .right-part__history-remove-btn button{
   padding: 3px 6px;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -299,18 +339,20 @@ html, body{
   cursor: pointer;
 }
 .js-history-remove-btn{
-  visibility: hidden;
+  visibility: hidden; /* hidden by default */
 }
 
 
 
 
-
+/* History list items */
 .right-part__history-list{
-  height: 88%;
+  flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding-left: 2px;
+  padding-right: 5px;
 }
 .right-part .js-history-item{
   min-width: 0;
@@ -334,22 +376,13 @@ html, body{
 
 
 
-
-.active-toggle-btn{
-  background-color: #1C2A40;
-  border-color: none;
-  color: white;
-}
-
-
-
-
-
+/* ==============================
+   DARK THEME OVERRIDES
+   ============================== */
 body.dark_theme{
   background-color: #0C192A;
 }
 body.dark_theme .page{
-  /* color: #f5f5f5; */
   color: #EDEDED;
 }
 body.dark_theme .page__header,
@@ -360,7 +393,6 @@ body.dark_theme .right-part{
 body.dark_theme .btn, 
 body.dark_theme .header-toggle__btn{
   background-color: #192536;
-  /* color: #f5f5f5; */
   color: #EDEDED;
 }
 body.dark_theme .btn--ac, body.dark_theme .btn--equal{
@@ -368,7 +400,6 @@ body.dark_theme .btn--ac, body.dark_theme .btn--equal{
   color: #000;
 }
 body.dark_theme .active-toggle-btn{
-  /* background-color: #008CFF; */
   background-color: #2588F4;
   color: #111111;
 }

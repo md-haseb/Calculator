@@ -1,110 +1,163 @@
-<!--Calculator modular version-->
+<!--Evaluator modular version-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <title>Calculator By Md Haseb</title>
+  <title>Smart Evaluator</title>
 </head>
 <body>
 <div class="page">
-  <div class="page__header">
+
+  <!-- ======================
+       HEADER SECTION
+       Includes logo, subtitle, and theme toggle buttons
+       ====================== -->
+  <header class="page__header">
+
+    <!-- Logo and subtitle -->
     <div class="page__header-logo">
       <span class="page__header-logo-text">Smart Evaluator</span>
       <span class="page__header-logo-subtitle">Real Time Voice Command Enabled</span>
     </div>
+
+    <!-- Theme toggle buttons -->
     <div class="js-header-toggle">
       <div class="header-toggle__border">
-        <button class="header-toggle__btn js-theme-toggle-btn js-toggle-btn" data-toggle="true" data-value="dark">Dark</button><button class="header-toggle__btn js-theme-toggle-btn js-toggle-btn" data-toggle="true" data-value="light">Light</button>
+        <button type="button" class="header-toggle__btn js-theme-toggle-btn js-toggle-btn" data-toggle="true" data-value="dark">Dark</button>
+        <button type="button" class="header-toggle__btn js-theme-toggle-btn js-toggle-btn" data-toggle="true" data-value="light">Light</button>
       </div>
     </div>
-  </div>
+  </header>
+
+  <!-- ======================
+       MAIN EVALUATION SECTION
+       Contains left input panel and right history panel
+       ====================== -->
   <div class="page__evaluation">
-    <div class="left-part">
+
+    <!-- LEFT PANEL: Input, messages, voice input, buttons -->
+    <main class="left-part">
+
+      <!-- Error / status messages -->
       <div class="left-part__message">
         <div class="left-part__message-title">Message: </div>
         <div class="left-part__error-message js-error-message">All is well</div>
       </div>
-      <div class="left-part__input-display js-input-display" contenteditable="true"></div>
+
+      <!-- Editable expression input display -->
+      <div class="left-part__input-display js-input-display" contenteditable="true" role="textbox" aria-label="expression input"></div>
+
+      <!-- Voice input button -->
       <div class="left-part__voice-input">
-        <button class="left-part__voice-input-btn">Voice Input</button>
+        <button type="button" class="left-part__voice-input-btn">Voice Input</button>
       </div>
+
+      <!-- BUTTONS: grouped by functionality -->
       <div class="left-part__buttons">
+
+        <!-- First block: Logarithms, exponents, roots, constants -->
         <div class="left-part__buttons-block left-part__buttons-block--first">
+
+          <!-- Logarithm buttons -->
           <div class="buttons-block__row buttons-block__row--logarithm">
-            <button class="btn btn--log-box"><span>log<sub class="expBox-icon">□</sub></span></button>
-            <button class="btn btn--log"><span>log</span></button>
-            <button class="btn btn--ln"><span>ln</span></button>
+            <button type="button" class="btn btn--log-box"><span>log<sub class="expBox-icon">□</sub></span></button>
+            <button type="button" class="btn btn--log"><span>log</span></button>
+            <button type="button" class="btn btn--ln"><span>ln</span></button>
           </div>
+
+          <!-- Exponent and factorial buttons -->
           <div class="buttons-block__row buttons-block__row--exponent-and-factorial">
-            <button class="btn btn--x-box"><span>x<sup class="expBox-icon">□</sup></span></button>
-            <button class="btn btn--x-square"><span>x<sup>2</sup></span></button>
-            <button class="btn btn--factorial"><span class="factorial-icon">!</span></button>
+            <button type="button" class="btn btn--x-box"><span>x<sup class="expBox-icon">□</sup></span></button>
+            <button type="button" class="btn btn--x-square"><span>x<sup>2</sup></span></button>
+            <button type="button" class="btn btn--factorial"><span class="factorial-icon">!</span></button>
           </div>
+
+          <!-- Root and Pi buttons -->
           <div class="buttons-block__row buttons-block__row--root-and-pi">
-            <button class="btn btn--root-box"><span class="root-Symbol"><sup class="expBox-icon">□</sup>√</span></button>
-            <button class="btn btn--root"><span class="root-Symbol">√</span></button>
-            <button class="btn btn--pi"><span>π</span></button>
+            <button type="button" class="btn btn--root-box"><span class="root-Symbol"><sup class="expBox-icon">□</sup>√</span></button>
+            <button type="button" class="btn btn--root"><span class="root-Symbol">√</span></button>
+            <button type="button" class="btn btn--pi"><span>π</span></button>
           </div>
+
+          <!-- Combinatorics and constant e -->
           <div class="buttons-block__row buttons-block__row--combinatorics-and-e">
-            <button class="btn btn--combination"><span><sup>n</sup>C<sub>r</sub></span></button>
-            <button class="btn btn--permutation"><span><sup>n</sup>P<sub>r</sub></span></button>
-            <button class="btn btn--e"><span>e</span></button>
+            <button type="button" class="btn btn--combination"><span><sup>n</sup>C<sub>r</sub></span></button>
+            <button type="button" class="btn btn--permutation"><span><sup>n</sup>P<sub>r</sub></span></button>
+            <button type="button" class="btn btn--e"><span>e</span></button>
           </div>
         </div>
+
+        <!-- Second block: Trigonometric buttons and RAD/DEG toggle -->
         <div class="left-part__buttons-block left-part__buttons-block--second">
+
+          <!-- RAD/DEG toggle -->
           <div class="buttons-block__row buttons-block__row--rad-deg-toggle">
             <div class="buttons-block__rad-deg-toggle-group js-rad-deg-toggle-group">
-              <button class="btn btn--radian js-toggle-btn" data-toggle="true" data-value="rad"><span>rad</span></button><button class="btn btn--degree js-toggle-btn active-toggle-btn" data-toggle="true" data-value="deg"><span>deg</span></button>
+              <button type="button" class="btn btn--radian js-toggle-btn" data-toggle="true" data-value="rad"><span>rad</span></button>
+              <button type="button" class="btn btn--degree js-toggle-btn active-toggle-btn" data-toggle="true" data-value="deg"><span>deg</span></button>
             </div>
           </div>
+
+          <!-- Trigonometric functions -->
           <div class="buttons-block__row buttons-block__row--sin-cot">
-            <button class="btn btn--sin"><span>sin</span></button>
-            <button class="btn btn--cot"><span>cot</span></button>
+            <button type="button" class="btn btn--sin"><span>sin</span></button>
+            <button type="button" class="btn btn--cot"><span>cot</span></button>
           </div>
           <div class="buttons-block__row buttons-block__row--cos-sec">
-            <button class="btn btn--cos"><span>cos</span></button>
-            <button class="btn btn--sec"><span>sec</span></button>
+            <button type="button" class="btn btn--cos"><span>cos</span></button>
+            <button type="button" class="btn btn--sec"><span>sec</span></button>
           </div>
           <div class="buttons-block__row buttons-block__row--tan-csc">
-            <button class="btn btn--tan"><span>tan</span></button>
-            <button class="btn btn--csc"><span>csc</span></button>
+            <button type="button" class="btn btn--tan"><span>tan</span></button>
+            <button type="button" class="btn btn--csc"><span>csc</span></button>
           </div>
         </div>
+
+        <!-- Third block: Numbers and basic operations -->
         <div class="left-part__buttons-block left-part__buttons-block--third">
           <div class="buttons-block__row buttons-block__row--number-and-divide">
-            <button class="btn btn--seven"><span>7</span></button>
-            <button class="btn btn--eight"><span>8</span></button>
-            <button class="btn btn--nine"><span>9</span></button>
-            <button class="btn btn--divide"><span class="divide-symbol">/</span></button>
+            <button type="button" class="btn btn--seven"><span>7</span></button>
+            <button type="button" class="btn btn--eight"><span>8</span></button>
+            <button type="button" class="btn btn--nine"><span>9</span></button>
+            <button type="button" class="btn btn--divide"><span class="divide-symbol">/</span></button>
           </div>
           <div class="buttons-block__row buttons-block__row--number-and-multiply">
-            <button class="btn btn--four"><span>4</span></button>
-            <button class="btn btn--five"><span>5</span></button>
-            <button class="btn btn--six"><span>6</span></button>
-            <button class="btn btn--multiply"><span>×</span></button>
+            <button type="button" class="btn btn--four"><span>4</span></button>
+            <button type="button" class="btn btn--five"><span>5</span></button>
+            <button type="button" class="btn btn--six"><span>6</span></button>
+            <button type="button" class="btn btn--multiply"><span>×</span></button>
           </div>
           <div class="buttons-block__row buttons-block__row--number-and-minus">
-            <button class="btn btn--one"><span>1</span></button>
-            <button class="btn btn--two"><span>2</span></button>
-            <button class="btn btn--three"><span>3</span></button>
-            <button class="btn btn--minus"><span class="minus-symbol">-</span></button>
+            <button type="button" class="btn btn--one"><span>1</span></button>
+            <button type="button" class="btn btn--two"><span>2</span></button>
+            <button type="button" class="btn btn--three"><span>3</span></button>
+            <button type="button" class="btn btn--minus"><span class="minus-symbol">-</span></button>
           </div>
           <div class="buttons-block__row buttons-block__row--zero-dot-percent-plus">
-            <button class="btn btn--zero"><span>0</span></button>
-            <button class="btn btn--dot"><span>.</span></button>
-            <button class="btn btn--percent"><span>%</span></button>
-            <button class="btn btn--plus"><span>+</span></button>
+            <button type="button" class="btn btn--zero"><span>0</span></button>
+            <button type="button" class="btn btn--dot"><span>.</span></button>
+            <button type="button" class="btn btn--percent"><span>%</span></button>
+            <button type="button" class="btn btn--plus"><span>+</span></button>
           </div>
         </div>
+
+        <!-- Fourth block: Special buttons (AC, arrows, brackets, delete, equal) -->
         <div class="left-part__buttons-block left-part__buttons-block--fourth">
+
+          <!-- AC button -->
           <div class="buttons-block__row buttons-block__row--ac">
             <button class="btn btn--ac"><span>AC</span></button>
           </div>
+
+          <!-- Cursor movement buttons -->
           <div class="buttons-block__row buttons-block__row--left-right-arrow">
-            <button class="btn btn--left-arrow js-left-arrow" data-value="left-arrow">
+
+            <!-- Left arrow button -->
+            <button type="button" class="btn btn--left-arrow js-left-arrow" data-value="left-arrow">
               <span>
+                <!-- Left arrow SVG icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 -6.5 38 38" version="1.1">
       
                     <title>left-arrow</title>
@@ -121,8 +174,11 @@
                 </svg>
               </span>
             </button>
-            <button class="btn btn--right-arrow js-right-arrow" data-value="right-arrow">
+
+            <!-- right arrow button -->
+            <button type="button" class="btn btn--right-arrow js-right-arrow" data-value="right-arrow">
               <span>
+                <!-- right arrow SVG icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 -6.5 38 38" version="1.1">
       
                     <title>right-arrow</title>
@@ -140,10 +196,17 @@
               </span>
             </button>
           </div>
+
+          <!-- Brackets and delete button -->
           <div class="buttons-block__row buttons-block__row--brackets-and-delete">
-            <button class="btn btn--brackets"><span>()</span></button>
-            <button class="btn btn--delete-btn js-delete-btn" data-value="delete">
+
+            <!-- Brackets button: allows users to group open bracket and close bracket -->
+            <button type="button" class="btn btn--brackets"><span>()</span></button>
+
+            <!-- delete button -->
+            <button type="button" class="btn btn--delete-btn js-delete-btn" data-value="delete">
               <span class="delete-btn-span">
+                <!-- Delete icon SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 -2 20 20" version="1.1" fill="#000000" transform="matrix(-1, 0, 0, 1, 0, 0)">
 
                   <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -156,30 +219,39 @@
               </span>
             </button>
           </div>
+
+          <!-- Equal button -->
           <div class="buttons-block__row buttons-block__row--equal">
-            <button class="btn btn--equal"><span>=</span></button>
+            <button type="button" class="btn btn--equal"><span>=</span></button>
           </div>
         </div>
       </div>
-    </div>
-    <div class="right-part">
+    </main>
+
+    <!-- RIGHT PANEL: Evaluation history -->
+    <aside class="right-part">
+
+      <!-- History title and remove button -->
       <div class="right-part__history-title">
         <div class="right-part__history-title-text">
           <span>History Panel</span>
           <div class="right-part__history-underline"></div>
         </div>
         <div class="right-part__history-remove-btn right-part__history-remove-btn--hidden js-history-remove-btn">
-          <button>Remove History</button>
+          <button type="button">Remove History</button>
         </div>
       </div>
-      <div class="right-part__history-list js-history-list">
 
+      <!-- History list -->
+      <div class="right-part__history-list js-history-list">
+        <!-- JS will populate history items here -->
       </div>
-    </div>
+    </aside>
   </div>
 </div>
 
-  <!-- <script src="script.js"></script> -->
-  <script type="module" src="js/main.js"></script>
+
+<!-- Main JS Module -->
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
