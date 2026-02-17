@@ -23,10 +23,11 @@ html, body{
 .page{
  width: 100%;
  max-width: 2000px;
- min-height: 100vh;
+ min-height: 100dvh;
  display: flex;
  flex-direction: column;
  align-items: center;
+ gap: 2dvh;
 }
 
 
@@ -37,7 +38,7 @@ html, body{
    ============================== */
 .page__header{
  width: 100%;
- min-height: 10vh;
+ min-height: 10dvh;
  background-color: #FEFEFE;
  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
  display: flex;
@@ -103,7 +104,7 @@ html, body{
 } */
 .page__evaluation{
   width: 100%;
-  min-height: 90vh;
+  min-height: 88dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,7 +150,7 @@ html, body{
 /* error messages */
 .left-part__message{
   width: 97%;
-  min-height: 10vh;
+  /* min-height: 10vh; */
   padding: 9px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   display: flex;
@@ -167,7 +168,7 @@ html, body{
 /* Input display area */
 .left-part__input-display{
   width: 96%;
-  min-height: 20vh;
+  /* min-height: 20vh; */
   padding-top: 25px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.30);
   font-size: 23px;
@@ -180,16 +181,16 @@ html, body{
 /* Voice input button */
 .left-part__voice-input{
   width: 97%;
-  min-height: 10vh;
+  /* min-height: 10vh; */
   display: flex;
-  justify-content: end;
-  padding: 25px 10px 10px 10px;
+  justify-content: flex-end;
+  /* padding: 25px 10px 10px 10px; */
 }
 .left-part__voice-input-btn{
   border: none;
   border-radius: 4px;
   background-color: #6AA5F8;
-  /* padding: 10px 30px; */
+  padding: 10px 30px;
   color: #ffffff;
   font-size: medium;
   font-weight: bold;
@@ -204,14 +205,15 @@ html, body{
    ============================== */
 .left-part__buttons{
   width: 97%;
-  min-height: 25vh;
+  /* min-height: 28dvh; */
+  flex: 1;
   order: 5;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
   padding: 10px;
-  margin-top: auto;
+  /* margin-top: auto; */
 }
 
 /* Icons with "fake borders" using text-shadow for clarity */
@@ -343,7 +345,11 @@ html, body{
 } */
  .right-part{
   width: 95%;
-  min-height: 25vh;
+  flex: 1;
+  min-height: 25dvh;
+  max-height: 30dvh;
+  /* min-height: 25dvh;
+  max-height: 32dvh; */
   order: 4;
   background-color: #FEFEFE;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -355,6 +361,8 @@ html, body{
   flex-direction: column;
   gap: 18px;
   background: red;
+  margin-top: 35px;
+  /* margin-top: auto; */
 }
 
 
