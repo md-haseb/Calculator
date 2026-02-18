@@ -206,13 +206,13 @@ html, body{
 .left-part__buttons{
   width: 97%;
   /* min-height: 28dvh; */
-  flex: 1;
+  /* flex: 1; */
   order: 5;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  padding: 10px;
+  padding: 10px 20px;
   /* margin-top: auto; */
 }
 
@@ -231,6 +231,9 @@ html, body{
 /* Button blocks */
 .left-part__buttons-block{
   width: auto;
+  flex: 1;
+  align-self: stretch;
+  /* padding: 0 20px; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -239,6 +242,7 @@ html, body{
 }
 .buttons-block__row{
   width: 100%;
+  flex: 1;
   display: flex;
   gap: 4px;
 }
@@ -249,7 +253,8 @@ html, body{
 /* General button styling */
 .btn{
   flex: 1;
-  min-width: 0;
+  min-height: 30px;
+  /* min-width: 50px; */
   /* padding: 8px 23px; */
   padding: 0 0;
   background-color: #FBFCFE;
@@ -345,9 +350,11 @@ html, body{
 } */
  .right-part{
   width: 95%;
-  flex: 1;
-  min-height: 25dvh;
-  max-height: 30dvh;
+  max-height: 28dvh;
+  /* overflow-y: auto; */
+  /* flex: 1; */
+  /* min-height: 25dvh;
+  max-height: 30dvh; */
   /* min-height: 25dvh;
   max-height: 32dvh; */
   order: 4;
@@ -361,8 +368,8 @@ html, body{
   flex-direction: column;
   gap: 18px;
   background: red;
-  margin-top: 35px;
-  /* margin-top: auto; */
+  /* margin-top: 35px; */
+  margin-top: auto;
 }
 
 
@@ -400,7 +407,7 @@ html, body{
 
 /* History list items */
 .right-part__history-list{
-  flex: 1;
+  /* flex: 1; */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
